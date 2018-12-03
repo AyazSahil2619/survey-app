@@ -40,7 +40,7 @@ import { ModalComponent } from './modal/modal.component';
     AddDataComponent,
     UpdateDataComponent,
     TableEditComponent,
-    ModalComponent
+    ModalComponent,
   ],
   imports: [
     ModalModule.forRoot(),
@@ -63,8 +63,5 @@ import { ModalComponent } from './modal/modal.component';
   ],
   bootstrap: [AppComponent],
 
-  entryComponents:[
-    ModalComponent,
-  ]
 })
 export class AppModule { }

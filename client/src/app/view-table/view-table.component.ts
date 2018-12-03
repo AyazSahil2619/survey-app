@@ -6,7 +6,8 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { DataTableDirective } from 'angular-datatables';
 
-
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 // import { switchMap } from 'rxjs/operators';
 
@@ -22,7 +23,7 @@ export class ViewTableComponent implements OnInit {
   dtElement: DataTableDirective;
   dtOptions: DataTables.Settings = {};
   dtTrigger = new Subject();
-
+  modalRef: BsModalRef;
   rowToDelete: any;
 
   datas = [];
@@ -32,7 +33,9 @@ export class ViewTableComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private router: Router,
     private _userService: UserServiceService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private modalService: BsModalService
+  ) { }
 
   table_id = this.route.snapshot.params['id'];
 
@@ -50,10 +53,7 @@ export class ViewTableComponent implements OnInit {
 
     this._userService.getById(this.table_id)
       .subscribe((response) => {
-
-
         var colinfo = response;
-        // console.log(colinfo,"00")
         colinfo.forEach((item, index) => {
           if (item.fieldname != 'uid') {
             this.colinfo1.push({
@@ -84,20 +84,27 @@ export class ViewTableComponent implements OnInit {
 
   updatedata(row_id) {
     this.router.navigate(['/updateData/' + this.table_id + '/' + row_id])
+    // this.modalRef = this.modalService.show(template);
+
+
   }
 
 
- 
+
+  deletedata(template: TemplateRef<any>, rowid) {
+    this.rowToDelete = rowid;
+    this.modalRef = this.modalService.show(template);
+  }
 
 
-  deleteData(row_id) {
-
-    this._userService.deleteRow(this.table_id, row_id).subscribe((response) => {
+  confirm() {
+    this.modalRef.hide();
+    this._userService.deleteRow(this.table_id, this.rowToDelete).subscribe((response) => {
       // this.datatableIntialization();
       this.messageService.add(
         { severity: 'success', summary: 'Deleted Successfully' });
       for (let i = 0; i < this.datas.length; i++) {
-        if (this.datas[i].uid == row_id) {
+        if (this.datas[i].uid == this.rowToDelete) {
           this.datas.splice(i, 1);
         }
       }
@@ -112,5 +119,60 @@ export class ViewTableComponent implements OnInit {
       console.log('Error while deleting', err);
     })
   }
-
+  decline() {
+    this.modalRef.hide();
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // deleteData(row_id) {
+
+  //   this._userService.deleteRow(this.table_id, row_id).subscribe((response) => {
+  //     // this.datatableIntialization();
+  //     this.messageService.add(
+  //       { severity: 'success', summary: 'Deleted Successfully' });
+  //     for (let i = 0; i < this.datas.length; i++) {
+  //       if (this.datas[i].uid == row_id) {
+  //         this.datas.splice(i, 1);
+  //       }
+  //     }
+  //     this.dtElement.dtInstance
+  //       .then((dtInstance: DataTables.Api) => {
+  //         dtInstance.destroy();
+  //         this.dtTrigger.next();
+  //       });
+
+
+  //   }, (err) => {
+  //     console.log('Error while deleting', err);
+  //   })
+  // }

@@ -8,23 +8,23 @@ import { Subject } from 'rxjs';
   styleUrls: ['./modal.component.css']
 })
 export class ModalComponent implements OnInit {
-
+  
   public onClose: Subject<boolean>;
+  
   constructor(public bsModalRef: BsModalRef) { }
-
+  
   ngOnInit() {
-    this.onClose = new Subject();
+  this.onClose = new Subject();
   }
-
+  
   public confirm(): void {
-    this.onClose.next(true);
-    this.bsModalRef.hide();
-
+  this.onClose.next(true);
+  this.bsModalRef.hide();
+  
   }
-
+  
   public decline(): void {
-    this.onClose.next(false);
-    this.bsModalRef.hide();
+  this.onClose.next(false);
+  this.bsModalRef.hide();
   }
-
 }

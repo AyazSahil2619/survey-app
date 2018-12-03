@@ -6,6 +6,11 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { UserServiceService } from '../user-service.service';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { Subject } from 'rxjs';
+
+
 @Component({
   selector: 'app-add-table',
   templateUrl: './add-table.component.html',
@@ -13,22 +18,32 @@ import { UserServiceService } from '../user-service.service';
 })
 export class AddTableComponent implements OnInit {
 
+  public onClose: Subject<boolean>;
+
+
   constructor(private Toast: ToastModule,
     private messageService: MessageService,
     private _router: Router,
     private _auth: AuthService,
-    private _userService: UserServiceService) { }
+    private _userService: UserServiceService,
+    private modalService: BsModalService) { }
 
   TableInfo: any = {};
   ColInfo: any = [];
   columns: any = [];
   count: any = 0;
 
+  modalRef: BsModalRef;
+
   dropdownlist = [];
   dropdownValue = [];
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.onClose = new Subject();
+  }
 
+  // this.modalRef = this.modalService.show(AddTableComponent);
+  
   showtable = true;
   showColoumns = function () {
     let data = {
@@ -41,6 +56,7 @@ export class AddTableComponent implements OnInit {
         } else {
           this.messageService
             .add({ severity: 'error', summary: 'Whoops !! Table with this name Exists' });
+
           this.showtable = true;
         }
       }, ((errResponse) => {
@@ -59,7 +75,7 @@ export class AddTableComponent implements OnInit {
   removeColumn() {
     var newItemNo = this.columns.length - 1;
     this.columns.splice(newItemNo, 1);
-}
+  }
 
   dropdown(index) {
 
@@ -76,7 +92,6 @@ export class AddTableComponent implements OnInit {
         id: 'dd' + this.count
       }]
     }
-
     // console.log(this.dropdownlist, "11")
   }
 
@@ -129,16 +144,23 @@ export class AddTableComponent implements OnInit {
     this._userService.createTable(this.TableInfo)
       .subscribe((response) => {
 
-        this._router.navigate(['/adminlogin']);
-        this.messageService.add(
-          { severity: 'success', summary: 'Table Created Successfully' });
+        // this._router.navigate(['/adminlogin']);
+
+        // this.messageService.add(
+        //   { severity: 'success', summary: 'Table Created Successfully' });
+       
+          this.onClose.next(true);
+
       }, (error) => {
 
         if (error.error == '42701') {
 
           // this._router.navigate(['/adminlogin']);
           this.ColInfo = [];
+          this.dropdownValue = [];
           this.messageService.add({ severity: 'error', summary: 'Each COLUMN NAME must be unique' });
+        
+          this.onClose.next(false);
 
           console.log('Sorry ! Table not created .. Each COLUMN NAME must be unique');
 
@@ -151,5 +173,6 @@ export class AddTableComponent implements OnInit {
 
         }
       })
+
   }
 }

@@ -13,11 +13,14 @@
       <td *ngFor="let column of colinfo1">{{row[column.fieldname]}}</td>
       <td>
         <button class="btn btn-primary " (click)="updatedata(row.uid)">Edit</button>
-        <button class="btn btn-danger " (click)="openModal(templatedelete,row.uid)">Delete</button>
+        <button class="btn btn-danger " (click)="deletedata(templatedelete,row.uid)">Delete</button>
       </td>
     </tr>
   </tbody>
 </table>
+
+
+
 
 
 

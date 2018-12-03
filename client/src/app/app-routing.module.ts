@@ -28,7 +28,7 @@ const routes: Routes = [
   { path: 'viewTable/:id', component: ViewTableComponent, canActivate: [AuthGuard] },
   { path: 'insertRow/:id', component: AddDataComponent, canActivate: [AuthGuard] },
   { path: 'updateData/:tableid/:rowid', component: UpdateDataComponent, canActivate: [AuthGuard] },
-  { path: 'editTable/:tableid', component: TableEditComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } }
+  { path: 'editTable/:tableid', component: TableEditComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
 
 ];
 

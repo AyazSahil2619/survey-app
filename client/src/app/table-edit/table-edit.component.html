@@ -52,7 +52,7 @@
               <label><b>Field type </b><span class='asteriskcolor'>*</span></label>
               <select type="text" class="form-control" #type="ngModel" [(ngModel)]="column.type" name="type{{i}}"
                 required>
-                <option value="" selected>Select</option>
+                <!-- <option value="" selected>Select</option> -->
                 <option value="text">Text</option>
                 <option value="varchar">Email</option>
                 <option value="integer">Integer</option>
@@ -60,7 +60,7 @@
                 <option value="date">Date</option>
                 <option value="dropdown">dropdown</option>
               </select>
-              <span class="error" *ngIf="!type.valid && type.dirty">Column Name is required!</span>
+              <!-- <span class="error" *ngIf="!type.valid && type.dirty">Column Name is required!</span> -->
             </div>
             <div class="col-md-6" *ngIf="column.type == 'dropdown'">
               <label>Dropdown Value <i Style="color: red">*</i></label>
@@ -71,7 +71,7 @@
               </div>
             </div>
           </div>
-        </fieldset><br>
+        </fieldset><br><br>
         <td colspan="2"> <button class="btn btn-secondary float-right" type="submit">Submit</button></td>
       </form>
     </div>

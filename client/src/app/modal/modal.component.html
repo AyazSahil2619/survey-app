@@ -1,27 +1,19 @@
-<!-- <div #template>
-  <div class="modal-body text-center">
-    <p>{{title}}</p>
-    <button class="btn btn-default" (click)="confirm()"><i class="fa fa-check" aria-hidden="true"></i>
-    </button>&nbsp;
-    <button class="btn btn-default" (click)="decline()"><i class="fa fa-times" aria-hidden="true"></i>
-    </button>
-  </div>
-</div> -->
-
-
-
 <div #templatedelete>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Delete</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Delete</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to delete ?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary " (click)="confirm()">Confirm</button>
+      <button type="button" class="btn btn-danger " (click)="decline()">Decline</button>
+    </div>
   </div>
-  <div class="modal-body">
-    Are you sure you want to delete ?
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-primary " (click)="confirm()">Confirm</button>
-    <button type="button" class="btn btn-danger " (click)="decline()">Decline</button>
-  </div>
-</div>
+
+
+  
+  

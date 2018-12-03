@@ -8,7 +8,7 @@ import { DataTableDirective } from 'angular-datatables';
 
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { ModalComponent } from '../modal/modal.component';
+import { AddTableComponent } from '../add-table/add-table.component';
 
 @Component({
   selector: 'app-adminlogin',
@@ -56,11 +56,18 @@ export class AdminloginComponent implements OnInit {
     })
   }
 
+  rerender() {
+    this.dtElement.dtInstance
+      .then((dtInstance: DataTables.Api) => {
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+  }
 
-  // openModal(template: TemplateRef<any>, rowid) {
-  //   this.tableToDeleted = rowid;
-  //   this.modalRef = this.modalService.show(template);
-  // }
+  deleteModal(template: TemplateRef<any>, rowid) {
+    this.tableToDeleted = rowid;
+    this.modalRef = this.modalService.show(template);
+  }
 
 
   confirm() {
@@ -72,11 +79,13 @@ export class AdminloginComponent implements OnInit {
           this.datas.splice(i, 1);
         }
       }
-      this.dtElement.dtInstance
-        .then((dtInstance: DataTables.Api) => {
-          dtInstance.destroy();
-          this.dtTrigger.next();
-        });
+      // this.dtElement.dtInstance
+      //   .then((dtInstance: DataTables.Api) => {
+      //     dtInstance.destroy();
+      //     this.dtTrigger.next();
+      //   });
+  
+      this.rerender();
 
       this.messageService.add(
         { severity: 'success', summary: 'Deleted Successfully' });
@@ -85,9 +94,89 @@ export class AdminloginComponent implements OnInit {
       console.log('Error while deleting', err);
     })
   }
+
+
   decline() {
     this.modalRef.hide();
   }
+
+
+  create() {
+    this._router.navigate(['/createTable']);
+  }
+
+  viewTableData(tableid) {
+    this._router.navigate(['/viewTable/' + tableid]);
+  }
+
+  updatetable(tableid) {
+    this._router.navigate(['/editTable/' + tableid]);
+  }
+
+  createModal() {
+    // this.modalRef = this.modalService.show(
+    //   template,
+    //   Object.assign({}, { class: 'gray modal-lg' })
+    // );
+
+    this.modalRef = this.modalService.show(AddTableComponent,
+      Object.assign({}, { class: 'gray modal-lg' }));
+
+    this.modalRef.content.onClose.subscribe((result) => {
+      if (result == true) {
+
+        this.modalRef.hide();
+
+        // this.dtElement.dtInstance
+        //   .then((dtInstance: DataTables.Api) => {
+        //     dtInstance.destroy();
+        //     this.dtTrigger.next();
+        //   });
+        this.rerender();
+
+        this.messageService.add(
+          { severity: 'success', summary: 'Table Created Successfully' });
+
+      } else {
+        this.modalRef.hide();
+        //   this.messageService.add(
+        //     { severity: 'error', summary: 'Table Created Successfully' });
+      }
+
+    })
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   // deleteTable(tableid) {
@@ -111,38 +200,3 @@ export class AdminloginComponent implements OnInit {
   //     console.log('Error while deleting', err);
   //   })
   // }
-
-  Create() {
-    this._router.navigate(['/createTable']);
-  }
-
-  viewTableData(tableid) {
-    this._router.navigate(['/viewTable/' + tableid]);
-  }
-
-  updatetable(tableid) {
-    this._router.navigate(['/editTable/' + tableid]);
-  }
-
-
-
-
-  deleteTable(template, tableid) {
-    this.tableToDeleted = tableid;
-    this.openModal(template, tableid);
-
-  }
-
-  openModal(template: TemplateRef<any>, tableid) {
-    this.tableToDeleted = tableid;
-    this.modalRef = this.modalService.show(ModalComponent);
-    this.modalRef.content.onClose
-      .subscribe(result => {
-        if (result == true) {
-          this.confirm();
-        } else {
-          this.decline();
-        }
-      });
-  }
-}

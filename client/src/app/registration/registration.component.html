@@ -1,6 +1,9 @@
 <div class="registration_image">
   <div class="container">
     <div class="card col-md-6 offset-md-3 text-black bg-light mb-3">
+      <div class="card-header">
+        <h4>Sign Up</h4>
+      </div>
       <div class="card-body">
         <form name="form" [formGroup]="registrationDetails" (ngSubmit)="onSubmit()">
           <div class="form-group">
@@ -41,13 +44,12 @@
             </p>
           </div>
         </form>
-
       </div>
-      <!-- <footer class="app-footer fixed-footer">
-      <div>
-        <span class='asterisk'>* Required Fields</span>
+      <div class="card-footer">
+        <div class="d-flex justify-content-center links">
+          Already have an account?<a href="/login">Sign In</a>
+        </div>
       </div>
-    </footer> -->
     </div>
   </div>
 </div>
