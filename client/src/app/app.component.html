@@ -1,0 +1,11 @@
+<nav class="navbar">
+  <ul class="nav">
+    <a *ngIf="!auth.isLoggednIn()" routerLink="/registration">Registration</a>
+    <a *ngIf="!auth.isLoggednIn()" routerLink="/login">Login</a>
+    <a *ngIf="auth.isRole() == 'admin'" routerLink="/adminlogin">Home</a>
+    <a *ngIf="auth.isRole() == 'user'" routerLink="/userlogin">Home</a>
+  </ul>
+  <a class="my-2 my-sm-0" *ngIf="auth.isLoggednIn()" routerLink="/logout">LogOut</a>
+</nav>
+<p-toast position="top-right"></p-toast>
+<router-outlet></router-outlet>

@@ -1,0 +1,50 @@
+<div ng-app="updatedata" ng-controller="updatedataController" class="container">
+  <div class="card col-md-6 offset-md-3 text-black bg-light mb-3">
+    <div class="card-body">
+      <form class="form-group" (ngSubmit)="updateData()">
+        <table class="table table-condensed table-responsive">
+          <tr *ngFor="let x of colinfo1">
+            <td><label><b>{{x.label}} </b><span class="astericks">*</span></label></td>
+            <td *ngIf="x.fieldtype == 'text'">
+              <input name="name1{{x.fieldname}}" #name1="ngModel" class="form-control" type="text" [(ngModel)]="data[x.fieldname]"
+                required>
+              <span class="error" *ngIf="!name1.valid && name1.dirty">{{x.fieldname}} is required!</span>
+
+            </td>
+            <td *ngIf="x.fieldtype == 'integer' || x.fieldtype == 'bigint'">
+              <input name="name2{{x.fieldname}}" #name2="ngModel" class="form-control" type="number" [(ngModel)]="data[x.fieldname]"
+                required>
+              <span class="error" *ngIf="!name2.valid && name2.dirty">{{x.fieldname}} is required!</span>
+
+            </td>
+            <td *ngIf="x.fieldtype == 'dropdown'">
+              <select class="form-control" name="name5{{x.fieldname}}" #name5="ngModel" [(ngModel)]="data[x.fieldname]"
+                required>
+                <ng-container *ngFor="let y of ddinfo1">
+                  <ng-container *ngIf="y.colname == x.fieldname">
+                    <option [ngValue]="y.ddValue">{{y.ddValue}}</option>
+                  </ng-container>
+                </ng-container>
+              </select>
+            </td>
+            <td *ngIf="x.fieldtype == 'date'">
+              <input name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
+                required>
+              <span class="error" *ngIf="!name3.valid && name3.dirty">{{x.fieldname}} is required!</span>
+
+            </td>
+            <td *ngIf="x.fieldtype == 'varchar'">
+              <input name="name4{{x.fieldname}}" #name4="ngModel" class="form-control" type="email" [(ngModel)]="data[x.fieldname]"
+                required>
+              <span class="error" *ngIf="!name4.valid && name4.dirty">{{x.fieldname}} is required!</span>
+
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2"><button class="btn btn-default float-right" value="Submit">Submit</button></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>

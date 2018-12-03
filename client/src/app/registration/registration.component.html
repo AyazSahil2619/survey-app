@@ -1,0 +1,54 @@
+<div class="registration_image">
+  <div class="container">
+    <div class="card col-md-6 offset-md-3 text-black bg-light mb-3">
+      <div class="card-body">
+        <form name="form" [formGroup]="registrationDetails" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="username"><b>User name </b><span class='asterisk'>*</span></label>
+            <input type="text" class="form-control" formControlName="name" required>
+            <div *ngIf="name.errors">
+              <div class="error" *ngIf="name.errors.required && name.dirty">User Name is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email"><b>Email </b><span class='asterisk'>*</span></label>
+            <input type="email" class="form-control" name="email" formControlName="email" required>
+            <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error">
+              <div class="error" *ngIf="!email.errors.required && email.errors.email">Invalid Email Address</div>
+              <div class="error" *ngIf="email.errors.required">Email is Required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password"><b>Password </b><span class='asterisk'>*</span></label>
+            <input type="password" class="form-control" name="password" formControlName="password" required>
+            <div *ngIf="password.errors">
+              <div class="error" *ngIf="password.errors.required && password.dirty">Password is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="role"><b>Role </b><span class='asterisk'>*</span></label>
+            <select type="text" class="form-control" name="role" formControlName="role" required>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+            <div *ngIf="role.errors">
+              <div class="error" *ngIf="role.errors.required && role.dirty">Role is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <p align="center">
+              <button type="submit" [disabled]="!registrationDetails.valid" class="btn btn-primary">Register</button>
+            </p>
+          </div>
+        </form>
+
+      </div>
+      <!-- <footer class="app-footer fixed-footer">
+      <div>
+        <span class='asterisk'>* Required Fields</span>
+      </div>
+    </footer> -->
+    </div>
+  </div>
+</div>
+<!-- <p-toast position="top-left"></p-toast> -->

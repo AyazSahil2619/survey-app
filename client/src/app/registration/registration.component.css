@@ -1,0 +1,14 @@
+.error{
+    color: red;
+}
+.asterisk{
+    color: rgba(209, 24, 24, 0.911)
+}
+
+.registration_image {
+    background-image: url('../image/pexels-photo-316465.jpeg');
+    background-size: cover;
+    height: 100vh;
+    color: black;
+
+}
