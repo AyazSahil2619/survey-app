@@ -1,0 +1,322 @@
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU'
+  crossorigin='anonymous'>
+
+
+
+
+<div class="Container-fluid">
+  <div class="card col-md-10 offset-md-1 text-black bg-light">
+    <div class="card-header">
+      <h3>{{title}}</h3>
+      <button class="btn btn-primary float-right" (click)="addField(addFieldTemplate)">Add Field</button>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped table-bordered table-condensed">
+        <tr>
+          <th>Name</th>
+          <th>Label</th>
+          <th>Field type</th>
+          <th>Primary ?</th>
+          <th>Action</th>
+        </tr>
+        <tr *ngFor="let object of displayArray">
+          <td>{{object.colname}}</td>
+          <td>{{object.label}}</td>
+          <td>{{object.type}}</td>
+          <td>{{object.constraints}}</td>
+          <td>
+            <a type="button" class="btn btn-warning btn-sm" (click)="updatefield(editFieldTemplate,object.colname)"><i
+                class='fa fa-edit'></i></a>
+            <a type="button" class="btn btn-danger btn-sm" (click)="deletefield(object.colname)"><i class='fa fa-close'></i></a>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-warning" (click)="save()">Save</button>
+    </div>
+  </div>
+</div>
+
+<p-toast position="top-right"></p-toast>
+
+
+<ng-template #addFieldTemplate>
+  <div class="Container">
+    <div class="modal-header">
+      <h3>Survey Details</h3>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="fieldForm" (ngSubmit)="onSubmit()" class="form-group" novalidate>
+        <fieldset>
+          <div class="row">
+            <div class="col-md-12">
+              <label>Name <span class='asteriskcolor'>*</span></label>
+              <input type="text" class="form-control" formControlName="colname" required>
+              <span class="error" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
+            </div>
+
+            <div class="col-md-12">
+              <label>Label <span class='asteriskcolor'>*</span></label>
+              <input type="text" class="form-control" formControlName="label" required>
+              <span class="error" *ngIf="!label.valid && label.dirty">Label is required!</span>
+            </div>
+            <div class="col-md-12">
+              <label>Field type <span class='asteriskcolor'>*</span></label>
+              <select type="text" class="form-control" formControlName="type" (change)="onSelect()" required>
+                <option value="text">Text</option>
+                <option value="integer">Number</option>
+                <option value="bigint">Big Number</option>
+                <option value="varchar">Email</option>
+                <option value="date">Date</option>
+                <option value="dropdown">Dropdown</option>
+                <option value="radio">Radio</option>
+                <option value="checkbox">Checkbox</option>
+              </select>
+              <span class="error" *ngIf="!type.valid && type.dirty">Field type is required!</span>
+            </div>
+            <div class="col-md-12" *ngIf="isDropdown">
+              <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
+              <a type="button" class="btn btn-primary float-right" (click)="addDropdown()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
+              <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
+              <div formArrayName="dropdownList">
+                <div *ngFor="let dropdown of dropdownList.controls; let i=index">
+                  <div [formGroupName]="i">
+                    <div class="container-fluid row">
+                      <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
+                      <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue"><br><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="col-md-12" *ngIf="isRadio">
+              <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
+              <a type="button" class="btn btn-primary float-right" (click)="addRadio()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
+              <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
+              <div formArrayName="radioList">
+                <div *ngFor="let radio of radioList.controls; let i=index">
+                  <div [formGroupName]="i">
+                    <div class="container-fluid row">
+                      <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
+                      <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue"><br><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="col-md-12" *ngIf="isCheckbox">
+              <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
+              <a type="button" class="btn btn-primary float-right" (click)="addCheckbox()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
+              <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
+              <div formArrayName="checkboxList">
+                <div *ngFor="let checkbox of checkboxList.controls; let i=index">
+                  <div [formGroupName]="i">
+                    <div class="container-fluid row">
+                      <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
+                      <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue"><br><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="col-md-12" *ngIf="!isDropdown && !isRadio && !isCheckbox">
+              <label>Primary Key</label>
+              <select type="text" class="form-control" formControlName="constraints" required>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+        </fieldset><br><br>
+        <div class="modal-footer">
+          <input class="btn btn-primary float-right" [disabled]="!fieldForm.valid" type="submit">
+          <input type="button" class="btn btn-warning float-right" (click)="Cancel()" value="Cancel">
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="zindex">
+    <p-toast key="buzz" position="top-right"></p-toast>
+  </div>
+</ng-template>
+
+
+
+
+
+
+<!-- <ng-template #editFieldTemplate>
+  <div class="Container">
+    <div class="modal-header">
+      <h3>Survey Details</h3>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="fieldForm" (ngSubmit)="onSubmit()" class="form-group" novalidate>
+        <fieldset>
+          <div class="row">
+            <div class="col-md-12">
+              <label>Name <span class='asteriskcolor'>*</span></label>
+              <input type="text" class="form-control" formControlName="colname" required>
+              <span class="error" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
+            </div>
+
+            <div class="col-md-12">
+              <label>Label <span class='asteriskcolor'>*</span></label>
+              <input type="text" class="form-control" formControlName="label" required>
+              <span class="error" *ngIf="!label.valid && label.dirty">Label is required!</span>
+            </div>
+            <div class="col-md-12">
+              <label>Field type <span class='asteriskcolor'>*</span></label>
+              <select type="text" class="form-control" formControlName="type" (change)="onSelect()" required>
+                <option value="text">Text</option>
+                <option value="integer">Number</option>
+                <option value="bigint">Big Number</option>
+                <option value="varchar">Email</option>
+                <option value="date">Date</option>
+                <option value="dropdown">Dropdown</option>
+                <option value="radio">Radio</option>
+              </select>
+              <span class="error" *ngIf="!type.valid && type.dirty">Field type is required!</span>
+            </div>
+            <div class="col-md-12" *ngIf="isDropdown">
+              <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
+              <a type="button" class="btn btn-primary float-right" (click)="addDropdown()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
+              <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
+              <div formArrayName="dropdownList">
+                <div *ngFor="let dropdown of dropdownList.controls; let i=index">
+                  <div [formGroupName]="i">
+                    <div class="container-fluid row">
+                      <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
+                      <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue"><br><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="col-md-12" *ngIf="isRadio">
+              <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
+              <a type="button" class="btn btn-primary float-right" (click)="addRadio()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
+              <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
+              <div formArrayName="radioList">
+                <div *ngFor="let radio of radioList.controls; let i=index">
+                  <div [formGroupName]="i">
+                    <div class="container-fluid row">
+                      <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
+                      <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue"><br><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="col-md-12" *ngIf="isCheckbox">
+              <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
+              <a type="button" class="btn btn-primary float-right" (click)="addCheckbox()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
+              <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
+              <div formArrayName="checkboxList">
+                <div *ngFor="let checkbox of checkboxList.controls; let i=index">
+                  <div [formGroupName]="i">
+                    <div class="container-fluid row">
+                      <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
+                      <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue"><br><br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="col-md-12" *ngIf="!isDropdown && !isRadio && !isCheckbox">
+              <label>Primary Key</label>
+              <select type="text" class="form-control" formControlName="constraints" required>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          </div>
+        </fieldset><br><br>
+        <div class="modal-footer">
+          <input class="btn btn-primary float-right" [disabled]="!fieldForm.valid" type="submit">
+          <input type="button" class="btn btn-warning float-right" (click)="Cancel()" value="Cancel">
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="zindex">
+    <p-toast key="buzz" position="top-right"></p-toast>
+  </div>
+</ng-template> -->
+
+
+
+
+
+
+
+<!-- <ng-template #fieldTemplate>
+  <div class="Container">
+    <div class="modal-body">
+      <form #columnForm="ngForm" (ngSubmit)="onSubmit()" class="form-group" novalidate>
+        <fieldset>
+          <div class="row">
+            <div class="col-md-12">
+              <label><b>Name </b><span class='asteriskcolor'>*</span></label>
+              <input type="text" class="form-control" #colname="ngModel" [(ngModel)]="column.colname" name="colname{{i}}"
+                required>
+              <span class="error" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
+            </div>
+
+            <div class="col-md-12">
+              <label><b>Label </b><span class='asteriskcolor'>*</span></label>
+              <input type="text" class="form-control" #label="ngModel" [(ngModel)]="column.label" name="label{{i}}"
+                required>
+              <span class="error" *ngIf="!label.valid && label.dirty">Label is required!</span>
+            </div>
+            <div class="col-md-6">
+              <label><b>Field type </b><span class='asteriskcolor'>*</span></label>
+              <select type="text" class="form-control" #type="ngModel" [(ngModel)]="column.type" name="type{{i}}"
+                required>
+                <option value="text">Text</option>
+                <option value="integer">Integer</option>
+                <option value="bigint">Big Int</option>
+                <option value="varchar">Email</option>
+                <option value="date">Date</option>
+                <option value="dropdown">Dropdown</option>
+              </select>
+              <span class="error" *ngIf="!type.valid && type.dirty">Field Name is required!</span>
+            </div>
+            <div class="col-md-6" *ngIf="column.type == 'dropdown'">
+              <label><b>Dropdown Value </b><span class="asteriskcolor">*</span></label>
+              <a type="button" class="btn btn-primary float-right" (click)="dropdown()"><i class='fas fa-plus-circle'></i></a>
+              <div *ngFor="let dropdown of dropdownlist ; let y=index">
+                <input class="form-control" name="{{y}}dd{{column.colId}}" type="text" [(ngModel)]="column[(dropdown.id)]"><br>
+              </div>
+            </div>
+           <br><div class="col-md-12" *ngIf="column.type != 'dropdown'" >
+                <label>Primary Key</label>
+                <select type="text" class="form-control" #type="ngModel" [(ngModel)]="column.constraints" name="constraints{{i}}"
+                  required>
+                  <option value="true">Yes</option>
+                  <option value="false" selected>No</option>
+                </select>
+              </div>
+          </div>
+        </fieldset><br><br>
+        <div class="modal-footer">
+          <button class="btn btn-warning float-right" [disabled]="!columnForm.form.valid" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+<p-toast position="top-right"></p-toast> -->

@@ -50,59 +50,66 @@ async function addDataToTable(req, res, id) {
 
     console.log(req.body, "INSIDE ADDDING DATA TO TABLE")
 
-    let body = [req.body];
-    let colquery = '';
-    let values = '';
+    // let body = [req.body];
+    // let colquery = '';
+    // let values = '';
 
-    let query = squel
-        .select()
-        .from("fieldstable")
-        .field("fieldname")
-        .where("tableid =?", id)
-        .toString();
+    // let CheckboxValue = req.body.chechboxValue;
 
-    let query1 = squel
-        .select()
-        .from("mastertable")
-        .where("id =?", id)
-        .toString();
+    // console.log(CheckboxValue, "PPPPP");
 
+    // let query = squel
+    //     .select()
+    //     .from("fieldstable")
+    //     .field("fieldname")
+    //     .where("tableid =?", id)
+    //     .toString();
+
+    // let query1 = squel
+    //     .select()
+    //     .from("mastertable")
+    //     .where("id =?", id)
+    //     .toString();
+
+    
     try {
-        let res = await queryExecute(query)
-        let res1 = await queryExecute(query1);
+        // let res = await queryExecute(query)
+        // let res1 = await queryExecute(query1);
 
-        res.rows.forEach((item, index) => {
-            for (var key in item) {
-                if (item[key] != 'uid') {
-                    // colquery = colquery + item[key] + ',';
-                    colquery = colquery + '"' + item[key] + '"' + ',';
-                }
-            }
-        })
+        // let tablename = unescape(res1.rows[0].tablename);
 
-        body.forEach((item, index) => {
-            for (var key in item) {
-                values = values + `'` + item[key] + `'` + ',';
-            }
-        })
+        // res.rows.forEach((item, index) => {
+        //     for (var key in item) {
+        //         if (item[key] != 'uid') {
+        //             // colquery = colquery + item[key] + ',';
+        //             colquery = colquery + '"' + item[key] + '"' + ',';
+        //         }
+        //     }
+        // })
 
-
-        colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-        values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+        // body.forEach((item, index) => {
+        //     for (var key in item) {
+        //         values = values + `'` + item[key] + `'` + ',';
+        //     }
+        // })
 
 
-        // let query2 = `INSERT INTO ${res1.rows[0].tablename} (${colquery}) VALUES (${values})`
-        let query2 = `INSERT INTO "${res1.rows[0].tablename}" (${colquery}) VALUES (${values})`
+        // colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+        // values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
 
-        console.log(query2, "QUERY2")
 
-        let res2 = await queryExecute(query2);
+        // // let query2 = `INSERT INTO ${res1.rows[0].tablename} (${colquery}) VALUES (${values})`
+        // let query2 = `INSERT INTO "${tablename}" (${colquery}) VALUES (${values})`
 
-        if (res2.rowCount > 0) {
-            return res2;
-        } else {
-            return Promise.reject(err);
-        }
+        // console.log(query2, "QUERY2")
+
+        // let res2 = await queryExecute(query2);
+
+        // if (res2.rowCount > 0) {
+        //     return res2;
+        // } else {
+        //     return Promise.reject(err);
+        // }
     } catch (err) {
         console.log(err);
         return Promise.reject(err);
@@ -270,7 +277,7 @@ async function fetchDropdownList(tableid) {
         .where("tableid =?", tableid)
         .toString();
 
-        console.log(query,"1111")
+    console.log(query, "1111")
     try {
         let res = await queryExecute(query);
         if (res.rowCount > 0) {
@@ -285,6 +292,78 @@ async function fetchDropdownList(tableid) {
     }
 }
 
+async function fetchRadioList(tableid) {
+
+    let query = squel
+        .select()
+        .from("radiotable")
+        .where("tableid =?", tableid)
+        .toString();
+
+    console.log(query, "1111")
+    try {
+        let res = await queryExecute(query);
+        if (res.rowCount > 0) {
+            console.log(res);
+            return res.rows;
+        } else {
+            return false;
+        }
+
+    } catch (err) {
+        return Promise.reject(err.message);
+    }
+}
+
+async function fetchCheckboxList(tableid) {
+
+    let query = squel
+        .select()
+        .from("checkboxtable")
+        .where("tableid =?", tableid)
+        .toString();
+
+    console.log(query, "1111")
+    try {
+        let res = await queryExecute(query);
+        if (res.rowCount > 0) {
+            console.log(res);
+            return res.rows;
+        } else {
+            return false;
+        }
+
+    } catch (err) {
+        return Promise.reject(err.message);
+    }
+}
+
+async function tablename(tableid) {
+
+    let query = squel
+        .select()
+        .from("mastertable")
+        .where("id =?", tableid)
+        .toString();
+
+    console.log(query, "1111")
+    try {
+        let res = await queryExecute(query);
+        if (res.rowCount > 0) {
+            console.log(res.rows[0]);
+            let tablename = unescape(res.rows[0].tablename)
+            return tablename;
+        } else {
+            return Promise.reject({
+                msg: "NO RECORD FOUND"
+            });
+        }
+
+    } catch (err) {
+        return Promise.reject(err.message);
+    }
+}
+
 module.exports = {
     view: view,
     addDataToTable: addDataToTable,
@@ -292,5 +371,8 @@ module.exports = {
     deleteData: deleteData,
     getdetails: getdetails,
     updateRow: updateRow,
-    fetchDropdownList: fetchDropdownList
+    fetchDropdownList: fetchDropdownList,
+    tablename: tablename,
+    fetchRadioList: fetchRadioList,
+    fetchCheckboxList: fetchCheckboxList
 }

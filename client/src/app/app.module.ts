@@ -24,7 +24,8 @@ import { ViewTableComponent } from './view-table/view-table.component';
 import { AddDataComponent } from './add-data/add-data.component';
 import { UpdateDataComponent } from './update-data/update-data.component';
 import { TableEditComponent } from './table-edit/table-edit.component';
-import { ModalComponent } from './modal/modal.component';
+import { FieldsDataComponent } from './fields-data/fields-data.component';
+import { EditTableComponent } from './edit-table/edit-table.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { ModalComponent } from './modal/modal.component';
     AddDataComponent,
     UpdateDataComponent,
     TableEditComponent,
-    ModalComponent,
+    FieldsDataComponent,
+    EditTableComponent,
   ],
   imports: [
     ModalModule.forRoot(),

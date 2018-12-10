@@ -4,6 +4,11 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { UserServiceService } from '../user-service.service';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+
+import { Subject } from 'rxjs';
+
 @Component({
   selector: 'app-update-data',
   templateUrl: './update-data.component.html',
@@ -11,30 +16,42 @@ import { UserServiceService } from '../user-service.service';
 })
 export class UpdateDataComponent implements OnInit {
 
+  public onClose: Subject<boolean>;
+  modalRef: BsModalRef;
+
   constructor(private _route: ActivatedRoute,
     private _router: Router,
     private Toast: ToastModule,
     private messageService: MessageService,
-    private _userService: UserServiceService) { }
+    private _userService: UserServiceService,
+    private modalService: BsModalService
+  ) { }
 
   ngOnInit() {
     this.ColumnData();
     this.DataInfo();
     this.ddinfo();
+    this.radioInfo();
+    // this.onClose = new Subject();
+
   }
 
-  ddinfo1:any = [];
+  ddinfo1: any = [];
   colinfo1: Object[] = [];
+  radioList: Object[] = [];
   data = {};
 
-  tableid = this._route.snapshot.params['tableid'];
-  rowid = this._route.snapshot.params['rowid'];
+  table_id = this._route.snapshot.params['tableid'];
+  row_id = this._route.snapshot.params['rowid'];
+
+  // table_id: Number;
+  // row_id: Number;
 
   ColumnData() {
-    console.log(this.tableid, "111")
-    console.log(this.rowid, "000")
+    console.log(this.table_id, "111")
+    console.log(this.row_id, "000")
 
-    this._userService.getById(this.tableid)
+    this._userService.getById(this.table_id)
       .subscribe((response) => {
         let colinfo = response;
         colinfo.forEach((item, index) => {
@@ -53,7 +70,7 @@ export class UpdateDataComponent implements OnInit {
       );
   }
   DataInfo() {
-    this._userService.dataToEdit(this.tableid, this.rowid)
+    this._userService.dataToEdit(this.table_id, this.row_id)
       .subscribe((response) => {
         this.data = response[0];
         console.log(this.data, "data");
@@ -63,19 +80,43 @@ export class UpdateDataComponent implements OnInit {
   }
 
   ddinfo() {
-    this._userService.fetchddValue(this.tableid)
+    this._userService.fetchddValue(this.table_id)
       .subscribe((response) => {
         if (response) {
-          console.log(response,"111111111111111111");
-          let ddinfo:any = response;
-          console.log(ddinfo,"11212")
+          let ddinfo: any = response;
+          // console.log(ddinfo, "11212")
           ddinfo.forEach((item, index) => {
             this.ddinfo1.push({
-              ddValue: item.options,
+              dbValue: item.databasevalue,
+              dspValue: item.displayvalue,
               colname: item.colname
             })
           });
           console.log(this.ddinfo1, "ddinfo1");
+        } else {
+          console.log(response);
+        }
+      },
+        function (errResponse) {
+          console.error('Error while fetching dropdown data ');
+        }
+      );
+  }
+
+
+  radioInfo() {
+    this._userService.fetchradioValue(this.table_id)
+      .subscribe((response) => {
+        if (response) {
+          let radioValue: any = response;
+          radioValue.forEach((item, index) => {
+            this.radioList.push({
+              dbValue: item.databasevalue,
+              dspValue: item.displayvalue,
+              colname: item.colname
+            })
+          });
+          console.log(this.radioList, "radioList");
         } else {
           console.log(response);
         }
@@ -94,21 +135,25 @@ export class UpdateDataComponent implements OnInit {
 
   updateData() {
     console.log(this.data, "11");
-    this._userService.tableRowEdit(this.tableid, this.data)
+    this._userService.tableRowEdit(this.table_id, this.data)
       .subscribe((response) => {
-        this._userService.modified(this.tableid, this.modifiedUser)
+        this._userService.modified(this.table_id, this.modifiedUser)
           .subscribe((response) => {
             this.messageService.add(
               { severity: 'success', detail: 'Success', summary: 'Row Updated Successfully !!' });
+            this._router.navigate(['/viewTable/' + this.table_id]);
+            // this.onClose.next(true);
 
-            this._router.navigate(['/viewTable/' + this.tableid]);
           }, (errResponse) => {
             console.log(errResponse, 'Error while modifying')
           })
       }, (errResponse) => {
-        console.log(errResponse)
+        console.log(errResponse);
+
+        this.onClose.next(false);
+
         this.messageService.add(
-          { severity: 'error', detail: 'Success', summary: `${errResponse.error.detail}` });
+          { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });
         console.error(errResponse, 'Error while updating data.');
       });
   }

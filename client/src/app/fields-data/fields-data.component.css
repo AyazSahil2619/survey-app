@@ -2,19 +2,18 @@
   color: red;
 }
 
-.asteriskcolor {
-  color: red;
-}
-
 .zindex {
   z-index: 1050;
+}
+
+.asteriskcolor {
+  color: red;
 }
 
 .card {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
-
-.card-body {
-  padding: 0;
+.labels {
+  margin-left: 150px;
 }

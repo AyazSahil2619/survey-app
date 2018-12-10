@@ -190,7 +190,8 @@ export class TableEditComponent implements OnInit {
           console.log("AFTER RESPONSE");
           this._userService.modified(this.tableid, modifiedUser)
             .subscribe((response) => {
-              this._router.navigate(['/viewTable/' + this.tableid]);
+              // this._router.navigate(['/viewTable/' + this.tableid]);
+              this._router.navigate(['/adminlogin']);
               this._messageService.add(
                 { severity: 'success', detail: 'Success', summary: `${this.tableinfo[0].tablename} has been EDITED successfully` });
             }, (errResponse) => {
@@ -214,7 +215,8 @@ export class TableEditComponent implements OnInit {
                 console.log("AFTER RESPONSE");
                 this._userService.modified(this.tableid, modifiedUser)
                   .subscribe((response) => {
-                    this._router.navigate(['/viewTable/' + this.tableid]);
+                    this._router.navigate(['/adminlogin']);
+                    // this._router.navigate(['/viewTable/' + this.tableid]);
                     this._messageService.add(
                       { severity: 'success', detail: 'Success', summary: `TABLE ${this.tableinfo[0].tablename} has been EDITED successfully` });
                   }, (errResponse) => {

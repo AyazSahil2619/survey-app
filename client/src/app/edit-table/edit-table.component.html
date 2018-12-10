@@ -1,0 +1,22 @@
+<div class="container">
+  <div style="margin-top: 75px" class="card col-md-8 offset-md-2 text-black bg-light mb-3">
+    <div class="card-body">
+      <form #tableForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-group">
+          <label><b>Survey name <span class='asteriskcolor'>*</span></b></label>
+          <input type="text" name="tablename" class="form-control" id="tablename" [(ngModel)]="TableInfo.tablename"
+            #name="ngModel" required>
+          <span class="error" *ngIf="!name.valid && name.dirty">Table name is required!</span>
+        </div>
+        <div class="form-group">
+          <label><b>Description <span class='asteriskcolor'>*</span></b></label>
+          <input type="text" name="description" class="form-control" id="description" [(ngModel)]="TableInfo.description"
+            #desc="ngModel" required>
+          <span class="error" *ngIf="!desc.valid && desc.dirty">Description is required!</span>
+        </div>
+        <br><button class="btn btn-primary float-right" [disabled]="!tableForm.form.valid" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+<p-toast position="top-right"></p-toast>

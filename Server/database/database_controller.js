@@ -81,6 +81,42 @@ async function checkTablename(req, res) {
     }
 }
 
+async function addColumn(req, res) {
+    const id = parseInt(req.params.id, 10);
+
+    try {
+        let data = await repository.addColumn(req, res, id)
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
+async function editTableInfo(req, res) {
+    const id = parseInt(req.params.id, 10);
+
+    try {
+        let data = await repository.editTableInfo(req, res, id)
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
+async function check(req, res) {
+    const id = parseInt(req.params.id, 10);
+
+    try {
+        let data = await repository.check(req, res, id)
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
 
 module.exports = {
     CreateTable: CreateTable,
@@ -89,5 +125,8 @@ module.exports = {
     modifyTable: modifyTable,
     TableData: TableData,
     editTable: editTable,
-    checkTablename: checkTablename
+    checkTablename: checkTablename,
+    addColumn: addColumn,
+    editTableInfo: editTableInfo,
+    check: check
 }

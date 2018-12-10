@@ -79,7 +79,7 @@ async function updateRow(req, res) {
 async function fetchDropdownList(req, res) {
 
     const tableid = parseInt(req.params.id, 10);
-    console.log(tableid,"111");
+    console.log(tableid, "111");
 
     try {
         let data = await repository.fetchDropdownList(tableid);
@@ -90,6 +90,45 @@ async function fetchDropdownList(req, res) {
     }
 }
 
+async function tablename(req, res) {
+    const id = parseInt(req.params.id, 10);
+    console.log(id);
+
+    try {
+        var data = await repository.tablename(id)
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
+async function fetchRadioList(req, res) {
+
+    const tableid = parseInt(req.params.id, 10);
+    console.log(tableid, "111");
+
+    try {
+        let data = await repository.fetchRadioList(tableid);
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+async function fetchCheckboxList(req, res) {
+
+    const tableid = parseInt(req.params.id, 10);
+    console.log(tableid, "111");
+
+    try {
+        let data = await repository.fetchCheckboxList(tableid);
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
 module.exports = {
     view: view,
     addDataToTable: addDataToTable,
@@ -97,5 +136,8 @@ module.exports = {
     deleteData: deleteData,
     getdetails: getdetails,
     updateRow: updateRow,
-    fetchDropdownList: fetchDropdownList
+    fetchDropdownList: fetchDropdownList,
+    tablename: tablename,
+    fetchRadioList: fetchRadioList,
+    fetchCheckboxList: fetchCheckboxList
 }

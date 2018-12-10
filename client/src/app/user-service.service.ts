@@ -35,6 +35,15 @@ export class UserServiceService {
     return this._http.post('http://192.1.200.134:8080/create', data, { withCredentials: true });
   }
 
+  addColumn(tableid, data): Observable<any> {
+    return this._http.put('http://192.1.200.134:8080/addColumn/' + tableid, data, { withCredentials: true })
+  }
+
+  tablename(tableid): Observable<any> {
+    console.log(tableid, "LLL")
+    return this._http.get('http://192.1.200.134:8080/tablename/' + tableid, { withCredentials: true });
+  }
+
   getById(tableid): Observable<any> {
     return this._http.get('http://192.1.200.134:8080/view/' + tableid, { withCredentials: true });
   }
@@ -67,6 +76,10 @@ export class UserServiceService {
     return this._http.get('http://192.1.200.134:8080/tableData/' + tableid, { withCredentials: true })
   }
 
+  editTableInfo(tableid, data): Observable<any> {
+    return this._http.put('http://192.1.200.134:8080/editTableInfo/' + tableid, data, { withCredentials: true })
+  }
+
   editTable(tableid, newColumnDetails) {
     console.log(newColumnDetails, "NEW COLUMN DETAILS");
     return this._http.put('http://192.1.200.134:8080/editTable/' + tableid, newColumnDetails, { withCredentials: true })
@@ -74,4 +87,25 @@ export class UserServiceService {
   fetchddValue(tableid) {
     return this._http.get('http://192.1.200.134:8080/dropdown/' + tableid, { withCredentials: true })
   }
+  fetchradioValue(tableid): Observable<any> {
+    return this._http.get('http://192.1.200.134:8080/radio/' + tableid, { withCredentials: true })
+  }
+  fetchcheckboxValue(tableid): Observable<any> {
+    return this._http.get('http://192.1.200.134:8080/checkbox/' + tableid, { withCredentials: true })
+  }
+  checkTablenameforUpdate(tableid, tablename): Observable<any> {
+    return this._http.post('http://192.1.200.134:8080/checkTablenameforUpdate/' + tableid, tablename, { withCredentials: true })
+  }
 }
+
+
+
+
+
+
+
+
+
+  // createTable(data): Observable<any> {
+  //   return this._http.post('http://192.1.200.134:8080/create', data, { withCredentials: true });
+  // }

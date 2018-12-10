@@ -8,175 +8,338 @@ async function queryExecute(query) {
         // console.log(result, "RESULT");
         return result;
     } catch (err) {
-        console.log(err, "EROR");
+        console.log(err, "ERROR");
         return Promise.reject(err)
     }
 }
-//  Creating TABLE in DATABASE And Inserting its Details into MASTERTABLE AND FIELDSTABLE
+//  Creating TABLE in DATABASE And Inserting its Details into MASTERTABLE 
 
 async function CreateTable(req, res) {
 
-    let colquery = '';
-    let fieldsData = [];
-    let ColInfo = req.body.ColInfo;
-    let constraints = '';
-    let query = '';
-
-    let dropdownData = [];
-    let ddInfo = req.body.ddlist;
-
-    // console.log(ColInfo,"column info");
-
-    // console.log(ddInfo,"DD INFO");
-
     console.log(req.body, "BODY");
 
-    if (ddInfo.length != 0) {
-
-        ddInfo.forEach((item, index) => {
-            for (var key in item) {
-                if (key != 'colname') {
-                    dropdownData.push({
-                        options: item[key],
-                        colname: item.colname
-                    })
-                }
-            }
-        })
-    }
-
-    console.log(dropdownData, "Dropdowndata");
-
-    ColInfo.forEach((item, index) => {
-        if (item.constraint) {
-            // constraints = constraints + ' ' + item.name + ',';
-            constraints = constraints + ' ' + '"' + escape(item.name) + '"' + ',';
-
-            fieldsData.push({
-                fieldname: escape(item.name),
-                label: escape(item.label),
-                fieldtype: item.type,
-                Konstraint: true
-            })
-        } else {
-            fieldsData.push({
-                fieldname: escape(item.name),
-                label: escape(item.label),
-                fieldtype: item.type,
-                Konstraint: false
-            })
-        }
-        if (item.type == 'dropdown') {
-            colquery = colquery + ' ' + '"' + escape(item.name) + '"' + ' ' + 'text' + ',';
-        } else {
-            colquery = colquery + ' ' + '"' + escape(item.name) + '"' + ' ' + item.type + ',';
-        }
-    });
-
-    fieldsData.push({
-        fieldname: 'uid',
-        label: false,
-        fieldtype: 'serial',
-        Konstraint: false
-    })
-
-    colquery = colquery + 'uid SERIAL' + ',';
-
-    constraints = constraints.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+    let query = '';
     let tablename = escape(req.body.tablename);
+    let description = req.body.description;
+    let user = req.body.currentUser;
+    let fieldsData = [];
 
-    console.log(colquery, "colquery")
+    // query = `CREATE TABLE IF NOT EXISTS "${tablename}" ();`
+    query = `CREATE TABLE IF NOT EXISTS "${tablename}" (uid serial);`
 
-    if (constraints) {
-        // query = `CREATE TABLE IF NOT EXISTS ${req.body.tablename} (${colquery} PRIMARY KEY (${constraints}));`
-        // query = `CREATE TABLE IF NOT EXISTS "${req.body.tablename}" (${colquery} PRIMARY KEY (${constraints}));`
-        query = `CREATE TABLE IF NOT EXISTS "${tablename}" (${colquery} PRIMARY KEY (${constraints}));`
 
-    } else {
-        colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-        // query = `CREATE TABLE IF NOT EXISTS ${req.body.tablename} (${colquery});`
-        // query = `CREATE TABLE IF NOT EXISTS "${req.body.tablename}" (${colquery});`
-        query = `CREATE TABLE IF NOT EXISTS "${tablename}" (${colquery});`
-
-    }
 
     console.log(query, "QUERY")
 
     let query1 = squel
         .insert()
         .into("mastertable")
-        // tablename in place of req.body.tablename
         .set("tablename", tablename)
-        .set("createdby", req.body.currentUser)
-        .set("\"Description\"", req.body.description)
+        .set("\"Description\"", description)
+        .set("createdby", user)
         .toString();
 
     console.log(query1, "QUERY!");
 
+
+
     try {
         let response = await queryExecute(query);
-        console.log(response, "RESPONSE00");
         let response1 = await queryExecute(query1);
-        console.log(response1, "RESPONSE0011");
+
         let query2 = squel
             .select()
+            .field("id")
             .from("mastertable")
-            // tablename in place of req.body.tablename
             .where("tablename =?", tablename)
             .toString();
 
         let response2 = await queryExecute(query2);
 
+        console.log(response2.rows, "RESPONSE 2");
 
-        fieldsData.forEach((field) => {
-            field.tableid = response2.rows[0].id
-        });
-
-        dropdownData.forEach((field) => {
-            field.tableid = response2.rows[0].id
+        fieldsData.push({
+            fieldname: 'uid',
+            label: false,
+            fieldtype: 'serial',
+            Konstraint: false,
+            tableid: response2.rows[0].id
         })
 
-        console.log(dropdownData, "DDDDDD");
-
-        let query3 = squel
+        let fieldstableQuery = squel
             .insert()
             .into("fieldstable")
             .setFieldsRows(fieldsData)
             .toString();
 
-        let response3 = await queryExecute(query3);
+        let fieldstableResult = await queryExecute(fieldstableQuery);
 
-        console.log(response3, "RESPONSE3");
-
-        if (dropdownData.length != 0) {
-
-            console.log(dropdownData, "12345");
-
-            dropdownData.forEach((field) => {
-                field.tableid = response2.rows[0].id
-            })
-
-            console.log(dropdownData, "DROP DOWN")
-
-            let query4 = squel
-                .insert()
-                .into("dropdowntable")
-                .setFieldsRows(dropdownData)
-                .toString();
-
-            let response4 = await queryExecute(query4);
-
-            console.log(response4, "11")
-        }
-
-
-        return response;
+        return response2.rows[0];
 
     } catch (err) {
+        console.log(err, "Error while creating table");
         return Promise.reject(err.code)
     }
 
 }
+
+
+//  Adding Column to Table and data to (fieldstable and dropdowntable)
+
+async function addColumn(req, res, id) {
+
+    let fieldsData = [];
+    let dropdownData = [];
+    let colquery = '';
+    let constraints = '';
+
+    let deletefield = [];
+    let deleteColumn = '';
+
+    let radioData = [];
+    let fieldstableQuery;
+
+    let checkboxData = [];
+
+    let query = squel
+        .select()
+        .from("mastertable")
+        .where("id=?", id)
+        .toString();
+
+
+    console.log(req.body, "BODY");
+
+    req.body.forEach((item) => {
+
+        let data = {};
+        let data1 = {};
+        let data2 = {};
+        let data3 = {};
+
+        for (var key in item) {
+            if (key == 'colname' || key == 'label' || key == 'type' || key == 'constraints') {
+                data = {
+                    fieldname: escape(item.colname),
+                    label: escape(item.label),
+                    fieldtype: item.type,
+                    Konstraint: item.constraints,
+                    tableid: id
+                }
+            } else if (key == 'dbValue' || key == 'dspValue' || key == 'fieldname') {
+                data1 = {
+                    databasevalue: item.dbValue,
+                    displayvalue: item.dspValue,
+                    colname: item.fieldname,
+                    tableid: id,
+                    // adding cplomn type to optionstable
+                    // coltype:item.type
+                }
+            } else if (key == 'deletefield') {
+                deleteColumn = deleteColumn + 'DROP COLUMN IF EXISTS' + ' ' + '"' + escape(item.deletefield) + '"' + ','
+                deletefield.push({
+                    colname: item.deletefield
+                })
+            } else if (key == 'r_dbValue' || key == 'r_dspValue' || key == 'r_fieldname') {
+                data2 = {
+                    databasevalue: item.r_dbValue,
+                    displayvalue: item.r_dspValue,
+                    colname: item.r_fieldname,
+                    tableid: id,
+                    // adding cplomn type to optionstable
+                    // coltype:item.type
+                }
+            } else if (key == 'c_dbValue' || key == 'c_dspValue' || key == 'c_fieldname') {
+                data3 = {
+                    databasevalue: item.c_dbValue,
+                    displayvalue: item.c_dspValue,
+                    colname: item.c_fieldname,
+                    tableid: id,
+                }
+            }
+
+        }
+
+        if (Object.keys(data).length != 0) {
+            fieldsData.push(data);
+        }
+        if (Object.keys(data1).length != 0) {
+            dropdownData.push(data1);
+        }
+        if (Object.keys(data2).length != 0) {
+            radioData.push(data2);
+        }
+        if (Object.keys(data3).length != 0) {
+            checkboxData.push(data3);
+        }
+    })
+
+
+    // console.log(deletefield, "DELETEFIELD");
+    // console.log(deleteColumn, "DELETE COLUMN");
+
+    console.log(fieldsData, "FIELDSDATA")
+    console.log(dropdownData, "DROPDOWNDATA")
+    console.log(radioData, "RADIO DATA");
+    console.log(checkboxData, "CHECK BOX DATA");
+
+
+    fieldsData.forEach((item) => {
+        if (item.Konstraint == 'true') {
+            constraints = constraints + ' ' + escape(item.fieldname) + ',';
+        }
+        if (item.fieldtype == 'dropdown' || item.fieldtype == 'radio') {
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + 'text' + ',';
+        } else if (item.fieldtype == 'checkbox') {
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + 'text[]' + ',';
+        } else {
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + item.fieldtype + ',';
+        }
+    })
+
+    // colquery = colquery + 'ADD COLUMN' + 'uid SERIAL' + ',';
+
+    constraints = constraints.replace(/(^[,\s]+)|([,\s]+$)/g, '')
+    colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+    if (fieldsData.length != 0) {
+        fieldstableQuery = squel
+            .insert()
+            .into("fieldstable")
+            .setFieldsRows(fieldsData)
+            .toString();
+    }
+
+    try {
+        let response = await queryExecute(query);
+        let fieldsDataResult;
+        let tablename = response.rows[0].tablename;
+        console.log(tablename, "TABLENAME");
+
+        if (fieldsData.length != 0) {
+            console.log("1111")
+            let query1 = `ALTER TABLE "${tablename}" ${colquery} ;`
+            console.log(query1, "QUERY");
+            let addColumnResult = await queryExecute(query1);
+            fieldsDataResult = await queryExecute(fieldstableQuery);
+
+        }
+
+        if (constraints) {
+            console.log("2222")
+            let constraintQuery = `ALTER TABLE "${tablename}" ADD PRIMARY KEY (${constraints});`
+            console.log(constraintQuery, "CONSTRAINT QUERY")
+            let constraintResult = await queryExecute(constraintQuery);
+        }
+
+
+        if (dropdownData.length != 0) {
+            console.log("333")
+
+            console.log(dropdownData, "DROP DOWN")
+
+            let dropdownQuery = squel
+                .insert()
+                .into("dropdowntable")
+                .setFieldsRows(dropdownData)
+                .toString();
+            console.log(dropdownQuery, "QUERY");
+            let dropdownResult = await queryExecute(dropdownQuery);
+
+            console.log(dropdownResult, "dropdown")
+        }
+
+
+        if (radioData.length != 0) {
+            console.log("4444")
+
+            console.log(radioData, "radio")
+
+            let radioQuery = squel
+                .insert()
+                .into("radiotable")
+                .setFieldsRows(radioData)
+                .toString();
+
+            let radioResult = await queryExecute(radioQuery);
+
+            console.log(radioResult, "radio")
+        }
+
+
+        if (checkboxData.length != 0) {
+            console.log("333")
+
+            console.log(checkboxData, "DROP DOWN")
+
+            let checkboxQuery = squel
+                .insert()
+                .into("checkboxtable")
+                .setFieldsRows(checkboxData)
+                .toString();
+            console.log(checkboxQuery, "QUERY");
+            let checkboxResult = await queryExecute(checkboxQuery);
+
+            console.log(checkboxResult, "checkbox")
+        }
+
+        if (deletefield.length != 0) {
+            console.log("5555")
+
+            deleteColumn = deleteColumn.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+            let deletequery = `ALTER TABLE "${tablename}" ${deleteColumn};`
+            console.log(deletequery, "query");
+            let deleteResult = await queryExecute(deletequery);
+
+            deletefield.forEach((item) => {
+                let query = squel
+                    .delete()
+                    .from("fieldstable")
+                    .where("fieldname= ?", item.colname)
+                    .where("tableid= ?", id)
+                    .toString();
+                let response5 = queryExecute(query);
+            })
+
+            deletefield.forEach((item) => {
+                let query = squel
+                    .delete()
+                    .from("dropdowntable")
+                    .where("colname= ?", item.colname)
+                    .where("tableid= ?", id)
+                    .toString();
+                let response5 = queryExecute(query);
+            })
+            deletefield.forEach((item) => {
+                let query = squel
+                    .delete()
+                    .from("radiotable")
+                    .where("colname= ?", item.colname)
+                    .where("tableid= ?", id)
+                    .toString();
+                let response5 = queryExecute(query);
+            })
+            deletefield.forEach((item) => {
+                let query = squel
+                    .delete()
+                    .from("checkboxtable")
+                    .where("colname= ?", item.colname)
+                    .where("tableid= ?", id)
+                    .toString();
+                let response5 = queryExecute(query);
+            })
+        }
+        return fieldsDataResult;
+
+    } catch (err) {
+        console.log(err, "ERROR");
+
+        return Promise.reject(err);
+    }
+}
+
+
 
 
 // Fetching DATA from MASTERTABLE
@@ -246,8 +409,21 @@ async function deleteTable(id) {
         .where("tableid= ? ", id)
         .toString();
 
+    let query5 = squel
+        .delete()
+        .from("radiotable")
+        .where("tableid= ? ", id)
+        .toString();
+    let query6 = squel
+        .delete()
+        .from("checkboxtable")
+        .where("tableid= ? ", id)
+        .toString();
+
     try {
         let resp = await queryExecute(query);
+        let resp6 = await queryExecute(query6);
+        let resp5 = await queryExecute(query5);
         let resp4 = await queryExecute(query4);
         let resp3 = await queryExecute(query3);
         let query2 = `DROP TABLE "${resp.rows[0].tablename}"`;
@@ -322,279 +498,7 @@ async function TableData(id) {
 }
 
 
-// ============================= Editing Existing Table
 
-async function editTable(req, res, id) {
-
-    console.log(id, "ID");
-    console.log(req.body, "BODY");
-
-
-    let fieldsData = [];
-    let newfieldsData = [];
-    let constraint = '';
-
-    let newData = {};
-    let columnQuery = '';
-    let deleteColumn = '';
-    let deletecolumnArray = [];
-
-    let dropdownData = [];
-    let ddInfo = req.body.ddlist;
-
-    let changed = false;
-
-    if (ddInfo.length != 0) {
-
-        ddInfo.forEach((item, index) => {
-            for (var key in item) {
-                if (key != 'colname') {
-                    dropdownData.push({
-                        options: item[key],
-                        colname: item.colname
-                    })
-                }
-            }
-        })
-    }
-
-    console.log(dropdownData, "Dropdowndata");
-
-
-    req.body.columnList.forEach((item, index) => {
-        for (var key in item) {
-            if (key == 'tablename' || key == 'Description') {
-                newData = {
-                    tablename: escape(item.tablename),
-                    Description: item.Description
-                }
-            }
-            //  else {
-            //     if (key == 'deletefield') {
-            //         deleteColumn = deleteColumn + 'DROP COLUMN' + ' ' + '"' + escape(item.deletefield) + '"' + ','
-            //     }
-            // }
-        }
-    })
-
-    console.log(req.body.deleteArray, "lllllllll");
-
-    req.body.deleteArray.forEach((item) => {
-        console.log("lllllllaaaaaaall");
-
-        for (var key in item) {
-            if (key == 'deletefield') {
-                deleteColumn = deleteColumn + 'DROP COLUMN' + ' ' + '"' + escape(item.deletefield) + '"' + ','
-            } else if (item.deletefieldtype == 'dropdown') {
-                deletecolumnArray.push({
-                    colname: item.deletefield
-                })
-            }
-        }
-
-    })
-
-    console.log(deletecolumnArray, "ARRRAAAYYY");
-
-    req.body.columnList.forEach((item, index) => {
-
-        let data = {};
-        let newdata = {};
-
-        for (var key in item) {
-            if (key == 'fieldname' || key == 'label' || key == 'fieldtype' || key == 'konstraint') {
-
-                data[key] = item[key]
-
-            } else if (key == 'newfieldname' || key == 'newlabel' || key == 'newfieldtype' || key == 'newkonstraint') {
-
-                newdata[key] = item[key];
-
-            }
-        }
-        if (Object.keys(data).length != 0)
-            fieldsData.push(data);
-
-        if (Object.keys(newdata).length != 0)
-            newfieldsData.push(newdata);
-    })
-
-    console.log(newfieldsData, "NEW");
-
-    newfieldsData.forEach((item) => {
-        if (item.newkonstraint) {
-            // columnQuery = columnQuery + 'ADD COLUMN' + ' ' + '"' + escape(item.newfieldname) + '"' + ' ' +
-            // item.newfieldtype + ' ' + 'PRIMARY KEY' + ' ' + ','
-            columnQuery = columnQuery + 'ADD COLUMN' + ' ' + '"' + escape(item.newfieldname) + '"' + ' ' +
-                item.newfieldtype + ','
-
-            constraint = constraint + ' ' + '"' + escape(item.newfieldname) + '"' + ','
-
-        } else {
-
-            if (item.newfieldtype == 'dropdown') {
-                columnQuery = columnQuery + 'ADD COLUMN' + ' ' + '"' + escape(item.newfieldname) + '"' + ' ' + 'text' + ','
-            } else {
-                columnQuery = columnQuery + 'ADD COLUMN' + ' ' + '"' + escape(item.newfieldname) + '"' + ' ' + item.newfieldtype + ','
-            }
-        }
-        for (var key in item) {
-            if (key == 'newfieldname' || key == 'newlabel' || key == 'newfieldtype' || key == 'newkonstraint') {
-
-                data = {
-                    fieldname: escape(item.newfieldname),
-                    label: item.newlabel,
-                    fieldtype: item.newfieldtype,
-                    konstraint: item.newkonstraint
-                }
-            }
-        }
-        if (Object.keys(data).length != 0)
-            fieldsData.push(data);
-
-    })
-
-    fieldsData.forEach((field) => {
-        field.tableid = id;
-    })
-
-
-    constraint = constraint.replace(/(^[,\s]+)|([,\s]+$)/g, '')
-    columnQuery = columnQuery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-    deleteColumn = deleteColumn.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-
-    console.log(deleteColumn, " COLUMN DELETE ");
-    console.log(columnQuery, "columnQuery");
-    console.log(fieldsData, "Fields data");
-    console.log(newData, " Table description ");
-    console.log(constraint, "CONSTRAINTS");
-
-    let updateMastertableQuery = squel
-        .update()
-        .table('mastertable')
-        .set('tablename', newData.tablename)
-        .set('"Description"', newData.Description)
-        .where('id=?', id)
-        .toString();
-
-    console.log(updateMastertableQuery, "*")
-
-    let deleteOldDataQuery = squel
-        .delete()
-        .from("fieldstable")
-        .where("tableid= ? ", id)
-        .where("fieldname <>  ?", 'uid')
-        .toString();
-
-    console.log(deleteOldDataQuery, "**");
-
-    // console.log(fieldsData, "++++++")
-
-
-    let fieldstableQuery = squel
-        .insert()
-        .into("fieldstable")
-        .setFieldsRows(fieldsData)
-        .toString();
-
-    console.log(fieldstableQuery, "***");
-
-    try {
-        // console.log("TRY", id)
-        let response = await TableData(id);
-        // console.log("RESPONSE");
-        // console.log(response)
-
-
-        let tablename = escape(response[0].tablename);
-        let description = response[0].Description;
-
-        console.log(tablename, description, "===")
-        // console.log(columnQuery, "COLUMNQUERY");
-
-        let mastertableResult;
-        let fieldstableResult;
-
-        if (tablename != newData.tablename) {
-            let query = `ALTER TABLE "${tablename}"  RENAME TO "${newData.tablename}";`
-            // console.log(query);
-            let tableResult = await queryExecute(query);
-            mastertableResult = await queryExecute(updateMastertableQuery);
-            changed = true;
-        }
-
-        if (description != newData.Description) {
-            // console.log(description, "in")
-            mastertableResult = await queryExecute(updateMastertableQuery);
-            changed = true;
-        }
-
-        if (deleteColumn) {
-            let deleteColumnQuery = `ALTER TABLE "${newData.tablename}" ${deleteColumn};`
-            console.log(deleteColumnQuery, "deletecolumnQuery");
-            deleteColumnResult = await queryExecute(deleteColumnQuery);
-            let deleteResult = await queryExecute(deleteOldDataQuery);
-            fieldstableResult = await queryExecute(fieldstableQuery);
-
-            changed = true;
-        }
-
-        if (columnQuery) {
-
-            let alterColumnQuery = `ALTER TABLE "${newData.tablename}" ${columnQuery} ;`
-            console.log(alterColumnQuery, "QUERY");
-            let columnResult = await queryExecute(alterColumnQuery);
-
-            if (constraint) {
-                let constraintQuery = `ALTER TABLE "${newData.tablename}" ADD PRIMARY KEY (${constraint});`
-                console.log(constraintQuery, "QURRYYYYYYYYYYYY")
-                let constraintResult = await queryExecute(constraintQuery);
-            }
-
-            let deleteResult = await queryExecute(deleteOldDataQuery);
-            fieldstableResult = await queryExecute(fieldstableQuery);
-
-            changed = true;
-        }
-
-        if (deletecolumnArray.length != 0) {
-            console.log(deletecolumnArray, "11111");
-
-            deletecolumnArray.forEach((item) => {
-                let query5 = squel
-                    .delete()
-                    .from("dropdowntable")
-                    .where("colname= ?", item.colname)
-                    .toString();
-                console.log(query5, "QUERY 5")
-
-                let response5 = queryExecute(query5);
-            })
-
-        }
-
-
-        if (dropdownData.length > 0) {
-
-            dropdownData.forEach((field) => {
-                field.tableid = id;
-            })
-            let dropdownQuery = squel
-                .insert()
-                .into("dropdowntable")
-                .setFieldsRows(dropdownData)
-                .toString();
-
-            let dropdowntableResult = await queryExecute(dropdownQuery);
-        }
-
-        return changed;
-
-    } catch (err) {
-        console.log(err, "1234");
-        return Promise.reject(err);
-    }
-}
 
 async function checkTablename(req, res) {
 
@@ -624,12 +528,591 @@ async function checkTablename(req, res) {
 }
 
 
+async function editTableInfo(req, res, id) {
+
+    console.log(req.body, "BODY");
+    console.log(id, "ID");
+
+    let newData = req.body;
+
+    let updateMastertableQuery = squel
+        .update()
+        .table('mastertable')
+        .set('tablename', escape(newData.tablename))
+        .set('"Description"', newData.description)
+        .where('id=?', id)
+        .toString();
+
+    try {
+
+        let response = await TableData(id);
+        console.log(response[0], "RESPONSE")
+
+        let oldTablename = escape(response[0].tablename);
+
+        if (oldTablename != newData.tablename) {
+            let query = `ALTER TABLE "${oldTablename}"  RENAME TO "${escape(newData.tablename)}";`
+            let tableResult = await queryExecute(query);
+        }
+
+        let mastertableResult = await queryExecute(updateMastertableQuery);
+        console.log(mastertableResult, "aaa")
+
+        return mastertableResult;
+
+
+
+
+    } catch (err) {
+        console.log(err);
+        return Promise.reject(err)
+    }
+
+}
+
+async function check(req, res, id) {
+
+
+    let query = squel
+        .select()
+        .from("mastertable")
+        .field("id")
+        .field("tablename")
+        .toString();
+    let check = true;
+
+    try {
+        let response = await queryExecute(query);
+
+        response.rows.forEach((item, index) => {
+            if (item.id != id) {
+                if (item.tablename === req.body.tablename) {
+                    check = false;
+                    return check;
+                }
+            }
+        });
+        return check;
+
+    } catch (err) {
+        console.log(err);
+        return Promise.reject(err)
+    }
+
+}
+
+
 module.exports = {
     CreateTable: CreateTable,
     viewTable: viewTable,
     deleteTable: deleteTable,
     modifyTable: modifyTable,
     TableData: TableData,
-    editTable: editTable,
-    checkTablename: checkTablename
+    // editTable: editTable,
+    checkTablename: checkTablename,
+    addColumn: addColumn,
+    editTableInfo: editTableInfo,
+    check: check
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================= Editing Existing Table
+
+// async function editTable(req, res, id) {
+
+//     console.log(id, "ID");
+//     console.log(req.body, "BODY");
+
+
+//     let fieldsData = [];
+//     let newfieldsData = [];
+//     let constraint = '';
+
+//     let newData = {};
+//     let columnQuery = '';
+//     let deleteColumn = '';
+//     let deletecolumnArray = [];
+
+//     let dropdownData = [];
+//     let ddInfo = req.body.ddlist;
+
+//     let changed = false;
+
+//     if (ddInfo.length != 0) {
+
+//         ddInfo.forEach((item, index) => {
+//             for (var key in item) {
+//                 if (key != 'colname') {
+//                     dropdownData.push({
+//                         options: item[key],
+//                         colname: item.colname
+//                     })
+//                 }
+//             }
+//         })
+//     }
+
+//     console.log(dropdownData, "Dropdowndata");
+
+
+//     req.body.columnList.forEach((item, index) => {
+//         for (var key in item) {
+//             if (key == 'tablename' || key == 'Description') {
+//                 newData = {
+//                     tablename: escape(item.tablename),
+//                     Description: item.Description
+//                 }
+//             }
+//             //  else {
+//             //     if (key == 'deletefield') {
+//             //         deleteColumn = deleteColumn + 'DROP COLUMN' + ' ' + '"' + escape(item.deletefield) + '"' + ','
+//             //     }
+//             // }
+//         }
+//     })
+
+//     console.log(req.body.deleteArray, "lllllllll");
+
+//     req.body.deleteArray.forEach((item) => {
+//         console.log("lllllllaaaaaaall");
+
+//         for (var key in item) {
+//             if (key == 'deletefield') {
+//                 deleteColumn = deleteColumn + 'DROP COLUMN' + ' ' + '"' + escape(item.deletefield) + '"' + ','
+//             } else if (item.deletefieldtype == 'dropdown') {
+//                 deletecolumnArray.push({
+//                     colname: item.deletefield
+//                 })
+//             }
+//         }
+
+//     })
+
+//     console.log(deletecolumnArray, "ARRRAAAYYY");
+
+//     req.body.columnList.forEach((item, index) => {
+
+//         let data = {};
+//         let newdata = {};
+
+//         for (var key in item) {
+//             if (key == 'fieldname' || key == 'label' || key == 'fieldtype' || key == 'konstraint') {
+
+//                 data[key] = escape(item[key]);
+
+//             } else if (key == 'newfieldname' || key == 'newlabel' || key == 'newfieldtype' || key == 'newkonstraint') {
+
+//                 newdata[key] = item[key];
+
+//             }
+//         }
+//         if (Object.keys(data).length != 0)
+//             fieldsData.push(data);
+
+//         if (Object.keys(newdata).length != 0)
+//             newfieldsData.push(newdata);
+//     })
+
+//     console.log(newfieldsData, "NEW");
+
+//     newfieldsData.forEach((item) => {
+//         if (item.newkonstraint) {
+//             // columnQuery = columnQuery + 'ADD COLUMN' + ' ' + '"' + escape(item.newfieldname) + '"' + ' ' +
+//             // item.newfieldtype + ' ' + 'PRIMARY KEY' + ' ' + ','
+//             columnQuery = columnQuery + 'ADD COLUMN' + ' ' + '"' + escape(item.newfieldname) + '"' + ' ' +
+//                 item.newfieldtype + ','
+
+//             constraint = constraint + ' ' + '"' + escape(item.newfieldname) + '"' + ','
+
+//         } else {
+
+//             if (item.newfieldtype == 'dropdown') {
+//                 columnQuery = columnQuery + 'ADD COLUMN' + ' ' + '"' + escape(item.newfieldname) + '"' + ' ' + 'text' + ','
+//             } else {
+//                 columnQuery = columnQuery + 'ADD COLUMN' + ' ' + '"' + escape(item.newfieldname) + '"' + ' ' + item.newfieldtype + ','
+//             }
+//         }
+//         for (var key in item) {
+//             if (key == 'newfieldname' || key == 'newlabel' || key == 'newfieldtype' || key == 'newkonstraint') {
+
+//                 data = {
+//                     fieldname: escape(item.newfieldname),
+//                     label: escape(item.newlabel),
+//                     fieldtype: item.newfieldtype,
+//                     konstraint: item.newkonstraint
+//                 }
+//             }
+//         }
+//         if (Object.keys(data).length != 0)
+//             fieldsData.push(data);
+
+//     })
+
+//     fieldsData.forEach((field) => {
+//         field.tableid = id;
+//     })
+
+
+//     constraint = constraint.replace(/(^[,\s]+)|([,\s]+$)/g, '')
+//     columnQuery = columnQuery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+//     deleteColumn = deleteColumn.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+//     console.log(deleteColumn, " COLUMN DELETE ");
+//     console.log(columnQuery, "columnQuery");
+//     console.log(fieldsData, "Fields data");
+//     console.log(newData, " Table description ");
+//     console.log(constraint, "CONSTRAINTS");
+
+//     let updateMastertableQuery = squel
+//         .update()
+//         .table('mastertable')
+//         .set('tablename', newData.tablename)
+//         .set('"Description"', newData.Description)
+//         .where('id=?', id)
+//         .toString();
+
+//     console.log(updateMastertableQuery, "*")
+
+//     let deleteOldDataQuery = squel
+//         .delete()
+//         .from("fieldstable")
+//         .where("tableid= ? ", id)
+//         .where("fieldname <>  ?", 'uid')
+//         .toString();
+
+//     console.log(deleteOldDataQuery, "**");
+
+//     // console.log(fieldsData, "++++++")
+
+
+//     let fieldstableQuery = squel
+//         .insert()
+//         .into("fieldstable")
+//         .setFieldsRows(fieldsData)
+//         .toString();
+
+//     console.log(fieldstableQuery, "***");
+
+//     try {
+//         // console.log("TRY", id)
+//         let response = await TableData(id);
+//         // console.log("RESPONSE");
+//         // console.log(response)
+
+
+//         let tablename = escape(response[0].tablename);
+//         let description = response[0].Description;
+
+//         console.log(tablename, description, "===")
+//         // console.log(columnQuery, "COLUMNQUERY");
+
+//         let mastertableResult;
+//         let fieldstableResult;
+
+//         if (tablename != newData.tablename) {
+//             let query = `ALTER TABLE "${tablename}"  RENAME TO "${newData.tablename}";`
+//             // console.log(query);
+//             let tableResult = await queryExecute(query);
+//             mastertableResult = await queryExecute(updateMastertableQuery);
+//             changed = true;
+//         }
+
+//         if (description != newData.Description) {
+//             // console.log(description, "in")
+//             mastertableResult = await queryExecute(updateMastertableQuery);
+//             changed = true;
+//         }
+
+//         if (deleteColumn) {
+//             let deleteColumnQuery = `ALTER TABLE "${newData.tablename}" ${deleteColumn};`
+//             console.log(deleteColumnQuery, "deletecolumnQuery");
+//             deleteColumnResult = await queryExecute(deleteColumnQuery);
+//             let deleteResult = await queryExecute(deleteOldDataQuery);
+//             fieldstableResult = await queryExecute(fieldstableQuery);
+
+//             changed = true;
+//         }
+
+//         if (columnQuery) {
+
+//             let alterColumnQuery = `ALTER TABLE "${newData.tablename}" ${columnQuery} ;`
+//             console.log(alterColumnQuery, "QUERY");
+//             let columnResult = await queryExecute(alterColumnQuery);
+
+//             if (constraint) {
+//                 let constraintQuery = `ALTER TABLE "${newData.tablename}" ADD PRIMARY KEY (${constraint});`
+//                 console.log(constraintQuery, "QURRYYYYYYYYYYYY")
+//                 let constraintResult = await queryExecute(constraintQuery);
+//             }
+
+//             let deleteResult = await queryExecute(deleteOldDataQuery);
+//             fieldstableResult = await queryExecute(fieldstableQuery);
+
+//             changed = true;
+//         }
+
+//         if (deletecolumnArray.length != 0) {
+//             console.log(deletecolumnArray, "11111");
+
+//             deletecolumnArray.forEach((item) => {
+//                 let query5 = squel
+//                     .delete()
+//                     .from("dropdowntable")
+//                     .where("colname= ?", item.colname)
+//                     .toString();
+//                 console.log(query5, "QUERY 5")
+
+//                 let response5 = queryExecute(query5);
+//             })
+
+//         }
+
+
+//         if (dropdownData.length > 0) {
+
+//             dropdownData.forEach((field) => {
+//                 field.tableid = id;
+//             })
+//             let dropdownQuery = squel
+//                 .insert()
+//                 .into("dropdowntable")
+//                 .setFieldsRows(dropdownData)
+//                 .toString();
+
+//             let dropdowntableResult = await queryExecute(dropdownQuery);
+//         }
+
+//         return changed;
+
+//     } catch (err) {
+//         console.log(err, "1234");
+//         return Promise.reject(err);
+//     }
+// }
+
+// ==========CREATE TABLE PART
+
+// async function CreateTable(req, res) {
+
+//     let colquery = '';
+//     let fieldsData = [];
+//     let ColInfo = req.body.ColInfo;
+//     let constraints = '';
+//     let query = '';
+
+//     let dropdownData = [];
+//     let ddInfo = req.body.ddlist;
+
+//     // console.log(ColInfo,"column info");
+
+//     // console.log(ddInfo,"DD INFO");
+
+//     console.log(req.body, "BODY");
+
+//     if (ddInfo.length != 0) {
+
+//         ddInfo.forEach((item, index) => {
+//             for (var key in item) {
+//                 if (key != 'colname') {
+//                     dropdownData.push({
+//                         options: item[key],
+//                         colname: item.colname
+//                     })
+//                 }
+//             }
+//         })
+//     }
+
+//     console.log(dropdownData, "Dropdowndata");
+
+//     ColInfo.forEach((item, index) => {
+//         if (item.constraint) {
+//             // constraints = constraints + ' ' + item.name + ',';
+//             constraints = constraints + ' ' + '"' + escape(item.name) + '"' + ',';
+
+//             fieldsData.push({
+//                 fieldname: escape(item.name),
+//                 label: escape(item.label),
+//                 fieldtype: item.type,
+//                 Konstraint: true
+//             })
+//         } else {
+//             fieldsData.push({
+//                 fieldname: escape(item.name),
+//                 label: escape(item.label),
+//                 fieldtype: item.type,
+//                 Konstraint: false
+//             })
+//         }
+//         if (item.type == 'dropdown') {
+//             colquery = colquery + ' ' + '"' + escape(item.name) + '"' + ' ' + 'text' + ',';
+//         } else {
+//             colquery = colquery + ' ' + '"' + escape(item.name) + '"' + ' ' + item.type + ',';
+//         }
+//     });
+
+//     fieldsData.push({
+//         fieldname: 'uid',
+//         label: false,
+//         fieldtype: 'serial',
+//         Konstraint: false
+//     })
+
+//     colquery = colquery + 'uid SERIAL' + ',';
+
+//     constraints = constraints.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+//     let tablename = escape(req.body.tablename);
+
+//     console.log(colquery, "colquery")
+
+//     if (constraints) {
+//         // query = `CREATE TABLE IF NOT EXISTS ${req.body.tablename} (${colquery} PRIMARY KEY (${constraints}));`
+//         // query = `CREATE TABLE IF NOT EXISTS "${req.body.tablename}" (${colquery} PRIMARY KEY (${constraints}));`
+//         query = `CREATE TABLE IF NOT EXISTS "${tablename}" (${colquery} PRIMARY KEY (${constraints}));`
+
+//     } else {
+//         colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+//         // query = `CREATE TABLE IF NOT EXISTS ${req.body.tablename} (${colquery});`
+//         // query = `CREATE TABLE IF NOT EXISTS "${req.body.tablename}" (${colquery});`
+//         query = `CREATE TABLE IF NOT EXISTS "${tablename}" (${colquery});`
+
+//     }
+
+//     console.log(query, "QUERY")
+
+//     let query1 = squel
+//         .insert()
+//         .into("mastertable")
+//         // tablename in place of req.body.tablename
+//         .set("tablename", tablename)
+//         .set("createdby", req.body.currentUser)
+//         .set("\"Description\"", req.body.description)
+//         .toString();
+
+//     console.log(query1, "QUERY!");
+
+//     try {
+//         let response = await queryExecute(query);
+//         console.log(response, "RESPONSE00");
+//         let response1 = await queryExecute(query1);
+//         console.log(response1, "RESPONSE0011");
+//         let query2 = squel
+//             .select()
+//             .from("mastertable")
+//             // tablename in place of req.body.tablename
+//             .where("tablename =?", tablename)
+//             .toString();
+
+//         let response2 = await queryExecute(query2);
+
+
+//         fieldsData.forEach((field) => {
+//             field.tableid = response2.rows[0].id
+//         });
+
+//         dropdownData.forEach((field) => {
+//             field.tableid = response2.rows[0].id
+//         })
+
+//         console.log(dropdownData, "DDDDDD");
+
+//         let query3 = squel
+//             .insert()
+//             .into("fieldstable")
+//             .setFieldsRows(fieldsData)
+//             .toString();
+
+//         let response3 = await queryExecute(query3);
+
+//         console.log(response3, "RESPONSE3");
+
+//         if (dropdownData.length != 0) {
+
+//             console.log(dropdownData, "12345");
+
+//             dropdownData.forEach((field) => {
+//                 field.tableid = response2.rows[0].id
+//             })
+
+//             console.log(dropdownData, "DROP DOWN")
+
+//             let query4 = squel
+//                 .insert()
+//                 .into("dropdowntable")
+//                 .setFieldsRows(dropdownData)
+//                 .toString();
+
+//             let response4 = await queryExecute(query4);
+
+//             console.log(response4, "11")
+//         }
+
+
+//         return response;
+
+//     } catch (err) {
+//         return Promise.reject(err.code)
+//     }
+
+// }

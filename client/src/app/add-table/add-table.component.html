@@ -48,20 +48,20 @@
               <select type="text" class="form-control" #type="ngModel" [(ngModel)]="column.type" name="type{{i}}"
                 required>
                 <option value="text">Text</option>
-                <option value="varchar">Email</option>
                 <option value="integer">Integer</option>
                 <option value="bigint">Big Int</option>
+                <option value="varchar">Email</option>
                 <option value="date">Date</option>
                 <option value="dropdown">Dropdown</option>
-              </select> -->
-<!-- <span class="error" *ngIf="!type.valid && type.dirty">Field Name is required!</span> -->
-<!-- </div>
+              </select> 
+              <span class="error" *ngIf="!type.valid && type.dirty">Field Name is required!</span>
+            </div>
             <div class="col-md-6" *ngIf="column.type == 'dropdown'">
               <label><b>Dropdown Value </b><span class="asteriskcolor">*</span></label>
               <a type="button" class="btn btn-primary float-right" (click)="dropdown(i)"><i class='fas fa-plus-circle'></i></a>
-              <div *ngFor="let dropdown of dropdownlist[i]; let y=index"> -->
-<!-- {{y}}dd{{column.colId}} - {{dropdown}} -->
-<!-- <input class="form-control" name="{{y}}dd{{column.colId}}" type="text" [(ngModel)]="column[(dropdown.id)]"><br>
+              <div *ngFor="let dropdown of dropdownlist[i]; let y=index">
+                {{y}}dd{{column.colId}} - {{dropdown}}
+                <input class="form-control" name="{{y}}dd{{column.colId}}" type="text" [(ngModel)]="column[(dropdown.id)]"><br>
               </div>
             </div>
           </div>
@@ -70,8 +70,8 @@
       </form>
     </div>
   </div>
-</div> -->
-<!-- <p-toast position="top-left"></p-toast> -->
+</div>
+<p-toast position="top-right"></p-toast> -->
 
 
 
@@ -91,6 +91,152 @@
 
 
 
+
+
+
+
+<div class="container-fluid">
+  <div style="margin-top: 75px" class="card col-md-8 offset-md-2 text-black bg-light mb-3">
+    <div class="card-header">
+      <h3>Survey Details</h3>
+    </div>
+    <div class="card-body">
+      <form #tableForm="ngForm" (ngSubmit)="create()" novalidate>
+        <div class="form-group">
+          <label><b>Survey name <span class='asteriskcolor'>*</span></b></label>
+          <input type="text" name="tablename" class="form-control" id="tablename" [(ngModel)]="TableInfo.tablename"
+            #name="ngModel" required>
+          <span class="error" *ngIf="!name.valid && name.dirty">Table name is required!</span>
+        </div>
+        <div class="form-group">
+          <label><b>Description <span class='asteriskcolor'>*</span></b></label>
+          <input type="text" name="description" class="form-control" id="description" [(ngModel)]="TableInfo.description"
+            #desc="ngModel" required>
+          <span class="error" *ngIf="!desc.valid && desc.dirty">Description is required!</span>
+        </div>
+        <div class="card-footer">
+          <br><button class="btn btn-primary float-right" [disabled]="!tableForm.form.valid" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<p-toast position="top-right"></p-toast>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- modal pop up CASE -->
+
+<!-- 
 <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU'
   crossorigin='anonymous'>
 
@@ -118,7 +264,7 @@
     </form>
   </div>
   <div class="modal-body" [hidden]="showtable">
-    <button class="btn btn-primary float-right" (click)="addNewColumn()"><i class='fas fa-plus-circle'></i></button>
+    <button style="margin-left: 5px" class="btn btn-primary float-right" (click)="addNewColumn()"><i class='fas fa-plus-circle'></i></button>
     <button class="btn btn-danger float-right" (click)="removeColumn()"><i class='fas fa-minus-circle'></i></button><br><br>
 
     <form #columnForm="ngForm" (ngSubmit)="onSubmit()" class="form-group" novalidate>
@@ -144,7 +290,6 @@
             <label><b>Field type </b><span class='asteriskcolor'>*</span></label>
             <select type="text" class="form-control" #type="ngModel" [(ngModel)]="column.type" name="type{{i}}"
               required>
-              <!-- <option value="" selected>Select</option> -->
               <option value="text">Text</option>
               <option value="varchar">Email</option>
               <option value="integer">Integer</option>
@@ -152,13 +297,11 @@
               <option value="date">Date</option>
               <option value="dropdown">Dropdown</option>
             </select>
-            <!-- <span class="error" *ngIf="!type.valid && type.dirty">Field Name is required!</span> -->
           </div>
           <div class="col-md-6" *ngIf="column.type == 'dropdown'">
             <label><b>Dropdown Value </b><span class="asteriskcolor">*</span></label>
             <a type="button" class="btn btn-primary float-right" (click)="dropdown(i)"><i class='fas fa-plus-circle'></i></a>
             <div *ngFor="let dropdown of dropdownlist[i]; let y=index">
-              <!-- {{y}}dd{{column.colId}} - {{dropdown}} -->
               <input class="form-control" name="{{y}}dd{{column.colId}}" type="text" [(ngModel)]="column[(dropdown.id)]"><br>
             </div>
           </div>
@@ -169,5 +312,7 @@
       </div>
     </form>
   </div>
-  <!-- </div> -->
 </div>
+<div class="zindex">
+  <p-toast key='table' position="bottom-center"></p-toast>
+</div> -->

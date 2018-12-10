@@ -2,6 +2,16 @@
   color: red
 }
 
-.asteriskcolor{
-    color: rgba(160, 6, 6, 0.932)
+.asteriskcolor {
+  color: rgba(160, 6, 6, 0.932)
 }
+
+.zindex {
+  z-index: 1050;
+}
+
+.card {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+

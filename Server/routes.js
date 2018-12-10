@@ -63,17 +63,22 @@ app.use(check.login);
 
 app.post('/checkTablename', controller.checkTablename);
 app.post('/create', controller.CreateTable);
+app.put('/addColumn/:id', controller.addColumn);
 app.get('/getdata', controller.viewTable);
 app.delete('/delete/:id', controller.deleteTable);
 app.put('/modified/:id', controller.modifyTable);
 // app.get('/fetchTableDetails/:id', controller.TableData);
 app.get('/tabledata/:id', controller.TableData);
 app.put('/editTable/:id', controller.editTable);
+app.put('/editTableInfo/:id', controller.editTableInfo);
+app.post('/checkTablenameforUpdate/:id', controller.check);
+
+
 
 
 
 // Routes for operations in table
-
+app.get('/tablename/:id', operations.tablename);
 app.get('/view/:id', operations.view);
 app.put('/update/:id', operations.addDataToTable);
 app.get('/fetchdata/:id', operations.TableData);
@@ -81,6 +86,8 @@ app.delete('/deletedata/:tableid/:rowid', operations.deleteData)
 app.get('/updatedata/:tableid/:uid', operations.getdetails)
 app.put('/updaterow/:id', operations.updateRow);
 app.get('/dropdown/:id', operations.fetchDropdownList);
+app.get('/radio/:id', operations.fetchRadioList);
+app.get('/checkbox/:id', operations.fetchCheckboxList);
 
 
 app.get('/loggedout', check.logout)

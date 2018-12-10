@@ -6,3 +6,7 @@
 .astericks{
     color: red
 }
+
+.zindex{
+    z-index: 1050;
+}
