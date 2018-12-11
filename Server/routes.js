@@ -72,6 +72,8 @@ app.get('/tabledata/:id', controller.TableData);
 app.put('/editTable/:id', controller.editTable);
 app.put('/editTableInfo/:id', controller.editTableInfo);
 app.post('/checkTablenameforUpdate/:id', controller.check);
+app.get('/fields/:tableid/:fieldid', controller.fetchFieldData);
+
 
 
 

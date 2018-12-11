@@ -96,6 +96,9 @@ export class UserServiceService {
   checkTablenameforUpdate(tableid, tablename): Observable<any> {
     return this._http.post('http://192.1.200.134:8080/checkTablenameforUpdate/' + tableid, tablename, { withCredentials: true })
   }
+  fetchFieldData(tableid, field_id) {
+    return this._http.get('http://192.1.200.134:8080/fields/' + tableid + '/' + field_id, { withCredentials: true });
+  }
 }
 
 

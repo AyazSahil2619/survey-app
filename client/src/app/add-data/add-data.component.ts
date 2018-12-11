@@ -231,18 +231,20 @@ export class AddDataComponent implements OnInit {
       console.log(array, "ARRAY");
     }
 
-    array.forEach((item) => {
-      for (var key in item) {
-        this.data[key] = item[key];
-      }
-    })
+    // array.forEach((item) => {
+    //   for (var key in item) {
+    //     this.data[key] = item[key];
+    //   }
+    // })
+
+    this.data.checkboxData = array;
 
     console.log(this.data, "FINAL DATA ");
 
     // console.log(checkBoxArray, "sasa")
 
-    // console.log(this.data, "data");
-    // console.log(this.data1, "DATA 1");
+    console.log(this.data, "data");
+    console.log(this.data1, "DATA 1");
 
     this._userService.insertData(this.table_id, this.data)
       .subscribe((response) => {

@@ -41,6 +41,7 @@ export class FieldsDataComponent implements OnInit {
   // colinfo1 = [];
   title: String = '';
   deleteColumnArray = [];
+  editForm: boolean = false;
 
   ddList: Object[] = [];
 
@@ -75,15 +76,15 @@ export class FieldsDataComponent implements OnInit {
               colname: item.fieldname,
               label: item.label,
               type: item.fieldtype,
-              constraints: item.konstraint
+              constraints: item.konstraint,
+              f_uid: item.f_uid
             })
           }
+          console.log(this.displayArray, "CURRENT");
         });
-      },
-        function (errResponse) {
-
-          console.error(errResponse, 'Error while fetching field data ');
-        }
+      }, function (errResponse) {
+        console.error(errResponse, 'Error while fetching field data ');
+      }
       );
   }
 
@@ -114,10 +115,55 @@ export class FieldsDataComponent implements OnInit {
   }
 
 
-  // updatefield(template, fieldname) {
-  //   this.modalRef = this.modalService.show(template, { class: 'gray modal-lg' });
-  //   console.log(fieldname, "COL NAME");
-  // }
+  dropdownList1: any = [];
+  radioList1: any = [];
+  checkboxList1: any = [];
+
+
+  updatefield(template, field_id) {
+    this.editForm = true;
+    this.modalRef = this.modalService.show(template, { class: 'gray modal-lg' });
+    console.log(field_id, "COL NAME");
+    this._userService.fetchFieldData(this.table_id, field_id).subscribe((response) => {
+      console.log(response);
+      let info: any = response;
+
+      info.forEach(element => {
+        for (var key in element) {
+          if (element.c_dbValue != 'null' || element.c_dspvalue != 'null') {
+
+            this.checkboxList1.push({
+              databasevalue: element.d_dbvalue,
+              displayvalue: element.d_dspvalue
+            })
+
+          } else if (element.d_dbvalue != 'null' || element.d_dspvalue != 'null') {
+
+            this.dropdownList1.push({
+              databasevalue: element.d_dbvalue,
+              displayvalue: element.d_dspvalue
+            })
+
+          } else if (element.r_dbValue != 'null' || element.r_dspvalue != 'null') {
+
+            this.radioList1.push({
+              databasevalue: element.d_dbvalue,
+              displayvalue: element.d_dspvalue
+            })
+
+          } else if (key == 'fieldname' || key == 'fieldtype' || key == 'label' || key == 'konstraint') {
+            console.log('data entered>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+
+            this.fieldForm.setValue({ 'colname': element.fieldname, 'label': element.label, 'constraints': element.konstraint, 'type': element.fieldtype });
+            // this.editForm = true;
+
+          }
+        }
+      });
+    }, (err) => {
+      console.log(err);
+    })
+  }
 
 
   formColumnArray(data) {
@@ -316,7 +362,7 @@ export class FieldsDataComponent implements OnInit {
 
   }
 
-  
+
 
   deletefield(fieldname) {
     console.log(fieldname, "in delete")

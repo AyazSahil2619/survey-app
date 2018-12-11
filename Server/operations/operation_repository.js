@@ -50,13 +50,11 @@ async function addDataToTable(req, res, id) {
 
     console.log(req.body, "INSIDE ADDDING DATA TO TABLE")
 
-    // let body = [req.body];
-    // let colquery = '';
-    // let values = '';
+    let body = [req.body];
+    let colquery = '';
+    let values = '';
 
-    // let CheckboxValue = req.body.chechboxValue;
-
-    // console.log(CheckboxValue, "PPPPP");
+    let checkboxValue = req.body.checkboxData;
 
     // let query = squel
     //     .select()
@@ -65,18 +63,18 @@ async function addDataToTable(req, res, id) {
     //     .where("tableid =?", id)
     //     .toString();
 
-    // let query1 = squel
-    //     .select()
-    //     .from("mastertable")
-    //     .where("id =?", id)
-    //     .toString();
+    let query1 = squel
+        .select()
+        .from("mastertable")
+        .where("id =?", id)
+        .toString();
 
-    
+
     try {
         // let res = await queryExecute(query)
-        // let res1 = await queryExecute(query1);
+        let res1 = await queryExecute(query1);
 
-        // let tablename = unescape(res1.rows[0].tablename);
+        let tablename = unescape(res1.rows[0].tablename);
 
         // res.rows.forEach((item, index) => {
         //     for (var key in item) {
@@ -93,23 +91,40 @@ async function addDataToTable(req, res, id) {
         //     }
         // })
 
+        body.forEach((item) => {
+            for (var key in item) {
+                if (key != 'checkboxData') {
+                    colquery = colquery + '"' + key + '"' + ',';
+                    values = values + `'` + item[key] + `'` + ',';
+                } else if (key == 'checkboxData') {
+                    checkboxValue.forEach((element) => {
+                        for (var keys in element) {
+                            colquery = colquery + '"' + keys + '"' + ',';
+                            values = values + `'` + '{' + element[keys] + '}' + `'` + ',';
+                        }
+                    })
 
-        // colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-        // values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+                }
+            }
+        })
 
 
-        // // let query2 = `INSERT INTO ${res1.rows[0].tablename} (${colquery}) VALUES (${values})`
-        // let query2 = `INSERT INTO "${tablename}" (${colquery}) VALUES (${values})`
+        colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+        values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
 
-        // console.log(query2, "QUERY2")
 
-        // let res2 = await queryExecute(query2);
+        // let query2 = `INSERT INTO ${res1.rows[0].tablename} (${colquery}) VALUES (${values})`
+        let query2 = `INSERT INTO "${tablename}" (${colquery}) VALUES (${values})`
 
-        // if (res2.rowCount > 0) {
-        //     return res2;
-        // } else {
-        //     return Promise.reject(err);
-        // }
+        console.log(query2, "QUERY2")
+
+        let res2 = await queryExecute(query2);
+
+        if (res2.rowCount > 0) {
+            return res2;
+        } else {
+            return Promise.reject(err);
+        }
     } catch (err) {
         console.log(err);
         return Promise.reject(err);

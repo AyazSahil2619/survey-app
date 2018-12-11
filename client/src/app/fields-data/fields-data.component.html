@@ -25,7 +25,7 @@
           <td>{{object.type}}</td>
           <td>{{object.constraints}}</td>
           <td>
-            <a type="button" class="btn btn-warning btn-sm" (click)="updatefield(editFieldTemplate,object.colname)"><i
+            <a type="button" class="btn btn-warning btn-sm" (click)="updatefield(editFieldTemplate,object.f_uid)"><i
                 class='fa fa-edit'></i></a>
             <a type="button" class="btn btn-danger btn-sm" (click)="deletefield(object.colname)"><i class='fa fa-close'></i></a>
           </td>
@@ -152,12 +152,13 @@
 
 
 
-<!-- <ng-template #editFieldTemplate>
+
+<ng-template #editFieldTemplate>
   <div class="Container">
     <div class="modal-header">
       <h3>Survey Details</h3>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" *ngIf="editForm">
       <form [formGroup]="fieldForm" (ngSubmit)="onSubmit()" class="form-group" novalidate>
         <fieldset>
           <div class="row">
@@ -182,6 +183,7 @@
                 <option value="date">Date</option>
                 <option value="dropdown">Dropdown</option>
                 <option value="radio">Radio</option>
+                <option value="checkbox">Checkbox</option>
               </select>
               <span class="error" *ngIf="!type.valid && type.dirty">Field type is required!</span>
             </div>
@@ -255,7 +257,7 @@
   <div class="zindex">
     <p-toast key="buzz" position="top-right"></p-toast>
   </div>
-</ng-template> -->
+</ng-template>
 
 
 

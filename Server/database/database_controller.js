@@ -118,6 +118,21 @@ async function check(req, res) {
 }
 
 
+async function fetchFieldData(req, res) {
+    const tableid = parseInt(req.params.tableid, 10);
+    const fieldid = parseInt(req.params.fieldid, 10)
+
+
+    try {
+        let data = await repository.fetchFieldData(tableid, fieldid)
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
+
 module.exports = {
     CreateTable: CreateTable,
     viewTable: viewTable,
@@ -128,5 +143,6 @@ module.exports = {
     checkTablename: checkTablename,
     addColumn: addColumn,
     editTableInfo: editTableInfo,
-    check: check
+    check: check,
+    fetchFieldData: fetchFieldData
 }

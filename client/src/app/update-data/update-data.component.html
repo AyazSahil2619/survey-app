@@ -31,8 +31,17 @@
             <td *ngIf="x.fieldtype == 'radio'">
               <ng-container *ngFor="let y of radioList">
                 <ng-container *ngIf="y.colname == x.fieldname">
-                  <input type="radio" name="name5{{x.fieldname}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
+                  <input type="radio" name="name6{{x.fieldname}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
                     [value]="y.dspValue" required>{{y.dspValue}}
+                </ng-container>
+              </ng-container>
+            </td>
+            <td *ngIf="x.fieldtype == 'checkbox'">
+              <ng-container *ngFor="let y of checkboxList;let i = index">
+                <ng-container *ngIf="y.colname == x.fieldname">
+                  <!-- to be modiefied -->
+                  <input type="checkbox" name="{{i}}{{x.fieldname}}" [checked]='data[x.fieldname][i] && data[x.fieldname][i].indexOf(data[x.fieldname])>-1'
+                    #name7="ngModel" [(ngModel)]="data[x.fieldname][i]" [value]="data[x.fieldname]">{{y.dspValue}}
                 </ng-container>
               </ng-container>
             </td>

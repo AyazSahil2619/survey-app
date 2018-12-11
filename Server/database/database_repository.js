@@ -1,19 +1,22 @@
 const squel = require('squel');
 const runQuery = require('../pgConnection');
 
+
 //  Database Query gets executed
 async function queryExecute(query) {
     try {
         let result = await runQuery.pool.query(query);
-        // console.log(result, "RESULT");
         return result;
     } catch (err) {
         console.log(err, "ERROR");
         return Promise.reject(err)
     }
 }
-//  Creating TABLE in DATABASE And Inserting its Details into MASTERTABLE 
 
+
+
+
+//  Creating TABLE in DATABASE And Inserting its Details into MASTERTABLE 
 async function CreateTable(req, res) {
 
     console.log(req.body, "BODY");
@@ -132,8 +135,7 @@ async function addColumn(req, res, id) {
                     displayvalue: item.dspValue,
                     colname: item.fieldname,
                     tableid: id,
-                    // adding cplomn type to optionstable
-                    // coltype:item.type
+
                 }
             } else if (key == 'deletefield') {
                 deleteColumn = deleteColumn + 'DROP COLUMN IF EXISTS' + ' ' + '"' + escape(item.deletefield) + '"' + ','
@@ -146,8 +148,7 @@ async function addColumn(req, res, id) {
                     displayvalue: item.r_dspValue,
                     colname: item.r_fieldname,
                     tableid: id,
-                    // adding cplomn type to optionstable
-                    // coltype:item.type
+
                 }
             } else if (key == 'c_dbValue' || key == 'c_dspValue' || key == 'c_fieldname') {
                 data3 = {
@@ -601,6 +602,33 @@ async function check(req, res, id) {
 
 }
 
+async function fetchFieldData(tableid, fieldid) {
+
+    console.log(tableid, fieldid, "OOO");
+
+    let query = `SELECT d.databasevalue AS d_dbvalue, d.displayvalue AS d_dspvalue,
+     c.databasevalue AS c_dbvalue,c.displayvalue AS c_dspvalue,
+     r.databasevalue AS r_dbvalue,r.displayvalue AS r_dspvalue,
+     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid 
+    FROM public.fieldstable AS f 
+	FULL JOIN dropdowntable AS d ON d.tableid = f.tableid AND d.colname = f.fieldname 
+    FULL JOIN radiotable AS r ON r.tableid = f.tableid AND r.colname = f.fieldname 
+    FULL JOIN checkboxtable AS c ON c.tableid = f.tableid AND c.colname = f.fieldname where f.f_uid =${fieldid} ;`
+
+    try {
+        let response = await queryExecute(query);
+
+        console.log(response.rows);
+
+        return response.rows;
+
+    } catch (err) {
+        console.log(err);
+        return Promise.reject(err)
+    }
+
+}
+
 
 module.exports = {
     CreateTable: CreateTable,
@@ -612,7 +640,8 @@ module.exports = {
     checkTablename: checkTablename,
     addColumn: addColumn,
     editTableInfo: editTableInfo,
-    check: check
+    check: check,
+    fetchFieldData: fetchFieldData
 }
 
 

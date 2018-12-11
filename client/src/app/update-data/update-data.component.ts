@@ -32,6 +32,7 @@ export class UpdateDataComponent implements OnInit {
     this.DataInfo();
     this.ddinfo();
     this.radioInfo();
+    this.checkboxInfo();
     // this.onClose = new Subject();
 
   }
@@ -40,6 +41,9 @@ export class UpdateDataComponent implements OnInit {
   colinfo1: Object[] = [];
   radioList: Object[] = [];
   data = {};
+  data1: Object = {};
+
+  checkboxList: any = [];
 
   table_id = this._route.snapshot.params['tableid'];
   row_id = this._route.snapshot.params['rowid'];
@@ -74,6 +78,7 @@ export class UpdateDataComponent implements OnInit {
       .subscribe((response) => {
         this.data = response[0];
         console.log(this.data, "data");
+        
       }, ((errResponse) => {
         console.log(errResponse, "Error while fetching data ");
       }))
@@ -127,6 +132,29 @@ export class UpdateDataComponent implements OnInit {
       );
   }
 
+  checkboxInfo() {
+    this._userService.fetchcheckboxValue(this.table_id)
+      .subscribe((response) => {
+        if (response) {
+          let checkboxValue: any = response;
+          checkboxValue.forEach((item, index) => {
+            this.checkboxList.push({
+              dbValue: item.databasevalue,
+              dspValue: item.displayvalue,
+              colname: item.colname
+            })
+          });
+          console.log(this.checkboxList, "checkboxList");
+        } else {
+          console.log(response);
+        }
+      },
+        function (errResponse) {
+          console.error(errResponse, 'Error while fetching checkbox data ');
+        }
+      );
+  }
+
   modifiedUser = {
     user: localStorage.getItem("LoggedInUser"),
     time: Date(),
@@ -135,27 +163,29 @@ export class UpdateDataComponent implements OnInit {
 
   updateData() {
     console.log(this.data, "11");
-    this._userService.tableRowEdit(this.table_id, this.data)
-      .subscribe((response) => {
-        this._userService.modified(this.table_id, this.modifiedUser)
-          .subscribe((response) => {
-            this.messageService.add(
-              { severity: 'success', detail: 'Success', summary: 'Row Updated Successfully !!' });
-            this._router.navigate(['/viewTable/' + this.table_id]);
-            // this.onClose.next(true);
+    console.log(this.data1, "2211");
+    
+    // this._userService.tableRowEdit(this.table_id, this.data)
+    //   .subscribe((response) => {
+    //     this._userService.modified(this.table_id, this.modifiedUser)
+    //       .subscribe((response) => {
+    //         this.messageService.add(
+    //           { severity: 'success', detail: 'Success', summary: 'Row Updated Successfully !!' });
+    //         this._router.navigate(['/viewTable/' + this.table_id]);
+    //         // this.onClose.next(true);
 
-          }, (errResponse) => {
-            console.log(errResponse, 'Error while modifying')
-          })
-      }, (errResponse) => {
-        console.log(errResponse);
+    //       }, (errResponse) => {
+    //         console.log(errResponse, 'Error while modifying')
+    //       })
+    //   }, (errResponse) => {
+    //     console.log(errResponse);
 
-        this.onClose.next(false);
+    //     this.onClose.next(false);
 
-        this.messageService.add(
-          { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });
-        console.error(errResponse, 'Error while updating data.');
-      });
+    //     this.messageService.add(
+    //       { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });
+    //     console.error(errResponse, 'Error while updating data.');
+    //   });
   }
 
 }
