@@ -56,6 +56,9 @@ async function addDataToTable(req, res, id) {
 
     let checkboxValue = req.body.checkboxData;
 
+
+
+
     // let query = squel
     //     .select()
     //     .from("fieldstable")
@@ -71,7 +74,7 @@ async function addDataToTable(req, res, id) {
 
 
     try {
-        // let res = await queryExecute(query)
+        // let res = await queryExecute(query);
         let res1 = await queryExecute(query1);
 
         let tablename = unescape(res1.rows[0].tablename);
@@ -91,40 +94,92 @@ async function addDataToTable(req, res, id) {
         //     }
         // })
 
+        // body.forEach((item) => {
+        //     for (var key in item) {
+        //         if (key != 'checkboxData') {
+        //             colquery = colquery + '"' + key + '"' + ',';
+        //             values = values + `'` + item[key] + `'` + ',';
+        //         } else if (key == 'checkboxData') {
+        //             checkboxValue.forEach((element) => {
+        //                 for (var keys in element) {
+        //                     colquery = colquery + '"' + keys + '"' + ',';
+        //                     values = values + `'` + '{' + element[keys] + '}' + `'` + ',';
+        //                 }
+        //             })
+
+        //         }
+        //     }
+        // })
+
+
+        console.log(body, "BODY");
+
+
+        // var array1 = [{
+        //     name: 'sahil',
+        //     c1: {
+        //         b: true
+        //     },
+        //     c2: {
+        //         aa: true,
+        //         bb: true
+        //     }
+        // }];
+        // var objectarray = [];
+        // array1.forEach(function (element) {
+        //     for (var keys in element) {
+        //         if (typeof element[keys] == 'object') {
+        //             for (var key in element[keys]) {
+        //                 console.log(key);
+        //             }
+        //         } else {
+        //             objectarray.push({
+        //                 keys: element[keys]
+        //             })
+        //         }
+        //         console.log(objectarray, '1');
+        //     }
+        // });
+
+
         body.forEach((item) => {
             for (var key in item) {
-                if (key != 'checkboxData') {
+                if (typeof item[key] == 'object') {
+                    colquery = colquery + '"' + key + '"' + ',';
+                    for (var key1 in key) {
+                        values = values + `'` + '{' + key[key1] + '}' + `'` + ',';
+                    }
+                } else {
                     colquery = colquery + '"' + key + '"' + ',';
                     values = values + `'` + item[key] + `'` + ',';
-                } else if (key == 'checkboxData') {
-                    checkboxValue.forEach((element) => {
-                        for (var keys in element) {
-                            colquery = colquery + '"' + keys + '"' + ',';
-                            values = values + `'` + '{' + element[keys] + '}' + `'` + ',';
-                        }
-                    })
-
                 }
             }
         })
 
 
-        colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-        values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+        console.log("colquery",colquery);
+        console.log(values,"VALUES")
+        
 
 
-        // let query2 = `INSERT INTO ${res1.rows[0].tablename} (${colquery}) VALUES (${values})`
-        let query2 = `INSERT INTO "${tablename}" (${colquery}) VALUES (${values})`
 
-        console.log(query2, "QUERY2")
 
-        let res2 = await queryExecute(query2);
+        //     colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+        //     values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
 
-        if (res2.rowCount > 0) {
-            return res2;
-        } else {
-            return Promise.reject(err);
-        }
+
+        //     // let query2 = `INSERT INTO ${res1.rows[0].tablename} (${colquery}) VALUES (${values})`
+        //     let query2 = `INSERT INTO "${tablename}" (${colquery}) VALUES (${values})`
+
+        //     console.log(query2, "QUERY2")
+
+        //     let res2 = await queryExecute(query2);
+
+        // if (res2.rowCount > 0) {
+        //     return res2;
+        // } else {
+        //     return Promise.reject(err);
+        // }
     } catch (err) {
         console.log(err);
         return Promise.reject(err);

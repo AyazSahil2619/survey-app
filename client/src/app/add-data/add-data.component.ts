@@ -40,7 +40,7 @@ export class AddDataComponent implements OnInit {
   data1: Object = {};
   selectedValues: string[] = [];
 
-
+  test;
   modifiedUser = {
     user: localStorage.getItem("LoggedInUser"),
     time: Date(),
@@ -143,44 +143,16 @@ export class AddDataComponent implements OnInit {
               dspValue: item.displayvalue,
               colname: item.colname
             })
+            this.data[this.checkboxList[index].colname] = {};
             // this.data1.push(item.displayvalue);
           });
+        
+          console.log(this.data);
           console.log(this.checkboxList, "checkboxList");
+          this.test = new Array(this.checkboxList.length);
         } else {
           console.log(response);
         }
-
-        // let array: string[][] = [];
-        // if (this.checkboxList.length > 0) {
-        //   let temp_colname = this.checkboxList[0].colname;
-        //   console.log(temp_colname)
-        //   let count = 0;
-        //   let inputCounter = 0;
-        //   let firstCounter = 0;
-        //   this.checkboxList.forEach((item, index) => {
-        //     console.log('here');
-        //     if (item.colname == temp_colname) {
-        //       if (firstCounter == 0) {
-        //         array[count] = [];
-        //         firstCounter++;
-        //       }
-        //       array[count][inputCounter] = item.dbValue;
-        //       console.log(item.dbValue);
-        //       // count++;
-        //       inputCounter++;
-        //     } else {
-        //       count++;
-        //       inputCounter = 0;
-        //       array[count] = [];
-        //       temp_colname = item.colname;
-        //       array[count][inputCounter] = item.dbValue;
-        //       inputCounter++;
-        //     }
-        //   })
-        //   console.log(array, "ARRAY");
-        // }
-
-
       },
         function (errResponse) {
           console.error(errResponse, 'Error while fetching checkbox data ');
@@ -189,47 +161,48 @@ export class AddDataComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.data1)
+    // console.log(this.data1)
+    // console.log(this.test, "000");
 
 
-    let checkBoxArray: any = [];
-    for (let i = 0; i < this.checkboxList.length; i++) {
-      if (this.data1[i] == true) {
-        checkBoxArray.push({
-          value: this.checkboxList[i].dspValue,
-          colname: this.checkboxList[i].colname
-        });
-      }
-    }
+    // let checkBoxArray: any = [];
+    // for (let i = 0; i < this.checkboxList.length; i++) {
+    //   if (this.data1[i] == true) {
+    //     checkBoxArray.push({
+    //       value: this.checkboxList[i].dspValue,
+    //       colname: this.checkboxList[i].colname
+    //     });
+    //   }
+    // }
 
 
-    let array: any = [];
-    if (checkBoxArray.length > 0) {
-      let temp_colname = checkBoxArray[0].colname;
-      let count = 0;
-      let inputCounter = 0;
-      let firstCounter = 0;
-      checkBoxArray.forEach((item, index) => {
-        if (item.colname == temp_colname) {
-          if (firstCounter == 0) {
-            array[count] = {};
-            array[count][temp_colname] = [];
-            firstCounter++;
-          }
-          array[count][temp_colname].push(item.value);
-          inputCounter++;
-        } else {
-          count++;
-          temp_colname = item.colname;
-          inputCounter = 0;
-          array[count] = {};
-          array[count][temp_colname] = [];
-          array[count][temp_colname].push(item.value);
-          inputCounter++;
-        }
-      })
-      console.log(array, "ARRAY");
-    }
+    // let array: any = [];
+    // if (checkBoxArray.length > 0) {
+    //   let temp_colname = checkBoxArray[0].colname;
+    //   let count = 0;
+    //   let inputCounter = 0;
+    //   let firstCounter = 0;
+    //   checkBoxArray.forEach((item, index) => {
+    //     if (item.colname == temp_colname) {
+    //       if (firstCounter == 0) {
+    //         array[count] = {};
+    //         array[count][temp_colname] = [];
+    //         firstCounter++;
+    //       }
+    //       array[count][temp_colname].push(item.value);
+    //       inputCounter++;
+    //     } else {
+    //       count++;
+    //       temp_colname = item.colname;
+    //       inputCounter = 0;
+    //       array[count] = {};
+    //       array[count][temp_colname] = [];
+    //       array[count][temp_colname].push(item.value);
+    //       inputCounter++;
+    //     }
+    //   })
+    //   console.log(array, "ARRAY");
+    // }
 
     // array.forEach((item) => {
     //   for (var key in item) {
@@ -237,14 +210,14 @@ export class AddDataComponent implements OnInit {
     //   }
     // })
 
-    this.data.checkboxData = array;
+    // this.data.checkboxData = array;
 
-    console.log(this.data, "FINAL DATA ");
+    // console.log(this.data, "FINAL DATA ");
 
     // console.log(checkBoxArray, "sasa")
 
     console.log(this.data, "data");
-    console.log(this.data1, "DATA 1");
+    // console.log(this.data1, "DATA 1");
 
     this._userService.insertData(this.table_id, this.data)
       .subscribe((response) => {

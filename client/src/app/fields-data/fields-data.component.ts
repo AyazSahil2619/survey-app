@@ -41,7 +41,6 @@ export class FieldsDataComponent implements OnInit {
   // colinfo1 = [];
   title: String = '';
   deleteColumnArray = [];
-  editForm: boolean = false;
 
   ddList: Object[] = [];
 
@@ -109,100 +108,16 @@ export class FieldsDataComponent implements OnInit {
   get dropdownList() { return this.fieldForm.get('dropdownList') as FormArray }
   get checkboxList() { return this.fieldForm.get('checkboxList') as FormArray }
 
+  get dropdownList1() { return this.fieldForm.get('dropdownList1') as FormArray }
+
+
 
   addField(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template, { class: 'gray modal-lg' });
   }
 
 
-  dropdownList1: any = [];
-  radioList1: any = [];
-  checkboxList1: any = [];
 
-
-  updatefield(template, field_id) {
-    this.editForm = true;
-    this.modalRef = this.modalService.show(template, { class: 'gray modal-lg' });
-    console.log(field_id, "COL NAME");
-    this._userService.fetchFieldData(this.table_id, field_id).subscribe((response) => {
-      console.log(response);
-      let info: any = response;
-
-      info.forEach(element => {
-        for (var key in element) {
-          if (element.c_dbValue != 'null' || element.c_dspvalue != 'null') {
-
-            this.checkboxList1.push({
-              databasevalue: element.d_dbvalue,
-              displayvalue: element.d_dspvalue
-            })
-
-          } else if (element.d_dbvalue != 'null' || element.d_dspvalue != 'null') {
-
-            this.dropdownList1.push({
-              databasevalue: element.d_dbvalue,
-              displayvalue: element.d_dspvalue
-            })
-
-          } else if (element.r_dbValue != 'null' || element.r_dspvalue != 'null') {
-
-            this.radioList1.push({
-              databasevalue: element.d_dbvalue,
-              displayvalue: element.d_dspvalue
-            })
-
-          } else if (key == 'fieldname' || key == 'fieldtype' || key == 'label' || key == 'konstraint') {
-            console.log('data entered>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-
-            this.fieldForm.setValue({ 'colname': element.fieldname, 'label': element.label, 'constraints': element.konstraint, 'type': element.fieldtype });
-            // this.editForm = true;
-
-          }
-        }
-      });
-    }, (err) => {
-      console.log(err);
-    })
-  }
-
-
-  formColumnArray(data) {
-    this.modalRef.hide();
-
-    console.log(data, "DATA !@#$")
-
-    this.columnArray.push(data);
-    this.displayArray.push(data);
-
-    console.log(this.columnArray, "Column Array");
-
-    this.fieldForm.reset();
-    this.constraints.setValue('false');
-    this.isDropdown = false;
-    this.isRadio = false;
-    this.isCheckbox = false;
-    const control = <FormArray>this.fieldForm.controls['dropdownList'];
-    if (control) {
-      while (control.length !== 0) {
-        control.removeAt(0);
-      }
-    }
-
-    const control1 = <FormArray>this.fieldForm.controls['radioList'];
-    if (control1) {
-      while (control1.length !== 0) {
-        control1.removeAt(0);
-      }
-    }
-
-    const control2 = <FormArray>this.fieldForm.controls['checkboxList'];
-    if (control2) {
-      while (control2.length !== 0) {
-        control2.removeAt(0);
-      }
-    }
-
-  }
 
   onSubmit() {
     this.count = 0;
@@ -229,7 +144,6 @@ export class FieldsDataComponent implements OnInit {
   onSelect() {
     if (this.type.value == 'dropdown') {
       this.fieldForm.addControl('dropdownList', this._fb.array([]));
-      // console.log(this.dropdownList)
       this.isDropdown = true;
       this.isRadio = false;
       this.isCheckbox = false;
@@ -277,6 +191,14 @@ export class FieldsDataComponent implements OnInit {
     console.log(this.checkboxList)
   }
 
+
+  addDropdown1() {
+    this.dropdownList1.push(this._fb.group({
+      databaseValue: '',
+      displayValue: ''
+    }));
+    console.log(this.dropdownList)
+  }
 
   save() {
 
@@ -360,13 +282,26 @@ export class FieldsDataComponent implements OnInit {
       }
     }
 
+
+
+  }
+
+  editCancel() {
+
+    this.modalRef.hide();
+
+    const control3 = <FormArray>this.fieldForm.controls['dropdownList1'];
+    if (control3) {
+      while (control3.length !== 0) {
+        control3.removeAt(0);
+      }
+    }
+
   }
 
 
 
   deletefield(fieldname) {
-    console.log(fieldname, "in delete")
-    console.log(this.displayArray);
 
     for (let i = 0; i < this.displayArray.length; i++) {
       if (this.displayArray[i].colname === fieldname) {
@@ -376,7 +311,6 @@ export class FieldsDataComponent implements OnInit {
           deletefield: this.displayArray[i].colname,
           deletefieldtype: this.displayArray[i].type
         }
-        // this.deleteColumnArray.push(deletedColumn);
         this.columnArray.push(deletedColumn);
         this.displayArray.splice(i, 1);
       }
@@ -389,8 +323,6 @@ export class FieldsDataComponent implements OnInit {
             deletefield: this.columnArray[i].colname,
             deletefieldtype: this.columnArray[i].type
           }
-          // this.deleteColumnArray.push(deletedColumn);
-          // this.columnArray.push(deletedColumn);
           this.columnArray.splice(i, 1);
         }
       }
@@ -399,5 +331,145 @@ export class FieldsDataComponent implements OnInit {
     console.log(this.deleteColumnArray, "DELETED ARRAY");
   }
 
+  formColumnArray(data) {
+    this.modalRef.hide();
+
+    console.log(data, "DATA !@#$")
+
+    this.displayArray.push(data);
+    this.columnArray.push(data);
+
+    console.log(this.displayArray, "Display Array")
+    console.log(this.columnArray, "Column Array");
+
+    this.fieldForm.reset();
+    this.constraints.setValue('false');
+    this.isDropdown = false;
+    this.isRadio = false;
+    this.isCheckbox = false;
+    const control = <FormArray>this.fieldForm.controls['dropdownList'];
+    if (control) {
+      while (control.length !== 0) {
+        control.removeAt(0);
+      }
+    }
+
+    const control1 = <FormArray>this.fieldForm.controls['radioList'];
+    if (control1) {
+      while (control1.length !== 0) {
+        control1.removeAt(0);
+      }
+    }
+
+    const control2 = <FormArray>this.fieldForm.controls['checkboxList'];
+    if (control2) {
+      while (control2.length !== 0) {
+        control2.removeAt(0);
+      }
+    }
+
+  }
+
+  currentFieldId: Number;
+  dropdownToEdit: any = [];
+  radioListToEdit: any = [];
+  checkboxListToEdit: any = [];
+  // colObject: any = {};
+
+  updatefield(template, field_id) {
+    this.currentFieldId = field_id;
+    this.modalRef = this.modalService.show(template, { class: 'gray modal-lg' });
+    console.log(this.currentFieldId, "current field Id");
+    this._userService.fetchFieldData(this.table_id, field_id).subscribe((response) => {
+      console.log(response);
+      let info: any = response;
+
+      info.forEach(element => {
+
+        if (element.c_dbValue != null || element.c_dspvalue != null) {
+
+          this.checkboxListToEdit.push({
+            databasevalue: element.d_dbvalue,
+            displayvalue: element.d_dspvalue
+          })
+
+        } else if (element.d_dbvalue != null || element.d_dspvalue != null) {
+
+          this.dropdownToEdit.push({
+            databasevalue: element.d_dbvalue,
+            displayvalue: element.d_dspvalue
+          })
+
+        } else if (element.r_dbValue != null || element.r_dspvalue != null) {
+
+          this.radioListToEdit.push({
+            databasevalue: element.d_dbvalue,
+            displayvalue: element.d_dspvalue
+          })
+
+        }
+
+        for (var key in element) {
+
+          if (key == 'fieldname' || key == 'label' || key == 'fieldtype' || key == 'konstraint') {
+
+            this.fieldForm.setValue({ 'colname': element.fieldname, 'label': element.label, 'constraints': element.konstraint, 'type': element.fieldtype });
+          }
+
+        }
+      });
+
+      if (this.dropdownToEdit.length > 0) {
+
+        this.fieldForm.addControl('dropdownList1', this._fb.array([]));
+
+        this.dropdownToEdit.forEach((item) => {
+          this.dropdownList1.push(this._fb.group({
+            databaseValue: item.databasevalue,
+            displayValue: item.displayvalue
+          }));
+
+        });
+        this.isDropdown = true;
+      }
+
+      console.log(this.dropdownToEdit, "111");
+
+    }, (err) => {
+      console.log(err);
+    })
+  }
+
+
+
+  editFormSubmit() {
+
+    // this.modalRef.hide();
+    let removeIndex = null;
+    let counter = 0;
+    let counters = 0;
+    console.log(this.fieldForm.value, "NEW DATA");
+    if (this.displayArray.length) {
+      this.displayArray.forEach((item, index) => {
+        if (item.f_uid != this.currentFieldId) {
+          if (item.colname != this.fieldForm.value.colname) {
+            if (counter == 0) {
+              counter = 1;
+              this.fieldForm.value.f_uid = this.currentFieldId;
+              this.formColumnArray(this.fieldForm.value);
+            }
+          } else {
+            this.messageService.add(
+              { key: 'buzz', severity: 'error', detail: 'Error', summary: 'Fields with this name already exist' });
+          }
+        } else {
+          if (counters == 0) {
+            counters = 1;
+            this.displayArray.splice(index, 1);
+          }
+        }
+      })
+    }
+  }
 
 }

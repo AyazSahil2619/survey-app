@@ -620,6 +620,8 @@ async function fetchFieldData(tableid, fieldid) {
 
         console.log(response.rows);
 
+        // response.rows.forEach((item))
+
         return response.rows;
 
     } catch (err) {

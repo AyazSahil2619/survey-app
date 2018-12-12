@@ -25,8 +25,8 @@
           <td>{{object.type}}</td>
           <td>{{object.constraints}}</td>
           <td>
-            <a type="button" class="btn btn-warning btn-sm" (click)="updatefield(editFieldTemplate,object.f_uid)"><i
-                class='fa fa-edit'></i></a>
+            <!-- <a type="button" class="btn btn-warning btn-sm" (click)="updatefield(editFieldTemplate,object.f_uid)"><i
+                class='fa fa-edit'></i></a> -->
             <a type="button" class="btn btn-danger btn-sm" (click)="deletefield(object.colname)"><i class='fa fa-close'></i></a>
           </td>
         </tr>
@@ -158,8 +158,8 @@
     <div class="modal-header">
       <h3>Survey Details</h3>
     </div>
-    <div class="modal-body" *ngIf="editForm">
-      <form [formGroup]="fieldForm" (ngSubmit)="onSubmit()" class="form-group" novalidate>
+    <div class="modal-body">
+      <form [formGroup]="fieldForm" (ngSubmit)="editFormSubmit()" class="form-group" novalidate>
         <fieldset>
           <div class="row">
             <div class="col-md-12">
@@ -189,11 +189,11 @@
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right" (click)="addDropdown()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right" (click)="addDropdown1()"><i class='fas fa-plus-circle'></i></a><br><br>
               <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
               <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="dropdownList">
-                <div *ngFor="let dropdown of dropdownList.controls; let i=index">
+              <div formArrayName="dropdownList1">
+                <div *ngFor="let dropdown of dropdownList1.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
@@ -249,7 +249,7 @@
         </fieldset><br><br>
         <div class="modal-footer">
           <input class="btn btn-primary float-right" [disabled]="!fieldForm.valid" type="submit">
-          <input type="button" class="btn btn-warning float-right" (click)="Cancel()" value="Cancel">
+          <input type="button" class="btn btn-warning float-right" (click)="editCancel()" value="Cancel">
         </div>
       </form>
     </div>
@@ -258,6 +258,47 @@
     <p-toast key="buzz" position="top-right"></p-toast>
   </div>
 </ng-template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

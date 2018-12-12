@@ -36,7 +36,8 @@
             <td *ngIf="x.fieldtype == 'checkbox'">
               <ng-container *ngFor="let y of checkboxList;let i = index">
                 <ng-container *ngIf="y.colname == x.fieldname">
-                  <input type="checkbox" name="{{i}}{{x.fieldname}}" #name7="ngModel" [(ngModel)]="data1[i]">{{y.dspValue}}
+                  
+                  <input type="checkbox" name="{{i}}{{x.fieldname}}" [(ngModel)]="data[x.fieldname][y.dspValue]">{{y.dspValue}}
                 </ng-container>
               </ng-container>
             </td>
