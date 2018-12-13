@@ -1,18 +1,22 @@
-.error{
-    color: red;
+.error {
+  color: red;
 
 }
 
-.astericks{
-    color: red
+.astericks {
+  color: red
 }
 
-.zindex{
-    z-index: 1050;
+.zindex {
+  z-index: 1050;
 }
 
 
 .card {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.card-body {
+  padding: 0;
+}

@@ -78,7 +78,7 @@ export class UpdateDataComponent implements OnInit {
       .subscribe((response) => {
         this.data = response[0];
         console.log(this.data, "data");
-        
+
       }, ((errResponse) => {
         console.log(errResponse, "Error while fetching data ");
       }))
@@ -164,28 +164,28 @@ export class UpdateDataComponent implements OnInit {
   updateData() {
     console.log(this.data, "11");
     console.log(this.data1, "2211");
-    
-    // this._userService.tableRowEdit(this.table_id, this.data)
-    //   .subscribe((response) => {
-    //     this._userService.modified(this.table_id, this.modifiedUser)
-    //       .subscribe((response) => {
-    //         this.messageService.add(
-    //           { severity: 'success', detail: 'Success', summary: 'Row Updated Successfully !!' });
-    //         this._router.navigate(['/viewTable/' + this.table_id]);
-    //         // this.onClose.next(true);
 
-    //       }, (errResponse) => {
-    //         console.log(errResponse, 'Error while modifying')
-    //       })
-    //   }, (errResponse) => {
-    //     console.log(errResponse);
+    this._userService.tableRowEdit(this.table_id, this.data)
+      .subscribe((response) => {
+        this._userService.modified(this.table_id, this.modifiedUser)
+          .subscribe((response) => {
+            this.messageService.add(
+              { severity: 'success', detail: 'Success', summary: 'Row Updated Successfully !!' });
+            this._router.navigate(['/viewTable/' + this.table_id]);
+            // this.onClose.next(true);
 
-    //     this.onClose.next(false);
+          }, (errResponse) => {
+            console.log(errResponse, 'Error while modifying')
+          })
+      }, (errResponse) => {
+        console.log(errResponse);
 
-    //     this.messageService.add(
-    //       { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });
-    //     console.error(errResponse, 'Error while updating data.');
-    //   });
+        this.onClose.next(false);
+
+        this.messageService.add(
+          { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });
+        console.error(errResponse, 'Error while updating data.');
+      });
   }
 
 }

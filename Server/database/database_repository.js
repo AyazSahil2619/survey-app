@@ -59,7 +59,7 @@ async function CreateTable(req, res) {
 
         let response2 = await queryExecute(query2);
 
-        console.log(response2.rows, "RESPONSE 2");
+        // console.log(response2.rows, "RESPONSE 2");
 
         fieldsData.push({
             fieldname: 'uid',
@@ -618,7 +618,7 @@ async function fetchFieldData(tableid, fieldid) {
     try {
         let response = await queryExecute(query);
 
-        console.log(response.rows);
+        // console.log(response.rows);
 
         // response.rows.forEach((item))
 

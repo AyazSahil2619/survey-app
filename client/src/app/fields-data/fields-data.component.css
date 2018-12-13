@@ -14,6 +14,19 @@
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
 .labels {
   margin-left: 150px;
+}
+
+.unmodified {
+  color: black !important
+}
+
+.modified {
+  color: #3974b4 !important;
+}
+
+.btnclr {
+  color: black !important;
 }

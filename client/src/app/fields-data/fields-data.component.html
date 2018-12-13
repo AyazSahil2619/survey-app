@@ -1,14 +1,8 @@
-<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU'
-  crossorigin='anonymous'>
-
-
-
-
 <div class="Container-fluid">
   <div class="card col-md-10 offset-md-1 text-black bg-light">
     <div class="card-header">
       <h3>{{title}}</h3>
-      <button class="btn btn-primary float-right" (click)="addField(addFieldTemplate)">Add Field</button>
+      <a type="button" class="btn btn-primary float-right" (click)="addField(addFieldTemplate)">Add Field</a>
     </div>
     <div class="card-body">
       <table class="table table-striped table-bordered table-condensed">
@@ -19,21 +13,21 @@
           <th>Primary ?</th>
           <th>Action</th>
         </tr>
-        <tr *ngFor="let object of displayArray">
+        <tr *ngFor="let object of displayArray" [class]="object.f_uid > 0 ? 'unmodified':'modified'">
           <td>{{object.colname}}</td>
           <td>{{object.label}}</td>
           <td>{{object.type}}</td>
           <td>{{object.constraints}}</td>
           <td>
-            <!-- <a type="button" class="btn btn-warning btn-sm" (click)="updatefield(editFieldTemplate,object.f_uid)"><i
-                class='fa fa-edit'></i></a> -->
-            <a type="button" class="btn btn-danger btn-sm" (click)="deletefield(object.colname)"><i class='fa fa-close'></i></a>
+            <a type="button" class="btn btn-warning btn-sm btnclr" (click)="updatefield(editFieldTemplate,object.f_uid)"><i
+                class='fa fa-edit'></i></a>
+            <a type="button" class="btn btn-danger btn-sm btnclr" (click)="deletefield(object.colname)"><i class='fa fa-close'></i></a>
           </td>
         </tr>
       </table>
     </div>
     <div class="card-footer">
-      <button class="btn btn-warning" (click)="save()">Save</button>
+      <a type="button" class="btn btn-warning" (click)="save()">Save</a>
     </div>
   </div>
 </div>

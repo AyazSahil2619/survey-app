@@ -289,6 +289,11 @@ export class FieldsDataComponent implements OnInit {
   editCancel() {
 
     this.modalRef.hide();
+    this.modalRef.hide();
+    this.fieldForm.reset();
+    this.constraints.setValue('false');
+    this.isDropdown = false;
+    this.isRadio = false;
 
     const control3 = <FormArray>this.fieldForm.controls['dropdownList1'];
     if (control3) {
@@ -298,7 +303,6 @@ export class FieldsDataComponent implements OnInit {
     }
 
   }
-
 
 
   deletefield(fieldname) {
@@ -444,32 +448,45 @@ export class FieldsDataComponent implements OnInit {
 
   editFormSubmit() {
 
-    // this.modalRef.hide();
-    let removeIndex = null;
-    let counter = 0;
-    let counters = 0;
-    console.log(this.fieldForm.value, "NEW DATA");
-    if (this.displayArray.length) {
-      this.displayArray.forEach((item, index) => {
-        if (item.f_uid != this.currentFieldId) {
-          if (item.colname != this.fieldForm.value.colname) {
-            if (counter == 0) {
-              counter = 1;
-              this.fieldForm.value.f_uid = this.currentFieldId;
-              this.formColumnArray(this.fieldForm.value);
-            }
-          } else {
-            this.messageService.add(
-              { key: 'buzz', severity: 'error', detail: 'Error', summary: 'Fields with this name already exist' });
-          }
-        } else {
-          if (counters == 0) {
-            counters = 1;
-            this.displayArray.splice(index, 1);
-          }
-        }
-      })
-    }
+    this.fieldForm.value.f_uid = this.currentFieldId;
+
+    console.log(this.fieldForm.value,"!!!");
+   
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+ // let removeIndex = null;
+    // let counter = 0;
+    // let counters = 0;
+    // console.log(this.fieldForm.value, "NEW DATA");
+    // if (this.displayArray.length) {
+    //   this.displayArray.forEach((item, index) => {
+    //     if (item.f_uid != this.currentFieldId) {
+    //       if (item.colname != this.fieldForm.value.colname) {
+    //         if (counter == 0) {
+    //           counter = 1;
+    //           this.fieldForm.value.f_uid = this.currentFieldId;
+    //           this.formColumnArray(this.fieldForm.value);
+    //         }
+    //       } else {
+    //         this.messageService.add(
+    //           { key: 'buzz', severity: 'error', detail: 'Error', summary: 'Fields with this name already exist' });
+    //       }
+    //     } else {
+    //       if (counters == 0) {
+    //         counters = 1;
+    //         this.displayArray.splice(index, 1);
+    //       }
+    //     }
+    //   })
+    // }

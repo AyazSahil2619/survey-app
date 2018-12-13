@@ -11,6 +11,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { AddTableComponent } from '../add-table/add-table.component';
 
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../auth.service';
 
 
 @Component({
@@ -33,6 +34,7 @@ export class AdminloginComponent implements OnInit {
   tableToDelete: any;
 
   constructor(
+    private _authService: AuthService,
     private _userService: UserServiceService,
     private Toast: ToastModule,
     private _router: Router,
@@ -56,6 +58,7 @@ export class AdminloginComponent implements OnInit {
       this.dtTrigger.next();
     }, (err) => {
       if (err.error.msg == 'INVALID') {
+        this._authService.logout();
         this._router.navigate(['/login']);
       }
       console.log('Error while fetching datas', err);

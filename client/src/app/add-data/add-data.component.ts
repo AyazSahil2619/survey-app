@@ -111,7 +111,6 @@ export class AddDataComponent implements OnInit {
     this._userService.fetchradioValue(this.table_id)
       .subscribe((response) => {
         if (response) {
-          // console.log(response, "111111111111111111");
           let radioValue: any = response;
           radioValue.forEach((item, index) => {
             this.radioList.push({
@@ -161,8 +160,61 @@ export class AddDataComponent implements OnInit {
   }
 
   submit() {
-    // console.log(this.data1)
-    // console.log(this.test, "000");
+    console.log(this.data, "data");
+
+    this._userService.insertData(this.table_id, this.data)
+      .subscribe((response) => {
+        this._userService.modified(this.table_id, this.modifiedUser)
+          .subscribe((response) => {
+            console.log("Row added successfully");
+            this.router.navigate(['/viewTable/' + this.table_id]);
+            this.messageService.add(
+              { severity: 'success', detail: 'Success', summary: 'Data Added Successfully' });
+            // this.onClose.next(true);
+          }, (error) => {
+            console.log("Error while modifying", error);
+          })
+      }, (errResponse) => {
+        console.log(errResponse, "Error in adding row in table");
+
+        this.messageService.add(
+          { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
+        this.onClose.next(false);
+      })
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// taking another object for checkbox then binding it to data ..
 
 
     // let checkBoxArray: any = [];
@@ -211,33 +263,3 @@ export class AddDataComponent implements OnInit {
     // })
 
     // this.data.checkboxData = array;
-
-    // console.log(this.data, "FINAL DATA ");
-
-    // console.log(checkBoxArray, "sasa")
-
-    console.log(this.data, "data");
-    // console.log(this.data1, "DATA 1");
-
-    this._userService.insertData(this.table_id, this.data)
-      .subscribe((response) => {
-        this._userService.modified(this.table_id, this.modifiedUser)
-          .subscribe((response) => {
-            console.log("Row added successfully");
-            this.router.navigate(['/viewTable/' + this.table_id]);
-            this.messageService.add(
-              { severity: 'success', detail: 'Success', summary: 'Data Added Successfully' });
-            // this.onClose.next(true);
-          }, (error) => {
-            console.log("Error while modifying", error);
-          })
-      }, (errResponse) => {
-        console.log(errResponse, "Error in adding row in table");
-
-        this.messageService.add(
-          { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
-        this.onClose.next(false);
-      })
-  }
-
-}
