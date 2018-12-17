@@ -91,18 +91,39 @@ async function CreateTable(req, res) {
 
 async function addColumn(req, res, id) {
 
+
+
+    console.log(id, "BODY");
+
+    console.log(req.body, "BODY");
+
+    let body = [req.body];
     let fieldsData = [];
-    let dropdownData = [];
     let colquery = '';
     let constraints = '';
+    let list = [];
+    let fieldtype = req.body.type;
 
-    let deletefield = [];
-    let deleteColumn = '';
 
-    let radioData = [];
-    let fieldstableQuery;
+    let optionData = [];
 
-    let checkboxData = [];
+    if (req.body.arrayList && req.body.arrayList.length > 0) {
+        list = req.body.arrayList
+    }
+
+
+    if (list && list.length > 0) {
+        list.forEach((item) => {
+            optionData.push({
+                databasevalue: item.databaseValue,
+                displayvalue: item.displayValue,
+                colname: req.body.colname,
+                tableid: id,
+            })
+
+        })
+    }
+
 
     let query = squel
         .select()
@@ -111,78 +132,20 @@ async function addColumn(req, res, id) {
         .toString();
 
 
-    console.log(req.body, "BODY");
-
-    req.body.forEach((item) => {
-
-        let data = {};
-        let data1 = {};
-        let data2 = {};
-        let data3 = {};
-
-        for (var key in item) {
-            if (key == 'colname' || key == 'label' || key == 'type' || key == 'constraints') {
-                data = {
-                    fieldname: escape(item.colname),
-                    label: escape(item.label),
-                    fieldtype: item.type,
-                    Konstraint: item.constraints,
-                    tableid: id
-                }
-            } else if (key == 'dbValue' || key == 'dspValue' || key == 'fieldname') {
-                data1 = {
-                    databasevalue: item.dbValue,
-                    displayvalue: item.dspValue,
-                    colname: item.fieldname,
-                    tableid: id,
-
-                }
-            } else if (key == 'deletefield') {
-                deleteColumn = deleteColumn + 'DROP COLUMN IF EXISTS' + ' ' + '"' + escape(item.deletefield) + '"' + ','
-                deletefield.push({
-                    colname: item.deletefield
-                })
-            } else if (key == 'r_dbValue' || key == 'r_dspValue' || key == 'r_fieldname') {
-                data2 = {
-                    databasevalue: item.r_dbValue,
-                    displayvalue: item.r_dspValue,
-                    colname: item.r_fieldname,
-                    tableid: id,
-
-                }
-            } else if (key == 'c_dbValue' || key == 'c_dspValue' || key == 'c_fieldname') {
-                data3 = {
-                    databasevalue: item.c_dbValue,
-                    displayvalue: item.c_dspValue,
-                    colname: item.c_fieldname,
-                    tableid: id,
-                }
-            }
-
-        }
-
-        if (Object.keys(data).length != 0) {
-            fieldsData.push(data);
-        }
-        if (Object.keys(data1).length != 0) {
-            dropdownData.push(data1);
-        }
-        if (Object.keys(data2).length != 0) {
-            radioData.push(data2);
-        }
-        if (Object.keys(data3).length != 0) {
-            checkboxData.push(data3);
-        }
+    fieldsData.push({
+        fieldname: escape(req.body.colname),
+        label: escape(req.body.label),
+        fieldtype: req.body.type,
+        Konstraint: req.body.constraints,
+        tableid: id
     })
 
 
-    // console.log(deletefield, "DELETEFIELD");
-    // console.log(deleteColumn, "DELETE COLUMN");
 
     console.log(fieldsData, "FIELDSDATA")
-    console.log(dropdownData, "DROPDOWNDATA")
-    console.log(radioData, "RADIO DATA");
-    console.log(checkboxData, "CHECK BOX DATA");
+    console.log(optionData, "    optionData")
+
+
 
 
     fieldsData.forEach((item) => {
@@ -198,7 +161,6 @@ async function addColumn(req, res, id) {
         }
     })
 
-    // colquery = colquery + 'ADD COLUMN' + 'uid SERIAL' + ',';
 
     constraints = constraints.replace(/(^[,\s]+)|([,\s]+$)/g, '')
     colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
@@ -234,103 +196,17 @@ async function addColumn(req, res, id) {
         }
 
 
-        if (dropdownData.length != 0) {
-            console.log("333")
-
-            console.log(dropdownData, "DROP DOWN")
-
-            let dropdownQuery = squel
+        if (optionData && optionData.length > 0) {
+            let query = squel
                 .insert()
-                .into("dropdowntable")
-                .setFieldsRows(dropdownData)
-                .toString();
-            console.log(dropdownQuery, "QUERY");
-            let dropdownResult = await queryExecute(dropdownQuery);
-
-            console.log(dropdownResult, "dropdown")
-        }
-
-
-        if (radioData.length != 0) {
-            console.log("4444")
-
-            console.log(radioData, "radio")
-
-            let radioQuery = squel
-                .insert()
-                .into("radiotable")
-                .setFieldsRows(radioData)
+                .into(`${fieldtype}table`)
+                .setFieldsRows(optionData)
                 .toString();
 
-            let radioResult = await queryExecute(radioQuery);
+            let result = await queryExecute(query);
 
-            console.log(radioResult, "radio")
         }
 
-
-        if (checkboxData.length != 0) {
-            console.log("333")
-
-            console.log(checkboxData, "DROP DOWN")
-
-            let checkboxQuery = squel
-                .insert()
-                .into("checkboxtable")
-                .setFieldsRows(checkboxData)
-                .toString();
-            console.log(checkboxQuery, "QUERY");
-            let checkboxResult = await queryExecute(checkboxQuery);
-
-            console.log(checkboxResult, "checkbox")
-        }
-
-        if (deletefield.length != 0) {
-            console.log("5555")
-
-            deleteColumn = deleteColumn.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-
-            let deletequery = `ALTER TABLE "${tablename}" ${deleteColumn};`
-            console.log(deletequery, "query");
-            let deleteResult = await queryExecute(deletequery);
-
-            deletefield.forEach((item) => {
-                let query = squel
-                    .delete()
-                    .from("fieldstable")
-                    .where("fieldname= ?", item.colname)
-                    .where("tableid= ?", id)
-                    .toString();
-                let response5 = queryExecute(query);
-            })
-
-            deletefield.forEach((item) => {
-                let query = squel
-                    .delete()
-                    .from("dropdowntable")
-                    .where("colname= ?", item.colname)
-                    .where("tableid= ?", id)
-                    .toString();
-                let response5 = queryExecute(query);
-            })
-            deletefield.forEach((item) => {
-                let query = squel
-                    .delete()
-                    .from("radiotable")
-                    .where("colname= ?", item.colname)
-                    .where("tableid= ?", id)
-                    .toString();
-                let response5 = queryExecute(query);
-            })
-            deletefield.forEach((item) => {
-                let query = squel
-                    .delete()
-                    .from("checkboxtable")
-                    .where("colname= ?", item.colname)
-                    .where("tableid= ?", id)
-                    .toString();
-                let response5 = queryExecute(query);
-            })
-        }
         return fieldsDataResult;
 
     } catch (err) {
@@ -617,12 +493,26 @@ async function fetchFieldData(tableid, fieldid) {
 
     try {
         let response = await queryExecute(query);
+        let newArray = [];
 
         // console.log(response.rows);
 
-        // response.rows.forEach((item))
+        response.rows.forEach((item) => {
+            let datas = {};
 
-        return response.rows;
+            for (var key in item) {
+                if (item[key] != null) {
+                    datas[key] = unescape(item[key]);
+                }
+            }
+            newArray.push(datas);
+
+        })
+
+        console.log(newArray, "NEW ARRAY");
+
+        return newArray;
+        // return response.rows;
 
     } catch (err) {
         console.log(err);
@@ -631,6 +521,202 @@ async function fetchFieldData(tableid, fieldid) {
 
 }
 
+async function fieldEdit(req, table_id, field_id) {
+
+    console.log(table_id, "tableID");
+    console.log(field_id, "Field id");
+    console.log(req.body, "Body");
+
+    // let body = [req.body];
+    let colquery = '';
+
+    let optionList = [];
+    let optionData = [];
+
+    if (req.body.List && req.body.List.length > 0) {
+        optionList = req.body.List;
+    }
+
+    let new_fieldname = escape(req.body.colname);
+    let new_fieldtype;
+
+    if (req.body.type == 'dropdown' || req.body.type == 'radio') {
+        new_fieldtype = 'text';
+    } else if (req.body.type = 'checkbox') {
+        new_fieldtype = 'text[]';
+    } else {
+        new_fieldtype = req.body.type;
+    }
+
+    let new_label = req.body.label;
+    let new_konstraint = req.body.constraints;
+
+
+
+    if (optionList.length > 0) {
+
+        optionList.forEach((item) => {
+            optionData.push({
+                databasevalue: item.databaseValue,
+                displayvalue: item.displayValue,
+                colname: new_fieldname,
+                tableid: table_id,
+            })
+        })
+
+        console.log(optionList, "optionList");
+        console.log(optionData, "optionData");
+
+    }
+
+
+    let query = squel
+        .select()
+        .field("tablename")
+        .from("mastertable")
+        .where("id =?", table_id)
+        .toString();
+
+    let query1 = squel
+        .select()
+        .from("fieldstable")
+        .where("f_uid =?", field_id)
+        .toString();
+
+    let query4 = squel
+        .update()
+        .table("fieldstable")
+        .set("fieldname", new_fieldname)
+        .set("fieldtype", req.body.type)
+        .set("label", new_label)
+        .set("konstraint", new_konstraint)
+        .where("f_uid = ?", field_id)
+        .toString()
+
+
+    console.log(query4, "QUERY 4")
+
+
+    try {
+        let response = await queryExecute(query);
+        let response1 = await queryExecute(query1);
+        let tablename = unescape(response.rows[0].tablename);
+        let prv_fieldname = unescape(response1.rows[0].fieldname);
+        let prv_fieldtype = response1.rows[0].fieldtype;
+
+        let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}" SET DATA TYPE ${new_fieldtype};`
+        console.log(query2, "QUERY 2");
+        let response2 = await queryExecute(query2);
+        console.log(response2, "RESPONSE2");
+
+        if (prv_fieldname != new_fieldname) {
+            let query3 = `ALTER TABLE "${tablename}"  RENAME COLUMN "${prv_fieldname}" TO "${new_fieldname}"`
+            console.log(query3, "QUERY 3");
+            let response3 = await queryExecute(query3);
+            console.log(response3, "RESPONSE3");
+        }
+
+        if (new_konstraint == true) {
+            console.log(new_konstraint, "IN HERE");
+            let query5 = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${new_fieldname}")`
+            let response5 = await queryExecute(query5);
+        }
+
+
+        console.log(prv_fieldtype, "PREVIOUS FIELD TYPE");
+
+        if (prv_fieldtype == 'dropdown' || prv_fieldtype == 'radio' || prv_fieldtype == 'checkbox') {
+
+            let query6 = squel
+                .delete()
+                .from(`${prv_fieldtype}table`)
+                .where("tableid = ?", table_id)
+                .where("colname = ?", prv_fieldname)
+                .toString()
+
+            console.log(query6, "QUERY6");
+            let response6 = await queryExecute(query6);
+
+        }
+
+        if (optionData.length > 0) {
+            let query7 = squel
+                .insert()
+                .into(`${req.body.type}table`)
+                .setFieldsRows(optionData)
+                .toString();
+
+            console.log(query7, "QUERY7");
+
+            let response7 = await queryExecute(query7);
+        }
+
+
+        let response4 = await queryExecute(query4);
+
+        return response4;
+
+    } catch (err) {
+        console.log(err);
+        return Promise.reject(err)
+    }
+
+}
+
+
+async function fieldDelete(tableid, fieldid) {
+    console.log("HERE");
+
+    console.log(tableid, fieldid, "OOO");
+
+    let query = squel
+        .select()
+        .from("fieldstable")
+        .where("tableid =?", tableid)
+        .where("f_uid =?", fieldid)
+        .toString();
+    try {
+
+        let resp = await TableData(tableid);
+        let tablename = escape(resp[0].tablename);
+
+        let response = await queryExecute(query);
+
+        let fieldname = response.rows[0].fieldname;
+        let fieldtype = response.rows[0].fieldtype;
+
+        if (fieldtype == 'dropdown' || fieldtype == 'radio' || fieldtype == 'checkbox') {
+            let query1 = squel
+                .delete()
+                .from(`${fieldtype}table`)
+                .where("tableid =?", tableid)
+                .where("colname =?", fieldname)
+                .toString();
+
+            let response1 = await queryExecute(query1);
+        }
+
+        let query2 = squel
+            .delete()
+            .from("fieldstable")
+            .where("tableid =?", tableid)
+            .where("f_uid =?", fieldid)
+            .toString();
+
+        let response2 = await queryExecute(query2);
+
+        let query3 = `ALTER TABLE "${tablename}" DROP COLUMN IF EXISTS "${escape(fieldname)}" ; `
+        console.log(query3, "QUERY3");
+        let response3 = await queryExecute(query3);
+
+        return response3;
+
+    } catch (err) {
+        console.log(err);
+        return Promise.reject(err)
+    }
+
+}
 
 module.exports = {
     CreateTable: CreateTable,
@@ -643,7 +729,9 @@ module.exports = {
     addColumn: addColumn,
     editTableInfo: editTableInfo,
     check: check,
-    fetchFieldData: fetchFieldData
+    fetchFieldData: fetchFieldData,
+    fieldEdit: fieldEdit,
+    fieldDelete: fieldDelete
 }
 
 
@@ -659,6 +747,262 @@ module.exports = {
 
 
 
+
+
+// ADD COLUMN================
+
+// async function addColumn(req, res, id) {
+
+//     let fieldsData = [];
+//     let dropdownData = [];
+//     let colquery = '';
+//     let constraints = '';
+
+//     let deletefield = [];
+//     let deleteColumn = '';
+
+//     let radioData = [];
+//     let fieldstableQuery;
+
+//     let checkboxData = [];
+
+//     let query = squel
+//         .select()
+//         .from("mastertable")
+//         .where("id=?", id)
+//         .toString();
+
+
+//     console.log(req.body, "BODY");
+
+//     req.body.forEach((item) => {
+
+//         let data = {};
+//         let data1 = {};
+//         let data2 = {};
+//         let data3 = {};
+
+//         for (var key in item) {
+//             if (key == 'colname' || key == 'label' || key == 'type' || key == 'constraints') {
+//                 data = {
+//                     fieldname: escape(item.colname),
+//                     label: escape(item.label),
+//                     fieldtype: item.type,
+//                     Konstraint: item.constraints,
+//                     tableid: id
+//                 }
+//             } else if (key == 'dbValue' || key == 'dspValue' || key == 'fieldname') {
+//                 data1 = {
+//                     databasevalue: item.dbValue,
+//                     displayvalue: item.dspValue,
+//                     colname: item.fieldname,
+//                     tableid: id,
+
+//                 }
+//             }
+//             // else if (key == 'deletefield') {
+//             //     deleteColumn = deleteColumn + 'DROP COLUMN IF EXISTS' + ' ' + '"' + escape(item.deletefield) + '"' + ','
+//             //     deletefield.push({
+//             //         colname: item.deletefield
+//             //     })
+//             // } 
+//             else if (key == 'r_dbValue' || key == 'r_dspValue' || key == 'r_fieldname') {
+//                 data2 = {
+//                     databasevalue: item.r_dbValue,
+//                     displayvalue: item.r_dspValue,
+//                     colname: item.r_fieldname,
+//                     tableid: id,
+
+//                 }
+//             } else if (key == 'c_dbValue' || key == 'c_dspValue' || key == 'c_fieldname') {
+//                 data3 = {
+//                     databasevalue: item.c_dbValue,
+//                     displayvalue: item.c_dspValue,
+//                     colname: item.c_fieldname,
+//                     tableid: id,
+//                 }
+//             }
+
+//         }
+
+//         if (Object.keys(data).length != 0) {
+//             fieldsData.push(data);
+//         }
+//         if (Object.keys(data1).length != 0) {
+//             dropdownData.push(data1);
+//         }
+//         if (Object.keys(data2).length != 0) {
+//             radioData.push(data2);
+//         }
+//         if (Object.keys(data3).length != 0) {
+//             checkboxData.push(data3);
+//         }
+//     })
+
+
+//     // console.log(deletefield, "DELETEFIELD");
+//     // console.log(deleteColumn, "DELETE COLUMN");
+
+//     console.log(fieldsData, "FIELDSDATA")
+//     console.log(dropdownData, "DROPDOWNDATA")
+//     console.log(radioData, "RADIO DATA");
+//     console.log(checkboxData, "CHECK BOX DATA");
+
+
+//     fieldsData.forEach((item) => {
+//         if (item.Konstraint == 'true') {
+//             constraints = constraints + ' ' + escape(item.fieldname) + ',';
+//         }
+//         if (item.fieldtype == 'dropdown' || item.fieldtype == 'radio') {
+//             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + 'text' + ',';
+//         } else if (item.fieldtype == 'checkbox') {
+//             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + 'text[]' + ',';
+//         } else {
+//             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + item.fieldtype + ',';
+//         }
+//     })
+
+//     // colquery = colquery + 'ADD COLUMN' + 'uid SERIAL' + ',';
+
+//     constraints = constraints.replace(/(^[,\s]+)|([,\s]+$)/g, '')
+//     colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+//     if (fieldsData.length != 0) {
+//         fieldstableQuery = squel
+//             .insert()
+//             .into("fieldstable")
+//             .setFieldsRows(fieldsData)
+//             .toString();
+//     }
+
+//     try {
+//         let response = await queryExecute(query);
+//         let fieldsDataResult;
+//         let tablename = response.rows[0].tablename;
+//         console.log(tablename, "TABLENAME");
+
+//         if (fieldsData.length != 0) {
+//             console.log("1111")
+//             let query1 = `ALTER TABLE "${tablename}" ${colquery} ;`
+//             console.log(query1, "QUERY");
+//             let addColumnResult = await queryExecute(query1);
+//             fieldsDataResult = await queryExecute(fieldstableQuery);
+
+//         }
+
+//         if (constraints) {
+//             console.log("2222")
+//             let constraintQuery = `ALTER TABLE "${tablename}" ADD PRIMARY KEY (${constraints});`
+//             console.log(constraintQuery, "CONSTRAINT QUERY")
+//             let constraintResult = await queryExecute(constraintQuery);
+//         }
+
+
+//         if (dropdownData.length != 0) {
+//             console.log("333")
+
+//             console.log(dropdownData, "DROP DOWN")
+
+//             let dropdownQuery = squel
+//                 .insert()
+//                 .into("dropdowntable")
+//                 .setFieldsRows(dropdownData)
+//                 .toString();
+//             console.log(dropdownQuery, "QUERY");
+//             let dropdownResult = await queryExecute(dropdownQuery);
+
+//             console.log(dropdownResult, "dropdown")
+//         }
+
+
+//         if (radioData.length != 0) {
+//             console.log("4444")
+
+//             console.log(radioData, "radio")
+
+//             let radioQuery = squel
+//                 .insert()
+//                 .into("radiotable")
+//                 .setFieldsRows(radioData)
+//                 .toString();
+
+//             let radioResult = await queryExecute(radioQuery);
+
+//             console.log(radioResult, "radio")
+//         }
+
+
+//         if (checkboxData.length != 0) {
+//             console.log("333")
+
+//             console.log(checkboxData, "DROP DOWN")
+
+//             let checkboxQuery = squel
+//                 .insert()
+//                 .into("checkboxtable")
+//                 .setFieldsRows(checkboxData)
+//                 .toString();
+//             console.log(checkboxQuery, "QUERY");
+//             let checkboxResult = await queryExecute(checkboxQuery);
+
+//             console.log(checkboxResult, "checkbox")
+//         }
+
+//         // if (deletefield.length != 0) {
+//         //     console.log("5555")
+
+//         //     deleteColumn = deleteColumn.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+//         //     let deletequery = `ALTER TABLE "${tablename}" ${deleteColumn};`
+//         //     console.log(deletequery, "query");
+//         //     let deleteResult = await queryExecute(deletequery);
+
+//         //     deletefield.forEach((item) => {
+//         //         let query = squel
+//         //             .delete()
+//         //             .from("fieldstable")
+//         //             .where("fieldname= ?", item.colname)
+//         //             .where("tableid= ?", id)
+//         //             .toString();
+//         //         let response5 = queryExecute(query);
+//         //     })
+
+//         //     deletefield.forEach((item) => {
+//         //         let query = squel
+//         //             .delete()
+//         //             .from("dropdowntable")
+//         //             .where("colname= ?", item.colname)
+//         //             .where("tableid= ?", id)
+//         //             .toString();
+//         //         let response5 = queryExecute(query);
+//         //     })
+//         //     deletefield.forEach((item) => {
+//         //         let query = squel
+//         //             .delete()
+//         //             .from("radiotable")
+//         //             .where("colname= ?", item.colname)
+//         //             .where("tableid= ?", id)
+//         //             .toString();
+//         //         let response5 = queryExecute(query);
+//         //     })
+//         //     deletefield.forEach((item) => {
+//         //         let query = squel
+//         //             .delete()
+//         //             .from("checkboxtable")
+//         //             .where("colname= ?", item.colname)
+//         //             .where("tableid= ?", id)
+//         //             .toString();
+//         //         let response5 = queryExecute(query);
+//         //     })
+//         // }
+//         return fieldsDataResult;
+
+//     } catch (err) {
+//         console.log(err, "ERROR");
+
+//         return Promise.reject(err);
+//     }
+// }
 
 
 

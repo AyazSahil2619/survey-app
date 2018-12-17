@@ -86,6 +86,7 @@ async function addColumn(req, res) {
 
     try {
         let data = await repository.addColumn(req, res, id)
+
         res.status(200).json(data)
 
     } catch (err) {
@@ -132,6 +133,40 @@ async function fetchFieldData(req, res) {
     }
 }
 
+async function fieldEdit(req, res) {
+    const table_id = parseInt(req.params.tableid, 10);
+    const field_id = parseInt(req.params.fieldid, 10);
+
+    try {
+        let data = await repository.fieldEdit(req, table_id, field_id)
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
+
+async function fieldDelete(req, res) {
+    const table_id = parseInt(req.params.tableid, 10);
+    const field_id = parseInt(req.params.fieldid, 10);
+
+
+    try {
+        console.log("HERaaaaaaaaaaaaaE");
+
+        let data = await repository.fieldDelete(table_id, field_id)
+
+        console.log("HERaaaaaaaaaaaaaE");
+
+        res.status(200).json(data)
+
+    } catch (err) {
+        console.log(err, "!!!!!!!");
+        res.status(400).json(err);
+    }
+}
+
 
 module.exports = {
     CreateTable: CreateTable,
@@ -144,5 +179,7 @@ module.exports = {
     addColumn: addColumn,
     editTableInfo: editTableInfo,
     check: check,
-    fetchFieldData: fetchFieldData
+    fetchFieldData: fetchFieldData,
+    fieldEdit: fieldEdit,
+    fieldDelete: fieldDelete
 }

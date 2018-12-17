@@ -19,6 +19,7 @@ import { LogoutComponent } from './logout/logout.component';
 import { UserloginComponent } from './userlogin/userlogin.component';
 import { AddTableComponent } from './add-table/add-table.component';
 import { MessageService } from 'primeng/api';
+import { CalendarModule } from 'primeng/calendar';
 import { RoleGuard } from './role.guard';
 import { ViewTableComponent } from './view-table/view-table.component';
 import { AddDataComponent } from './add-data/add-data.component';
@@ -54,7 +55,7 @@ import { EditTableComponent } from './edit-table/edit-table.component';
     ToastModule,
     BrowserAnimationsModule,
     DataTablesModule,
-    
+    CalendarModule
   ],
   providers: [
     UserServiceService,

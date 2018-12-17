@@ -73,6 +73,8 @@ app.put('/editTable/:id', controller.editTable);
 app.put('/editTableInfo/:id', controller.editTableInfo);
 app.post('/checkTablenameforUpdate/:id', controller.check);
 app.get('/fields/:tableid/:fieldid', controller.fetchFieldData);
+app.put('/fieldEdit/:tableid/:fieldid', controller.fieldEdit);
+app.delete('/fieldDelete/:tableid/:fieldid', controller.fieldDelete)
 
 
 

@@ -39,13 +39,14 @@
             <td *ngIf="x.fieldtype == 'checkbox'">
               <ng-container *ngFor="let y of checkboxList;let i = index">
                 <ng-container *ngIf="y.colname == x.fieldname">
-                  <input type="checkbox" name="{{i}}{{x.fieldname}}" [(ngModel)]="data[x.fieldname][y.dspValue]"> {{y.dspValue}}<br>
+                  <input type="checkbox" name="{{i}}{{x.fieldname}}" [(ngModel)]="data[x.fieldname][y.dspValue]">
+                  {{y.dspValue}}<br>
                 </ng-container>
               </ng-container>
             </td>
             <td *ngIf="x.fieldtype == 'date'">
-              <input name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
-                required>
+              <!-- <p-calendar name="name3{{x.fieldname}}" [(ngModel)]="data[x.fieldname]"></p-calendar> -->
+              <input name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]" required>
               <span class="error" *ngIf="!name3.valid && name3.dirty">{{x.fieldname}} is required!</span>
 
             </td>

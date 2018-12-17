@@ -21,18 +21,39 @@
           <td>
             <a type="button" class="btn btn-warning btn-sm btnclr" (click)="updatefield(editFieldTemplate,object.f_uid)"><i
                 class='fa fa-edit'></i></a>
-            <a type="button" class="btn btn-danger btn-sm btnclr" (click)="deletefield(object.colname)"><i class='fa fa-close'></i></a>
+            <!-- <a type="button" class="btn btn-danger btn-sm btnclr" (click)="deletefield(object.colname)"><i class='fa fa-close'></i></a> -->
+            <a type="button" class="btn btn-danger btn-sm btnclr" (click)="deleteModal(templatedelete,object.f_uid)"><i
+                class='fa fa-close'></i></a>
           </td>
         </tr>
       </table>
     </div>
-    <div class="card-footer">
+    <!-- <div class="card-footer">
       <a type="button" class="btn btn-warning" (click)="save()">Save</a>
-    </div>
+    </div> -->
   </div>
 </div>
 
 <p-toast position="top-right"></p-toast>
+
+
+
+<ng-template #templatedelete>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Delete</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Do you want to delete this field ?
+  </div>
+  <div class="modal-footer">
+    <a type="button" class="btn btn-primary btn-sm " (click)="confirm()">Confirm</a>
+    <a type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>
+  </div>
+</ng-template>
+
 
 
 <ng-template #addFieldTemplate>
@@ -71,11 +92,11 @@
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right" (click)="addDropdown()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right" (click)="add()"><i class='fas fa-plus-circle'></i></a><br><br>
               <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
               <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="dropdownList">
-                <div *ngFor="let dropdown of dropdownList.controls; let i=index">
+              <div formArrayName="arrayList">
+                <div *ngFor="let dropdown of arrayList.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
@@ -88,11 +109,11 @@
             <br>
             <div class="col-md-12" *ngIf="isRadio">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right" (click)="addRadio()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right" (click)="add()"><i class='fas fa-plus-circle'></i></a><br><br>
               <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
               <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="radioList">
-                <div *ngFor="let radio of radioList.controls; let i=index">
+              <div formArrayName="arrayList">
+                <div *ngFor="let radio of arrayList.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
@@ -105,11 +126,11 @@
             <br>
             <div class="col-md-12" *ngIf="isCheckbox">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right" (click)="addCheckbox()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right" (click)="add()"><i class='fas fa-plus-circle'></i></a><br><br>
               <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
               <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="checkboxList">
-                <div *ngFor="let checkbox of checkboxList.controls; let i=index">
+              <div formArrayName="arrayList">
+                <div *ngFor="let checkbox of arrayList.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
@@ -169,7 +190,7 @@
             </div>
             <div class="col-md-12">
               <label>Field type <span class='asteriskcolor'>*</span></label>
-              <select type="text" class="form-control" formControlName="type" (change)="onSelect()" required>
+              <select type="text" class="form-control" formControlName="type" (change)="onSelect1()" required>
                 <option value="text">Text</option>
                 <option value="integer">Number</option>
                 <option value="bigint">Big Number</option>
@@ -183,11 +204,11 @@
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right" (click)="addDropdown1()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right" (click)="addSuggestion()"><i class='fas fa-plus-circle'></i></a><br><br>
               <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
               <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="dropdownList1">
-                <div *ngFor="let dropdown of dropdownList1.controls; let i=index">
+              <div formArrayName="List">
+                <div *ngFor="let dropdown of List.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
@@ -200,11 +221,11 @@
             <br>
             <div class="col-md-12" *ngIf="isRadio">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right" (click)="addRadio()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right" (click)="addSuggestion()"><i class='fas fa-plus-circle'></i></a><br><br>
               <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
               <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="radioList">
-                <div *ngFor="let radio of radioList.controls; let i=index">
+              <div formArrayName="List">
+                <div *ngFor="let radio of List.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
@@ -217,11 +238,11 @@
             <br>
             <div class="col-md-12" *ngIf="isCheckbox">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right" (click)="addCheckbox()"><i class='fas fa-plus-circle'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right" (click)="addSuggestion()"><i class='fas fa-plus-circle'></i></a><br><br>
               <label for="databasevalue">Database Value <span class="asteriskcolor">*</span></label>
               <label class="labels" id="displayvalue">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="checkboxList">
-                <div *ngFor="let checkbox of checkboxList.controls; let i=index">
+              <div formArrayName="List">
+                <div *ngFor="let checkbox of List.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;

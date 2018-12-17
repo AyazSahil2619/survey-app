@@ -229,20 +229,22 @@ async function getdetails(tableid, uid) {
             newArray.push(datas);
         });
 
+        console.log(newArray, "NEW ARRAY");
+
         newArray.forEach((item, index) => {
             for (var key in item) {
-                if (typeof item[key] == 'object') {
+                if (item[key] && typeof item[key] == 'object' && item[key].length != undefined) {
+                    console.log("IN HERE")
                     let data = {};
                     for (let i = 0; i < item[key].length; i++) {
 
                         data[item[key][i]] = true;
                     }
                     item[key] = data;
-                    // finalArray.push(data);
                 }
             }
         })
-        // console.log(finalArray, "Final ARRAY")
+
         console.log(newArray, "getdetails");
 
         return newArray;

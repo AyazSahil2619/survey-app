@@ -36,6 +36,7 @@ export class UserServiceService {
   }
 
   addColumn(tableid, data): Observable<any> {
+    console.log(tableid, data);
     return this._http.put('http://192.1.200.134:8080/addColumn/' + tableid, data, { withCredentials: true })
   }
 
@@ -81,7 +82,6 @@ export class UserServiceService {
   }
 
   editTable(tableid, newColumnDetails) {
-    console.log(newColumnDetails, "NEW COLUMN DETAILS");
     return this._http.put('http://192.1.200.134:8080/editTable/' + tableid, newColumnDetails, { withCredentials: true })
   }
   fetchddValue(tableid) {
@@ -98,6 +98,13 @@ export class UserServiceService {
   }
   fetchFieldData(tableid, field_id) {
     return this._http.get('http://192.1.200.134:8080/fields/' + tableid + '/' + field_id, { withCredentials: true });
+  }
+  editColumn(tableid, field_id, data): Observable<any> {
+    console.log(tableid, data);
+    return this._http.put('http://192.1.200.134:8080/fieldEdit/' + tableid + '/' + field_id, data, { withCredentials: true })
+  }
+  deleteField(tableid, field_id): Observable<any> {
+    return this._http.delete('http://192.1.200.134:8080/fieldDelete/' + tableid + '/' + field_id, { withCredentials: true })
   }
 }
 
