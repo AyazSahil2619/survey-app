@@ -233,7 +233,7 @@ async function getdetails(tableid, uid) {
 
         newArray.forEach((item, index) => {
             for (var key in item) {
-                if (item[key] && typeof item[key] == 'object' && item[key].length != undefined) {
+                if (item[key] && typeof item[key] == 'object' && item[key].length != undefined ) {
                     console.log("IN HERE")
                     let data = {};
                     for (let i = 0; i < item[key].length; i++) {

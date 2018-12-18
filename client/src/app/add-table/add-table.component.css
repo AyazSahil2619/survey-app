@@ -13,5 +13,12 @@
 .card {
   padding-left: 0 !important;
   padding-right: 0 !important;
+  /* margin-top: 75px; */
 }
 
+.background_img {
+  background-image: url('../image/signbg.jpg');
+  background-size: cover;
+  height: 100vh;
+  color: black;
+}

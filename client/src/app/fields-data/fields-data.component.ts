@@ -206,6 +206,11 @@ export class FieldsDataComponent implements OnInit {
   }
 
 
+  minus(index) {
+    console.log(index, "OOO");
+    this.arrayList.removeAt(index);
+  }
+
   add() {
     this.arrayList.push(this._fb.group({
       databaseValue: '',
@@ -220,6 +225,11 @@ export class FieldsDataComponent implements OnInit {
       displayValue: ''
     }));
 
+  }
+
+  minus1(index) {
+    console.log(index, "OOO");
+    this.List.removeAt(index);
   }
 
 
@@ -295,9 +305,9 @@ export class FieldsDataComponent implements OnInit {
     this._userService.fetchFieldData(this.table_id, field_id).subscribe((response) => {
       let info: any = response;
 
-      console.log(info,"INFOOOOOOOOOO");
-
-      info.forEach(element => {
+      console.log(info, "INFOOOOOOOOOO");
+      this.ListToEdit = [];
+      info.forEach((element) => {
         for (var key in element) {
           if (key == 'fieldname' || key == 'label' || key == 'fieldtype' || key == 'konstraint') {
             this.fieldForm.setValue({
@@ -327,7 +337,7 @@ export class FieldsDataComponent implements OnInit {
         }
       });
 
-      console.log(this.ListToEdit,this.ListToEdit.length, "LLL");
+      console.log(this.ListToEdit, this.ListToEdit.length, "LLLlllllllllll");
 
       if (this.ListToEdit.length > 0) {
         this.fieldForm.addControl('List', this._fb.array([]));
@@ -337,6 +347,8 @@ export class FieldsDataComponent implements OnInit {
             displayValue: item.displayvalue
           }));
         });
+        console.log(this.List, "111111111");
+
 
         if (this.fieldtype == 'dropdown') {
           this.isDropdown = true;
@@ -420,19 +432,28 @@ export class FieldsDataComponent implements OnInit {
 
   editCancel() {
 
-    this.modalRef.hide();
-    this.fieldForm.reset();
-    this.constraints.setValue('false');
-    this.isDropdown = false;
-    this.isRadio = false;
-
     const control = <FormArray>this.fieldForm.controls['List'];
-    console.log(control, 'control');
+
     if (control) {
       while (control.length !== 0) {
         control.removeAt(0);
       }
     }
+
+    console.log("inhere");
+    this.constraints.setValue('false');
+    this.isDropdown = false;
+    this.isRadio = false;
+    this.isCheckbox = false;
+    this.fieldForm.removeControl('List');
+    this.fieldForm.reset();
+
+
+    console.log(this.List, this.fieldForm.value, "")
+
+    this.fieldForm.reset();
+    this.modalRef.hide();
+
 
   }
 

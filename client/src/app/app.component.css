@@ -3,17 +3,21 @@ nav a {
   text-decoration: none;
   margin-top: 10px;
   display: inline-block;
-  background-color:  #039be5;
+  background-color: #177d6b;
   border-radius: 4px;
 }
 
-nav a:visited, a:link {
-  color: #080808;
+nav a:visited,
+a:link {
+  color: #f3e7e7;
 }
+
 nav a:hover {
-  color: #039be5;
+  color: #e20e0e;
   background-color: #e3e8eb;
 }
-nav{
-      background-color:  #039be5; 
-  }
+
+nav {
+  background-color: #177d6b;
+  padding: 2px
+}

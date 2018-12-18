@@ -46,8 +46,8 @@ import { EditTableComponent } from './edit-table/edit-table.component';
     EditTableComponent,
   ],
   imports: [
-    ModalModule.forRoot(),
     BrowserModule,
+    ModalModule.forRoot(),
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,

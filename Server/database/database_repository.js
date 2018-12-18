@@ -542,7 +542,7 @@ async function fieldEdit(req, table_id, field_id) {
 
     if (req.body.type == 'dropdown' || req.body.type == 'radio') {
         new_fieldtype = 'text';
-    } else if (req.body.type = 'checkbox') {
+    } else if (req.body.type == 'checkbox') {
         new_fieldtype = 'text[]';
     } else {
         new_fieldtype = req.body.type;
@@ -551,7 +551,7 @@ async function fieldEdit(req, table_id, field_id) {
     let new_label = req.body.label;
     let new_konstraint = req.body.constraints;
 
-
+    console.log(new_fieldtype, "LLL");
 
     if (optionList.length > 0) {
 
@@ -604,7 +604,7 @@ async function fieldEdit(req, table_id, field_id) {
         let prv_fieldname = unescape(response1.rows[0].fieldname);
         let prv_fieldtype = response1.rows[0].fieldtype;
 
-        let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}" SET DATA TYPE ${new_fieldtype};`
+        let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}" SET DATA TYPE ${new_fieldtype} USING (${prv_fieldname} :: ${new_fieldtype});`
         console.log(query2, "QUERY 2");
         let response2 = await queryExecute(query2);
         console.log(response2, "RESPONSE2");

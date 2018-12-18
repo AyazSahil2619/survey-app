@@ -51,7 +51,6 @@ export class LoginComponent implements OnInit {
             { severity: 'error', summary: 'INVALID USERNAME OR PASSWORD' });
         } else {
           this._authService.sendToken(data.msg)
-
           console.log(data.msg, "SUCCESS");
           if (data.msg.role == 'admin') {
             this._router.navigate(['/adminlogin']);

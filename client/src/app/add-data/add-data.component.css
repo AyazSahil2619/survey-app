@@ -18,3 +18,11 @@
 .card-body {
   padding: 0;
 }
+
+.background_img{
+  background-image: url('../image/signbg.jpg');
+  background-size: cover;
+  background-repeat: repeat;
+  height: 100vh;
+  color: black;
+}

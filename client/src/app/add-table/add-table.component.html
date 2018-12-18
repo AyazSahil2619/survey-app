@@ -87,37 +87,31 @@
 
 
 
-
-
-
-
-
-
-
-
-<div class="container-fluid">
-  <div style="margin-top: 75px" class="card col-md-8 offset-md-2 text-black bg-light mb-3">
-    <div class="card-header">
-      <h3>Survey Details</h3>
-    </div>
-    <div class="card-body">
-      <form #tableForm="ngForm" (ngSubmit)="create()" novalidate>
-        <div class="form-group">
-          <label><b>Survey name <span class='asteriskcolor'>*</span></b></label>
-          <input type="text" name="tablename" class="form-control" id="tablename" [(ngModel)]="TableInfo.tablename"
-            #name="ngModel" required>
-          <span class="error" *ngIf="!name.valid && name.dirty">Table name is required!</span>
-        </div>
-        <div class="form-group">
-          <label><b>Description <span class='asteriskcolor'>*</span></b></label>
-          <input type="text" name="description" class="form-control" id="description" [(ngModel)]="TableInfo.description"
-            #desc="ngModel" required>
-          <span class="error" *ngIf="!desc.valid && desc.dirty">Description is required!</span>
-        </div>
-        <div class="card-footer">
-          <br><button class="btn btn-primary btn-sm float-right" [disabled]="!tableForm.form.valid" type="submit">Submit</button>
-        </div>
-      </form>
+<div class="background_img">
+  <div style="padding: 75px" class="container-fluid">
+    <div class="card col-md-8 offset-md-2 text-black bg-light mb-3">
+      <div class="card-header">
+        <h3>Survey Details</h3>
+      </div>
+      <div class="card-body">
+        <form #tableForm="ngForm" (ngSubmit)="create()" novalidate>
+          <div class="form-group">
+            <label><b>Survey name <span class='asteriskcolor'>*</span></b></label>
+            <input type="text" name="tablename" class="form-control" id="tablename" [(ngModel)]="TableInfo.tablename"
+              #name="ngModel" required>
+            <span class="error" *ngIf="!name.valid && name.dirty">Table name is required!</span>
+          </div>
+          <div class="form-group">
+            <label><b>Description <span class='asteriskcolor'>*</span></b></label>
+            <input type="text" name="description" class="form-control" id="description" [(ngModel)]="TableInfo.description"
+              #desc="ngModel" required>
+            <span class="error" *ngIf="!desc.valid && desc.dirty">Description is required!</span>
+          </div>
+          <div class="card-footer">
+            <br><button class="btn btn-primary btn-sm float-right" [disabled]="!tableForm.form.valid" type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>

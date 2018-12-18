@@ -1,7 +1,14 @@
-.asteriskcolor{
-    color: red;
+.asteriskcolor {
+  color: red;
 }
 
-.error{
-    color:red
+.error {
+  color: red
+}
+
+.background_img {
+  background-image: url('../image/signbg.jpg');
+  background-size: cover;
+  height: 100vh;
+  color: black;
 }
