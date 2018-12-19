@@ -80,17 +80,18 @@
 
 
 
-
-<div class="container">
+<app-navbar>
+  <div class="container">
     <div class="card col-md-8 offset-md-2 text-black bg-light mb-3">
       <div class="card-body">
         <button class="btn btn-secondary float-right" (click)="addNewColumn()">Add Column</button><br><br>
-  
+
         <form (ngSubmit)="onSubmit()" novalidate>
           <div *ngFor="let i of tableinfo">
             <div class="form-group">
               <label><b>Table name </b><span class='asteriskcolor'>*</span></label>
-              <input type="text" class="form-control" id="tablename" [(ngModel)]="i.tablename" name="tablename" required>
+              <input type="text" class="form-control" id="tablename" [(ngModel)]="i.tablename" name="tablename"
+                required>
             </div>
             <div class="form-group">
               <label><b>Description </b><span class='asteriskcolor'>*</span></label>
@@ -122,8 +123,8 @@
               </div>
               <div class="col-md-6" *ngIf="column.type != 'dropdown'">
                 <label><b>Primary Key </b></label>
-                <input type="checkbox" class="form-control" #constraints="ngModel" [(ngModel)]="column.constraints" name="constraints{{i}}"
-                  readonly><br>
+                <input type="checkbox" class="form-control" #constraints="ngModel" [(ngModel)]="column.constraints"
+                  name="constraints{{i}}" readonly><br>
               </div>
               <div class="col-md-12">
                 <label><b>Label </b><span class='asteriskcolor'>*</span></label>
@@ -157,6 +158,7 @@
       </div>
     </div>
   </div>
+</app-navbar>
 
 
 

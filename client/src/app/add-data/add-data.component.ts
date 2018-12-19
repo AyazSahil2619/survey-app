@@ -46,6 +46,8 @@ export class AddDataComponent implements OnInit {
     time: Date(),
   };
 
+  selectedvalues: string[] = ['Technology'];
+
 
   ngOnInit() {
     this.insert();
@@ -145,7 +147,7 @@ export class AddDataComponent implements OnInit {
             this.data[this.checkboxList[index].colname] = {};
             // this.data1.push(item.displayvalue);
           });
-        
+
           console.log(this.data);
           console.log(this.checkboxList, "checkboxList");
           this.test = new Array(this.checkboxList.length);

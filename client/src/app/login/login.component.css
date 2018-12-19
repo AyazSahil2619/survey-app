@@ -8,6 +8,7 @@
 
 .login_background {
   background-image: url('../image/pexels-photo-207301.jpeg');
+  /* background-color: blanchedalmond; */
   background-size: cover;
   height: 100vh;
   color: black;

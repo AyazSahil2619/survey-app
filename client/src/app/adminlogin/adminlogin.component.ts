@@ -32,6 +32,11 @@ export class AdminloginComponent implements OnInit {
   dtTrigger = new Subject();
   modalRef: BsModalRef;
   tableToDelete: any;
+  visibleSidebar2: any = false;
+
+  opensidebar(){
+    this.visibleSidebar2 = true;
+  }
 
   constructor(
     private _authService: AuthService,

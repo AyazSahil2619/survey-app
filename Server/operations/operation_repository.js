@@ -50,7 +50,7 @@ async function addDataToTable(req, res, id) {
     let colquery = '';
     let values = '';
 
-    let checkboxValue = req.body.checkboxData;
+    // let checkboxValue = req.body.checkboxData;
 
 
     let query1 = squel

@@ -1,20 +1,35 @@
 <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU'
   crossorigin='anonymous'>
+<p-toast position="top-right"></p-toast>
+<router-outlet></router-outlet>
+
+
+
+
+
+
+
+<!-- <div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" (click)="closeNav()">&times;</a>
+  <a routerLink="/adminlogin">About</a>
+  <a routerLink="/adminlogin">Services</a>
+  <a routerLink="/adminlogin">Clients</a>
+  <a routerLink="/adminlogin">Contact</a>
+</div>
 
 <nav class="navbar">
   <ul class="nav">
+
+    <a *ngIf="auth.isLoggednIn()" (click)="opensidebar()"><i class="fa fa-bars fa-3" aria-hidden="true"></i></a>
     <a *ngIf="!auth.isLoggednIn()" routerLink="/registration">Registration</a>
     <a *ngIf="!auth.isLoggednIn()" routerLink="/login">Login</a>
     <a *ngIf="auth.isRole() == 'admin'" routerLink="/adminlogin">Home</a>
     <a *ngIf="auth.isRole() == 'user'" routerLink="/userlogin">Home</a>
   </ul>
   <ul *ngIf="auth.isLoggednIn()" class="my-2 my-sm-0 dropdown">
-    <a style="margin-top: -20px" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{auth.getToken()}}</a>
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+      aria-expanded="false">{{auth.getToken()}}</a>
     <div style="text-align: center" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-      <!-- <h6 class="dropdown-header">User Avatar</h6>
-      <div class="dropdown-item" style="text-align: center">
-      </div> -->
       <div class="dropdown-divider"></div>
       <p class="dropdown-item">Type - {{auth.isRole()}}</p>
       <div class="dropdown-divider"></div>
@@ -23,7 +38,71 @@
       </div>
     </div>
   </ul>
-  <!-- <a class="my-2 my-sm-0" *ngIf="auth.isLoggednIn()" routerLink="/logout">LogOut</a> -->
+  <a class="my-2 my-sm-0" *ngIf="auth.isLoggednIn()" routerLink="/logout">LogOut</a>
 </nav>
-<p-toast position="top-right"></p-toast>
-<router-outlet></router-outlet>
+
+<div id="main">
+  <span style="font-size:30px;cursor:pointer" (click)="openNav()">&#9776;</span>
+  <ng-content></ng-content>
+</div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <p-sidebar [(visible)]="visibleSidebar2" position="left" [baseZIndex]="0">
+  <h1>Survey-App</h1>
+  <li>
+    <h4><a (click)="visibleSidebar2 = false" routerLink="/adminlogin" aria-expanded="false"><i class="fas fa-home fa-4"></i>
+        Home</a></h4>
+  </li>
+  <li>
+    <h4><a (click)="visibleSidebar2 = false" routerLink="/about" aria-expanded="false"><i class="fas fa-briefcase fa-4"></i>
+        About</a></h4>
+  </li>
+</p-sidebar> -->

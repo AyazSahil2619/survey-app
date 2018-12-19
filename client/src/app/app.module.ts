@@ -5,6 +5,9 @@ import { ToastModule } from 'primeng/toast';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DataTablesModule } from 'angular-datatables';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { CheckboxModule } from 'primeng/checkbox';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { SidebarModule } from 'primeng/sidebar';
 
 import { AppComponent } from './app.component';
 import { RegistrationComponent } from './registration/registration.component';
@@ -27,6 +30,8 @@ import { UpdateDataComponent } from './update-data/update-data.component';
 import { TableEditComponent } from './table-edit/table-edit.component';
 import { FieldsDataComponent } from './fields-data/fields-data.component';
 import { EditTableComponent } from './edit-table/edit-table.component';
+import { AboutComponent } from './about/about.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 
 @NgModule({
@@ -44,6 +49,8 @@ import { EditTableComponent } from './edit-table/edit-table.component';
     TableEditComponent,
     FieldsDataComponent,
     EditTableComponent,
+    AboutComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,7 +62,11 @@ import { EditTableComponent } from './edit-table/edit-table.component';
     ToastModule,
     BrowserAnimationsModule,
     DataTablesModule,
-    CalendarModule
+    CalendarModule,
+    CheckboxModule,
+    RadioButtonModule,
+    SidebarModule
+
   ],
   providers: [
     UserServiceService,
