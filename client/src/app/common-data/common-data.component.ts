@@ -1,35 +1,43 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { UserServiceService } from '../user-service.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { UserServiceService } from '../user-service.service';
+import { CheckboxModule } from 'primeng/checkbox';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
-import { Subject } from 'rxjs';
-
 @Component({
-  selector: 'app-update-data',
-  templateUrl: './update-data.component.html',
-  styleUrls: ['./update-data.component.css']
+  selector: 'app-common-data',
+  templateUrl: './common-data.component.html',
+  styleUrls: ['./common-data.component.css']
 })
-export class UpdateDataComponent implements OnInit {
+export class CommonDataComponent implements OnInit {
 
-  public onClose: Subject<boolean>;
-  modalRef: BsModalRef;
-
-  constructor(private _route: ActivatedRoute,
-    private _router: Router,
+  constructor(private route: ActivatedRoute,
+    private router: Router,
+    private _userService: UserServiceService,
     private Toast: ToastModule,
     private messageService: MessageService,
-    private _userService: UserServiceService,
-    private modalService: BsModalService
-  ) { }
+    private modalService: BsModalService) { }
+  table_id = this.route.snapshot.params['id'];
+  colinfo1: Object[] = [];
+  ddinfo1: Object[] = [];
+  radioList: Object[] = [];
+  checkboxList: any = [];
+  data: any = {};
+  data1: Object = {};
+  selectedValues: string[] = [];
+
+  test;
+  modifiedUser = {
+    user: localStorage.getItem("LoggedInUser"),
+    time: Date(),
+  };
 
   ngOnInit() {
-    this.ColumnData();
-    this.DataInfo();
+    this.insert();
     this.ddinfo();
     this.radioInfo();
     this.checkboxInfo();
@@ -37,23 +45,8 @@ export class UpdateDataComponent implements OnInit {
 
   }
 
-  ddinfo1: any = [];
-  colinfo1: Object[] = [];
-  radioList: Object[] = [];
-  data = {};
-  data1: Object = {};
-
-  checkboxList: any = [];
-
-  table_id = this._route.snapshot.params['tableid'];
-  row_id = this._route.snapshot.params['rowid'];
-
-  // table_id: Number;
-  // row_id: Number;
-
-  ColumnData() {
-    console.log(this.table_id, "111")
-    console.log(this.row_id, "000")
+  insert() {
+    console.log("ADDING ROW IN TABLE", this.table_id);
 
     this._userService.getById(this.table_id)
       .subscribe((response) => {
@@ -67,29 +60,24 @@ export class UpdateDataComponent implements OnInit {
             })
           }
         });
-        console.log(this.colinfo1, "colinfo1");
-      }, (errResponse) => {
-        console.error(errResponse, 'Error while fetching field data ');
-      }
-      );
-  }
-  DataInfo() {
-    this._userService.dataToEdit(this.table_id, this.row_id)
-      .subscribe((response) => {
-        this.data = response[0];
-        console.log(this.data, "data");
+        // for display table id in frontend
+        // this.id = response[0].tableid;
 
-      }, ((errResponse) => {
-        console.log(errResponse, "Error while fetching data ");
-      }))
+      },
+        function (errResponse) {
+
+          console.error(errResponse,'Error while fetching field data ');
+        }
+      );
   }
 
   ddinfo() {
     this._userService.fetchddValue(this.table_id)
       .subscribe((response) => {
         if (response) {
+
           let ddinfo: any = response;
-          // console.log(ddinfo, "11212")
+          console.log(ddinfo, "11212")
           ddinfo.forEach((item, index) => {
             this.ddinfo1.push({
               dbValue: item.databasevalue,
@@ -97,17 +85,16 @@ export class UpdateDataComponent implements OnInit {
               colname: item.colname
             })
           });
-          console.log(this.ddinfo1, "ddinfo1");
+          // console.log(this.ddinfo1, "ddinfo1");
         } else {
           console.log(response);
         }
       },
         function (errResponse) {
-          console.error('Error while fetching dropdown data ');
+          console.error(errResponse,'Error while fetching dropdown data ');
         }
       );
   }
-
 
   radioInfo() {
     this._userService.fetchradioValue(this.table_id)
@@ -127,7 +114,7 @@ export class UpdateDataComponent implements OnInit {
         }
       },
         function (errResponse) {
-          console.error('Error while fetching dropdown data ');
+          console.error(errResponse,'Error while fetching dropdown data ');
         }
       );
   }
@@ -136,6 +123,7 @@ export class UpdateDataComponent implements OnInit {
     this._userService.fetchcheckboxValue(this.table_id)
       .subscribe((response) => {
         if (response) {
+          // console.log(response, "111111111111111111");
           let checkboxValue: any = response;
           checkboxValue.forEach((item, index) => {
             this.checkboxList.push({
@@ -143,8 +131,13 @@ export class UpdateDataComponent implements OnInit {
               dspValue: item.displayvalue,
               colname: item.colname
             })
+            this.data[this.checkboxList[index].colname] = {};
+            // this.data1.push(item.displayvalue);
           });
+
+          console.log(this.data);
           console.log(this.checkboxList, "checkboxList");
+          this.test = new Array(this.checkboxList.length);
         } else {
           console.log(response);
         }
@@ -155,40 +148,26 @@ export class UpdateDataComponent implements OnInit {
       );
   }
 
-  modifiedUser = {
-    user: localStorage.getItem("LoggedInUser"),
-    time: Date(),
-  };
-
   onCancel() {
-    this._router.navigate(['/viewTable/' + this.table_id]);
+    this.router.navigate(['/viewTable/' + this.table_id]);
   }
 
-  updateData() {
-    console.log(this.data, "11");
-    console.log(this.data1, "2211");
 
-    this._userService.tableRowEdit(this.table_id, this.data)
+  submit() {
+    console.log(this.data, "data");
+
+    this._userService.insertData(this.table_id, this.data)
       .subscribe((response) => {
-        this._userService.modified(this.table_id, this.modifiedUser)
-          .subscribe((response) => {
-            this.messageService.add(
-              { severity: 'success', detail: 'Success', summary: 'Row Updated Successfully !!' });
-            this._router.navigate(['/viewTable/' + this.table_id]);
-            // this.onClose.next(true);
-
-          }, (errResponse) => {
-            console.log(errResponse, 'Error while modifying')
-          })
+        console.log("Row added successfully");
+        this.router.navigate(['/viewTable/' + this.table_id]);
+        this.messageService.add(
+          { severity: 'success', detail: 'Success', summary: 'Data Added Successfully' });
       }, (errResponse) => {
-        console.log(errResponse);
-
-        this.onClose.next(false);
+        console.log(errResponse, "Error in adding row in table");
 
         this.messageService.add(
-          { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });
-        console.error(errResponse, 'Error while updating data.');
-      });
+          { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
+      })
   }
 
 }

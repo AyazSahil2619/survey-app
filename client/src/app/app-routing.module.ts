@@ -18,12 +18,13 @@ import { TableEditComponent } from './table-edit/table-edit.component';
 import { FieldsDataComponent } from './fields-data/fields-data.component';
 import { EditTableComponent } from './edit-table/edit-table.component';
 import { AboutComponent } from './about/about.component';
+import { PreventGuardGuard } from './prevent-guard.guard';
+import { CommonDataComponent } from './common-data/common-data.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'home', redirectTo: 'adminlogin' },
-  { path: 'registration', component: RegistrationComponent },
-  { path: 'login', component: LoginComponent },
+  { path: 'registration', component: RegistrationComponent, canActivate: [PreventGuardGuard] },
+  { path: 'login', component: LoginComponent, canActivate: [PreventGuardGuard] },
   { path: 'adminlogin', component: AdminloginComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
   { path: 'createTable', component: AddTableComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
   { path: 'logout', component: LogoutComponent, canActivate: [AuthGuard] },
@@ -35,6 +36,8 @@ const routes: Routes = [
   { path: 'manage/:tableid', component: FieldsDataComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
   { path: 'editTable/:tableid', component: EditTableComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
   { path: 'about', component: AboutComponent, canActivate: [AuthGuard] },
+  { path: 'insert/:tableid?token', component: CommonDataComponent },
+  { path: '**', redirectTo: 'login', pathMatch: 'full' }
 ];
 
 @NgModule({

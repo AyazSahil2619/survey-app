@@ -19,10 +19,14 @@
   padding: 0;
 }
 
-.background_img{
+.background_img {
   background-image: url('../image/signbg.jpg');
   background-size: cover;
   background-repeat: repeat;
-  height: 100vh;
+  height: 150vh;
   color: black;
+}
+
+.card-footer {
+  background-color: rgba(0,0,0,.03) !important
 }

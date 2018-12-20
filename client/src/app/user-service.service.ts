@@ -106,6 +106,10 @@ export class UserServiceService {
   deleteField(tableid, field_id): Observable<any> {
     return this._http.delete('http://192.1.200.134:8080/fieldDelete/' + tableid + '/' + field_id, { withCredentials: true })
   }
+  generateUrl(data): Observable<any> {
+    console.log(data, "DATA");
+    return this._http.post('http://192.1.200.134:8080/generateUrl', data, { withCredentials: true });
+  }
 }
 
 

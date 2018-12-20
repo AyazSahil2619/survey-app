@@ -153,16 +153,24 @@ async function fieldDelete(req, res) {
 
 
     try {
-        console.log("HERaaaaaaaaaaaaaE");
 
         let data = await repository.fieldDelete(table_id, field_id)
-
-        console.log("HERaaaaaaaaaaaaaE");
-
         res.status(200).json(data)
 
     } catch (err) {
         console.log(err, "!!!!!!!");
+        res.status(400).json(err);
+    }
+}
+
+
+async function generateUrl(req, res) {
+    
+        try {
+        let data = await repository.generateUrl(req)
+        res.status(200).json(data)
+
+    } catch (err) {
         res.status(400).json(err);
     }
 }
@@ -181,5 +189,6 @@ module.exports = {
     check: check,
     fetchFieldData: fetchFieldData,
     fieldEdit: fieldEdit,
-    fieldDelete: fieldDelete
+    fieldDelete: fieldDelete,
+    generateUrl: generateUrl
 }

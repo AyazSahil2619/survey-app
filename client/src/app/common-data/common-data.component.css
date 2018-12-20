@@ -1,0 +1,7 @@
+.background_img {
+  background-image: url('../image/signbg.jpg');
+  background-size: cover;
+  background-repeat: repeat;
+  height: 150vh;
+  color: black;
+}

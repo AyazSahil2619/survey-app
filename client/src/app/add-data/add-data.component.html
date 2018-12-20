@@ -1,6 +1,6 @@
 <div class="background_img">
   <app-navbar>
-    <div class="container">
+    <div class="container-fluid">
       <div class="card col-md-6 offset-md-3 text-black bg-light mb-3">
         <div class="card-header">
           <h3>Survey Data</h3>
@@ -63,7 +63,10 @@
                 </td>
             </table>
             <div class="card-footer">
-              <button class="btn btn-primary btn-sm" value="Submit">Submit</button>
+
+              <button class="btn btn-primary btn-sm" [disabled]="!F.form.valid" value="Submit">Submit</button>
+              <button style="margin-right: 10px" class="btn btn-warning btn-sm" (click)="onCancel()">Cancel</button>
+
             </div>
           </form>
         </div>

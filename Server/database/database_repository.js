@@ -718,6 +718,43 @@ async function fieldDelete(tableid, fieldid) {
 
 }
 
+
+
+async function generateUrl(req) {
+
+    console.log(req.body, "BODY");
+
+    let token = Math.random().toString(36).substr(2);
+    let user = req.body.user;
+    let tableid = req.body.tableid;
+
+    console.log(token, "TOKEN");
+
+    let query = squel
+        .insert()
+        .into('urltable')
+        .set("tableid", tableid)
+        .set("username", user)
+        .set("token", token)
+        .toString();
+
+    console.log(query, "QUERY");
+    try {
+
+        let result = await queryExecute(query);
+
+        return token;
+
+    } catch (err) {
+
+        console.log(err, "ERRORRRRR");
+        return Promise.reject(err);
+    }
+
+}
+
+
+
 module.exports = {
     CreateTable: CreateTable,
     viewTable: viewTable,
@@ -731,7 +768,8 @@ module.exports = {
     check: check,
     fetchFieldData: fetchFieldData,
     fieldEdit: fieldEdit,
-    fieldDelete: fieldDelete
+    fieldDelete: fieldDelete,
+    generateUrl: generateUrl
 }
 
 

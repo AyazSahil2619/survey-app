@@ -16,8 +16,10 @@
                 #desc="ngModel" required>
               <span class="error" *ngIf="!desc.valid && desc.dirty">Description is required!</span>
             </div>
-            <br><button class="btn btn-primary float-right" [disabled]="!tableForm.form.valid" type="submit">Submit</button>
-          </form>
+            <br><button class="btn btn-primary float-right btn-sm" [disabled]="!tableForm.form.valid"
+              type="submit">Submit</button>
+            <button style="margin-right:10px " class="btn btn-warning float-right btn-sm" (click)="onCancel()">Cancel</button>
+            </form>
         </div>
       </div>
     </div>

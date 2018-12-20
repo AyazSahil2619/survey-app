@@ -161,6 +161,11 @@ export class AddDataComponent implements OnInit {
       );
   }
 
+  onCancel() {
+    this.router.navigate(['/viewTable/' + this.table_id]);
+  }
+
+
   submit() {
     console.log(this.data, "data");
 

@@ -107,9 +107,8 @@
                 #desc="ngModel" required>
               <span class="error" *ngIf="!desc.valid && desc.dirty">Description is required!</span>
             </div>
-            <div class="card-footer">
-              <br><button class="btn btn-primary btn-sm float-right" [disabled]="!tableForm.form.valid" type="submit">Submit</button>
-            </div>
+            <br><button style="margin-left: 10px" class="btn btn-warning btn-sm float-right" (click)="onCancel()">Cancel</button>
+            <button class="btn btn-primary btn-sm float-right" [disabled]="!tableForm.form.valid" type="submit">Submit</button>
           </form>
         </div>
       </div>

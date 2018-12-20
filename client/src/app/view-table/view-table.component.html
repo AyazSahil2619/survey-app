@@ -2,6 +2,7 @@
   <app-navbar>
     <div class="container-fluid">
       <br>
+      <a type="button" class="btn btn-warning btn-sm float-left " (click)="share(templateshare)"><i class="far fa-share-alt"></i>Share</a>
       <a type="button" class="btn btn-primary btn-sm float-right " (click)="addRow()"><i class='fas fa-plus-circle'></i>
         Add Data</a>
       <br><br>
@@ -27,6 +28,7 @@
   </app-navbar>
 </div>
 
+
 <ng-template #templatedelete>
   <div class="modal-header">
     <h4 class="modal-title pull-left">Delete</h4>
@@ -39,6 +41,25 @@
   </div>
   <div class="modal-footer">
     <a type="button" class="btn btn-primary btn-sm" (click)="confirm()">Confirm</a>
+    <a type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>
+  </div>
+</ng-template>
+
+
+
+
+<ng-template #templateshare>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Url share</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    
+    <a [href]="url">{{url}}</a>
+  </div>
+  <div class="modal-footer">
     <a type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>
   </div>
 </ng-template>

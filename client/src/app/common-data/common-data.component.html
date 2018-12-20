@@ -1,0 +1,67 @@
+<div class="background_img">
+  <div class="container-fluid">
+    <div class="card col-md-6 offset-md-3 text-black bg-light mb-3">
+      <div class="card-header">
+        <h3>Survey Data</h3>
+      </div>
+      <div class="card-body">
+        <form #F="ngForm" class="form-group" name="form" (ngSubmit)="F.form.valid && submit()" novalidate>
+          <table class="table">
+            <tr *ngFor="let x of colinfo1 ">
+              <td><label><b>{{x.label}} </b><span class="asteriskcolor">*</span></label></td>
+              <td *ngIf="x.fieldtype == 'text'">
+                <input id="text" name="name1{{x.fieldname}}" #name1="ngModel" class="form-control" type="text"
+                  [(ngModel)]="data[x.fieldname]" required>
+                <div *ngIf="F.submitted && name1.invalid">
+                  <span class="error" *ngIf="!name1.valid && name1.dirty">{{x.fieldname}} is required!</span>
+                </div>
+              </td>
+              <td *ngIf="x.fieldtype == 'dropdown'">
+                <select class="form-control" name="name5{{x.fieldname}}" #name5="ngModel" [(ngModel)]="data[x.fieldname]"
+                  required>
+                  <ng-container *ngFor="let y of ddinfo1">
+                    <ng-container *ngIf="y.colname == x.fieldname">
+                      <option [ngValue]="y.dspValue">{{y.dspValue}}</option>
+                    </ng-container>
+                  </ng-container>
+                </select>
+              </td>
+              <td *ngIf="x.fieldtype == 'radio'">
+                <ng-container *ngFor="let y of radioList">
+                  <ng-container *ngIf="y.colname == x.fieldname">
+                    <p-radioButton name="name6{{x.fieldname}}" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname]"
+                      [value]="y.dspValue" required></p-radioButton><br>
+                  </ng-container>
+                </ng-container>
+              </td>
+              <td *ngIf="x.fieldtype == 'checkbox'">
+                <ng-container *ngFor="let y of checkboxList;let i = index">
+                  <ng-container *ngIf="y.colname == x.fieldname">
+                    <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"></p-checkbox><br>
+                  </ng-container>
+                </ng-container>
+              </td>
+              <td *ngIf="x.fieldtype == 'varchar'">
+                <input id="email" name="name2{{x.fieldname}}" #name2="ngModel" class="form-control" type="email"
+                  [(ngModel)]="data[x.fieldname]" required>
+                <span class="error" *ngIf="!name2.valid && name2.dirty">{{x.fieldname}} is required!</span>
+              </td>
+              <td *ngIf="x.fieldtype == 'date'">
+                <input id="date" name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date"
+                  [(ngModel)]="data[x.fieldname]" required>
+                <span class="error" *ngIf="!name3.valid && name3.dirty">{{x.fieldname}} is required!</span>
+              </td>
+              <td *ngIf="x.fieldtype == 'integer' || x.fieldtype == 'bigint' ">
+                <input id="number" name="name4{{x.fieldname}}" #name4="ngModel" class="form-control" type="number"
+                  [(ngModel)]="data[x.fieldname]" required>
+                <span class="error" *ngIf="!name4.valid && name4.dirty">{{x.fieldname}} is required!</span>
+              </td>
+          </table>
+          <div class="card-footer">
+            <button class="btn btn-primary btn-sm" [disabled]="!F.form.valid" value="Submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

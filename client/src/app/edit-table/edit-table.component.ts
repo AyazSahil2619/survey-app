@@ -49,17 +49,20 @@ export class EditTableComponent implements OnInit {
       }))
   }
 
+  onCancel() {
+
+    this._router.navigate(['/adminlogin']);
+
+  }
+
 
   onSubmit() {
     console.log(this.TableInfo, "NEW DATA ");
-
-
 
     let modifiedUser = {
       user: localStorage.getItem("LoggedInUser"),
       time: Date(),
     };
-
 
     this._userService.checkTablenameforUpdate(this.tableid, this.TableInfo).subscribe((response) => {
       if (response) {

@@ -32,6 +32,8 @@ import { FieldsDataComponent } from './fields-data/fields-data.component';
 import { EditTableComponent } from './edit-table/edit-table.component';
 import { AboutComponent } from './about/about.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { PreventGuardGuard } from './prevent-guard.guard';
+import { CommonDataComponent } from './common-data/common-data.component';
 
 
 @NgModule({
@@ -51,6 +53,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     EditTableComponent,
     AboutComponent,
     NavbarComponent,
+    CommonDataComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,6 +76,7 @@ import { NavbarComponent } from './navbar/navbar.component';
     AuthService,
     AuthGuard,
     RoleGuard,
+    PreventGuardGuard,
     MessageService
   ],
   bootstrap: [AppComponent],

@@ -10,6 +10,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { AddDataComponent } from '../add-data/add-data.component';
 import { UpdateDataComponent } from '../update-data/update-data.component';
+import { AuthService } from '../auth.service';
 
 // import { switchMap } from 'rxjs/operators';
 
@@ -27,6 +28,7 @@ export class ViewTableComponent implements OnInit {
   dtTrigger = new Subject();
   modalRef: BsModalRef;
   rowToDelete: any;
+  url: any;
 
   datas = [];
   colinfo1: Object[] = [];
@@ -36,7 +38,8 @@ export class ViewTableComponent implements OnInit {
     private router: Router,
     private _userService: UserServiceService,
     private messageService: MessageService,
-    private _modalService: BsModalService
+    private _modalService: BsModalService,
+    private _auth: AuthService
   ) { }
 
   table_id = this.route.snapshot.params['id'];
@@ -133,6 +136,36 @@ export class ViewTableComponent implements OnInit {
 
   decline() {
     this.modalRef.hide();
+  }
+
+
+
+
+  share(template: TemplateRef<any>) {
+
+    this.modalRef = this._modalService.show(template);
+
+
+    let data = {
+      tableid: this.table_id,
+      user: this._auth.getToken(),
+    }
+
+    this._userService.generateUrl(data)
+      .subscribe((response) => {
+
+        console.log(response, "RESPONSE");
+
+        this.url = `http://192.1.200.134:4200/insert/${this.table_id}?token=${response}`
+
+        console.log(this.url, "URL")
+
+      }, (error) => {
+
+        console.log(error, "ERROR WHILE GENERATING URL");
+
+      })
+
   }
 
 

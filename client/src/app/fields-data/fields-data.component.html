@@ -21,11 +21,9 @@
             <td>{{object.type}}</td>
             <td>{{object.constraints}}</td>
             <td>
-              <a type="button" class="btn btn-warning btn-sm btnclr" (click)="updatefield(editFieldTemplate,object.f_uid)"><i
-                  class='fa fa-edit'></i></a>
+              <a (click)="updatefield(editFieldTemplate,object.f_uid)"><i class='fa fa-edit'></i></a>&nbsp;&nbsp;
               <!-- <a type="button" class="btn btn-danger btn-sm btnclr" (click)="deletefield(object.colname)"><i class='fa fa-close'></i></a> -->
-              <a type="button" class="btn btn-danger btn-sm btnclr" (click)="deleteModal(templatedelete,object.f_uid)"><i
-                  class='fa fa-close'></i></a>
+              <a style="color: red" (click)="deleteModal(templatedelete,object.f_uid)"><i class='fa fa-close'></i></a>
             </td>
           </tr>
         </table>

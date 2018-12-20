@@ -42,6 +42,12 @@ export class AddTableComponent implements OnInit {
     // this.onClose = new Subject();
   }
 
+  onCancel() {
+
+    this._router.navigate(['/adminlogin']);
+
+  }
+
 
   create() {
     let data = {
@@ -57,7 +63,7 @@ export class AddTableComponent implements OnInit {
           console.log(response, "AFTER TABLE CREATION");
           let id = response.id;
           this._router.navigate(['/manage/', +id]);
-          
+
           this.messageService
             .add({ severity: 'success', detail: 'Succes', summary: 'Table create successfully' });
 
@@ -72,8 +78,8 @@ export class AddTableComponent implements OnInit {
           .add({ severity: 'error', detail: 'Error', summary: 'Whoops !! Table with this name Exists' });
       }
     }, ((errResponse) => {
-      
-      if(errResponse.status == 401){
+
+      if (errResponse.status == 401) {
 
         this._router.navigate(['/login']);
       }
