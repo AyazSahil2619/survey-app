@@ -16,8 +16,9 @@
     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
       aria-expanded="false">{{auth.getToken()}}</a>
     <div style="text-align: center" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-      <div class="dropdown-divider"></div>
       <p class="dropdown-item">Type - {{auth.isRole()}}</p>
+      <div class="dropdown-divider"></div>
+      <p class="dropdown-item">Id - {{auth.isEmail()}}</p>
       <div class="dropdown-divider"></div>
       <div class="dropdown-item">
         <a class="logout" routerLink="/logout"><i class="fa fa-power-off" aria-hidden="true"> Log Out</i></a>

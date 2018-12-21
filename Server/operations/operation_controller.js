@@ -129,6 +129,23 @@ async function fetchCheckboxList(req, res) {
         res.status(400).json(err);
     }
 }
+
+async function checkToken(req, res) {
+
+    const tableid = parseInt(req.params.tableid, 10);
+    const token = req.params.token;
+
+    console.log(tableid, token, "))))");
+
+    try {
+        let data = await repository.checkToken(tableid, token);
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
 module.exports = {
     view: view,
     addDataToTable: addDataToTable,
@@ -139,5 +156,6 @@ module.exports = {
     fetchDropdownList: fetchDropdownList,
     tablename: tablename,
     fetchRadioList: fetchRadioList,
-    fetchCheckboxList: fetchCheckboxList
+    fetchCheckboxList: fetchCheckboxList,
+    checkToken: checkToken
 }

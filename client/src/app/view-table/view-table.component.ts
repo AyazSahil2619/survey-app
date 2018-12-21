@@ -29,6 +29,7 @@ export class ViewTableComponent implements OnInit {
   modalRef: BsModalRef;
   rowToDelete: any;
   url: any;
+  mailid: any;
 
   datas = [];
   colinfo1: Object[] = [];
@@ -140,11 +141,10 @@ export class ViewTableComponent implements OnInit {
 
 
 
-
   share(template: TemplateRef<any>) {
 
+    this.mailid = '';
     this.modalRef = this._modalService.show(template);
-
 
     let data = {
       tableid: this.table_id,
@@ -156,7 +156,7 @@ export class ViewTableComponent implements OnInit {
 
         console.log(response, "RESPONSE");
 
-        this.url = `http://192.1.200.134:4200/insert/${this.table_id}?token=${response}`
+        this.url = `http://192.1.200.134:4200/insert/${this.table_id}/${response}`
 
         console.log(this.url, "URL")
 
@@ -165,9 +165,33 @@ export class ViewTableComponent implements OnInit {
         console.log(error, "ERROR WHILE GENERATING URL");
 
       })
-
   }
 
+  onClick() {
+
+    console.log(this.mailid, "MAIL ID");
+
+    let data = {
+
+      sendermailid: localStorage.getItem("LoggerEmailId"),
+      mailid: this.mailid,
+      url: this.url
+
+    }
+    this._userService.sendMail(data)
+      .subscribe((response) => {
+
+        this.modalRef.hide();
+
+      }, (error) => {
+
+        console.log(error, "Error while sending mail");
+
+      })
+
+
+
+  }
 
 }
 

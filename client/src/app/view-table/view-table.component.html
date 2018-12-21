@@ -2,7 +2,8 @@
   <app-navbar>
     <div class="container-fluid">
       <br>
-      <a type="button" class="btn btn-warning btn-sm float-left " (click)="share(templateshare)"><i class="far fa-share-alt"></i>Share</a>
+      <a *ngIf="_auth.isRole() == 'admin'" id="sharebutton" type="button" class="btn-sm float-left " (click)="share(templateshare)">Share
+        <i class="fas fa-share-alt"></i></a><br>
       <a type="button" class="btn btn-primary btn-sm float-right " (click)="addRow()"><i class='fas fa-plus-circle'></i>
         Add Data</a>
       <br><br>
@@ -50,14 +51,20 @@
 
 <ng-template #templateshare>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">Url share</h4>
+    <h4 class="modal-title pull-left">Link to share</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    
-    <a [href]="url">{{url}}</a>
+    <label>Link : </label>
+    <a [href]="url">{{url}}</a><br>
+
+    <label>Email Id</label>
+    <input id="email" name="emailid" type="email" [(ngModel)]="mailid" required>
+    <a type="button" class="btn btn-primary btn-sm" (click)="onClick()">Share</a><br>
+    <p style="font-size: smaller;color: red">* For multiple email id use comma as a separator</p>
+
   </div>
   <div class="modal-footer">
     <a type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>

@@ -21,135 +21,124 @@ export class CommonDataComponent implements OnInit {
     private Toast: ToastModule,
     private messageService: MessageService,
     private modalService: BsModalService) { }
-  table_id = this.route.snapshot.params['id'];
+
+  table_id: any = this.route.snapshot.params['tableid'];
+  token: any = this.route.snapshot.params['token'];
+
   colinfo1: Object[] = [];
   ddinfo1: Object[] = [];
   radioList: Object[] = [];
   checkboxList: any = [];
   data: any = {};
   data1: Object = {};
-  selectedValues: string[] = [];
-
-  test;
-  modifiedUser = {
-    user: localStorage.getItem("LoggedInUser"),
-    time: Date(),
-  };
+  show: boolean = true;
+  status: string;
+  Submitshow: boolean = false;
 
   ngOnInit() {
-    this.insert();
-    this.ddinfo();
-    this.radioInfo();
-    this.checkboxInfo();
-    // this.onClose = new Subject();
+
+    this.check();
 
   }
 
-  insert() {
-    console.log("ADDING ROW IN TABLE", this.table_id);
+  check() {
 
-    this._userService.getById(this.table_id)
+    this._userService.checkToken(this.table_id, this.token)
       .subscribe((response) => {
-        let colinfo = response;
-        colinfo.forEach((item, index) => {
-          if (item.fieldname != 'uid') {
-            this.colinfo1.push({
-              fieldname: item.fieldname,
-              label: item.label,
-              fieldtype: item.fieldtype
-            })
-          }
-        });
-        // for display table id in frontend
-        // this.id = response[0].tableid;
 
-      },
-        function (errResponse) {
-
-          console.error(errResponse,'Error while fetching field data ');
-        }
-      );
-  }
-
-  ddinfo() {
-    this._userService.fetchddValue(this.table_id)
-      .subscribe((response) => {
         if (response) {
+          this._userService.getById(this.table_id)
+            .subscribe((response) => {
+              let colinfo = response;
+              colinfo.forEach((item, index) => {
+                if (item.fieldname != 'uid') {
+                  this.colinfo1.push({
+                    fieldname: item.fieldname,
+                    label: item.label,
+                    fieldtype: item.fieldtype
+                  })
+                }
+              });
+            },
+              function (errResponse) {
 
-          let ddinfo: any = response;
-          console.log(ddinfo, "11212")
-          ddinfo.forEach((item, index) => {
-            this.ddinfo1.push({
-              dbValue: item.databasevalue,
-              dspValue: item.displayvalue,
-              colname: item.colname
-            })
-          });
-          // console.log(this.ddinfo1, "ddinfo1");
+                console.error(errResponse, 'Error while fetching field data ');
+              }
+            );
+
+          this._userService.fetchddValue(this.table_id)
+            .subscribe((response) => {
+              if (response) {
+
+                let ddinfo: any = response;
+                console.log(ddinfo, "11212")
+                ddinfo.forEach((item, index) => {
+                  this.ddinfo1.push({
+                    dbValue: item.databasevalue,
+                    dspValue: item.displayvalue,
+                    colname: item.colname
+                  })
+                });
+                // console.log(this.ddinfo1, "ddinfo1");
+              } else {
+                console.log(response);
+              }
+            },
+              function (errResponse) {
+                console.error(errResponse, 'Error while fetching dropdown data ');
+              }
+            );
+          this._userService.fetchradioValue(this.table_id)
+            .subscribe((response) => {
+              if (response) {
+                let radioValue: any = response;
+                radioValue.forEach((item, index) => {
+                  this.radioList.push({
+                    dbValue: item.databasevalue,
+                    dspValue: item.displayvalue,
+                    colname: item.colname
+                  })
+                });
+                console.log(this.radioList, "radioList");
+              } else {
+                console.log(response);
+              }
+            },
+              function (errResponse) {
+                console.error(errResponse, 'Error while fetching dropdown data ');
+              }
+            );
+
+          this._userService.fetchcheckboxValue(this.table_id)
+            .subscribe((response) => {
+              if (response) {
+                let checkboxValue: any = response;
+                checkboxValue.forEach((item, index) => {
+                  this.checkboxList.push({
+                    dbValue: item.databasevalue,
+                    dspValue: item.displayvalue,
+                    colname: item.colname
+                  })
+                  this.data[this.checkboxList[index].colname] = {};
+                });
+
+              } else {
+                console.log(response);
+              }
+            },
+              function (errResponse) {
+                console.error(errResponse, 'Error while fetching checkbox data ');
+              }
+            );
         } else {
-          console.log(response);
-        }
-      },
-        function (errResponse) {
-          console.error(errResponse,'Error while fetching dropdown data ');
-        }
-      );
-  }
+          this.show = false;
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: 'Sorry ! You are not allowed to access this page....' });
 
-  radioInfo() {
-    this._userService.fetchradioValue(this.table_id)
-      .subscribe((response) => {
-        if (response) {
-          let radioValue: any = response;
-          radioValue.forEach((item, index) => {
-            this.radioList.push({
-              dbValue: item.databasevalue,
-              dspValue: item.displayvalue,
-              colname: item.colname
-            })
-          });
-          console.log(this.radioList, "radioList");
-        } else {
-          console.log(response);
         }
-      },
-        function (errResponse) {
-          console.error(errResponse,'Error while fetching dropdown data ');
-        }
-      );
-  }
-
-  checkboxInfo() {
-    this._userService.fetchcheckboxValue(this.table_id)
-      .subscribe((response) => {
-        if (response) {
-          // console.log(response, "111111111111111111");
-          let checkboxValue: any = response;
-          checkboxValue.forEach((item, index) => {
-            this.checkboxList.push({
-              dbValue: item.databasevalue,
-              dspValue: item.displayvalue,
-              colname: item.colname
-            })
-            this.data[this.checkboxList[index].colname] = {};
-            // this.data1.push(item.displayvalue);
-          });
-
-          console.log(this.data);
-          console.log(this.checkboxList, "checkboxList");
-          this.test = new Array(this.checkboxList.length);
-        } else {
-          console.log(response);
-        }
-      },
-        function (errResponse) {
-          console.error(errResponse, 'Error while fetching checkbox data ');
-        }
-      );
-  }
-
-  onCancel() {
-    this.router.navigate(['/viewTable/' + this.table_id]);
+      }, (error) => {
+        console.log(error, "Error while checking Token");
+      })
   }
 
 
@@ -159,14 +148,13 @@ export class CommonDataComponent implements OnInit {
     this._userService.insertData(this.table_id, this.data)
       .subscribe((response) => {
         console.log("Row added successfully");
-        this.router.navigate(['/viewTable/' + this.table_id]);
-        this.messageService.add(
-          { severity: 'success', detail: 'Success', summary: 'Data Added Successfully' });
-      }, (errResponse) => {
-        console.log(errResponse, "Error in adding row in table");
+        this.Submitshow = true;
+        this.status = 'Your data has been saved successfully !!';
 
-        this.messageService.add(
-          { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
+      }, (errResponse) => {
+
+        console.log(errResponse, "Error in adding row in table");
+        this.status = 'Something went wrong !!'
       })
   }
 

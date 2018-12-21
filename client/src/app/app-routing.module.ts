@@ -36,7 +36,7 @@ const routes: Routes = [
   { path: 'manage/:tableid', component: FieldsDataComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
   { path: 'editTable/:tableid', component: EditTableComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
   { path: 'about', component: AboutComponent, canActivate: [AuthGuard] },
-  { path: 'insert/:tableid?token', component: CommonDataComponent },
+  { path: 'insert/:tableid/:token', component: CommonDataComponent },
   { path: '**', redirectTo: 'login', pathMatch: 'full' }
 ];
 

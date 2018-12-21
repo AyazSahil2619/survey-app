@@ -15,6 +15,7 @@ async function queryExecute(query) {
 }
 async function view(req, res, id) {
 
+
     let query = squel
         .select()
         .from("fieldstable")
@@ -233,7 +234,7 @@ async function getdetails(tableid, uid) {
 
         newArray.forEach((item, index) => {
             for (var key in item) {
-                if (item[key] && typeof item[key] == 'object' && item[key].length != undefined ) {
+                if (item[key] && typeof item[key] == 'object' && item[key].length != undefined) {
                     console.log("IN HERE")
                     let data = {};
                     for (let i = 0; i < item[key].length; i++) {
@@ -419,6 +420,30 @@ async function tablename(tableid) {
     }
 }
 
+
+async function checkToken(tableid, token) {
+
+    let query = squel
+        .select()
+        .from("urltable")
+        .where("tableid =?", tableid)
+        .where("token= ?", token)
+        .toString();
+
+    try {
+        let res = await queryExecute(query);
+        if (res.rowCount > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        return Promise.reject(err.message);
+    }
+}
+
+
+
 module.exports = {
     view: view,
     addDataToTable: addDataToTable,
@@ -429,5 +454,6 @@ module.exports = {
     fetchDropdownList: fetchDropdownList,
     tablename: tablename,
     fetchRadioList: fetchRadioList,
-    fetchCheckboxList: fetchCheckboxList
+    fetchCheckboxList: fetchCheckboxList,
+    checkToken: checkToken
 }

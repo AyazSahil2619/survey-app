@@ -5,3 +5,25 @@
   height: 150vh;
   color: black;
 }
+
+
+.error {
+  color: red;
+}
+
+.asteriskcolor {
+  color: red;
+}
+
+.zindex {
+  z-index: 1050;
+}
+
+.card {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.card-body {
+  padding: 0;
+}

@@ -165,9 +165,21 @@ async function fieldDelete(req, res) {
 
 
 async function generateUrl(req, res) {
-    
-        try {
+
+    try {
         let data = await repository.generateUrl(req)
+        res.status(200).json(data)
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+
+
+async function sendMail(req, res) {
+
+    try {
+        let data = await repository.sendMail(req)
         res.status(200).json(data)
 
     } catch (err) {
@@ -190,5 +202,6 @@ module.exports = {
     fetchFieldData: fetchFieldData,
     fieldEdit: fieldEdit,
     fieldDelete: fieldDelete,
-    generateUrl: generateUrl
+    generateUrl: generateUrl,
+    sendMail: sendMail
 }

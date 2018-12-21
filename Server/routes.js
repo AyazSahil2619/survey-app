@@ -55,6 +55,12 @@ app.get('/login', check.loginerr)
 //     next();
 // }, check.logout)
 
+app.get('/checkToken/:tableid/:token', operations.checkToken);
+app.get('/view/:id', operations.view);
+app.get('/dropdown/:id', operations.fetchDropdownList);
+app.get('/radio/:id', operations.fetchRadioList);
+app.get('/checkbox/:id', operations.fetchCheckboxList);
+app.put('/update/:id', operations.addDataToTable);
 
 app.use(check.login);
 
@@ -67,7 +73,6 @@ app.put('/addColumn/:id', controller.addColumn);
 app.get('/getdata', controller.viewTable);
 app.delete('/delete/:id', controller.deleteTable);
 app.put('/modified/:id', controller.modifyTable);
-// app.get('/fetchTableDetails/:id', controller.TableData);
 app.get('/tabledata/:id', controller.TableData);
 app.put('/editTable/:id', controller.editTable);
 app.put('/editTableInfo/:id', controller.editTableInfo);
@@ -76,10 +81,7 @@ app.get('/fields/:tableid/:fieldid', controller.fetchFieldData);
 app.put('/fieldEdit/:tableid/:fieldid', controller.fieldEdit);
 app.delete('/fieldDelete/:tableid/:fieldid', controller.fieldDelete);
 app.post('/generateUrl', controller.generateUrl);
-
-
-
-
+app.post('/sendMail', controller.sendMail);
 
 
 

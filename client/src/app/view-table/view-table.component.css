@@ -11,6 +11,15 @@
 }
 
 
-#tablebutton{
+#tablebutton {
   margin-top: 5px;
+}
+
+#sharebutton {
+  background-color: teal !important;
+}
+
+.instruction {
+  color: red;
+  font-size: -1rem !important
 }

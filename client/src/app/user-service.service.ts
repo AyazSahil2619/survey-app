@@ -110,6 +110,13 @@ export class UserServiceService {
     console.log(data, "DATA");
     return this._http.post('http://192.1.200.134:8080/generateUrl', data, { withCredentials: true });
   }
+  sendMail(data): Observable<any> {
+    return this._http.post('http://192.1.200.134:8080/sendMail', data, { withCredentials: true });
+  }
+  checkToken(tableid, token): Observable<any> {
+    return this._http.get('http://192.1.200.134:8080/checkToken/' + tableid + '/' + token, { withCredentials: true })
+  }
+
 }
 
 

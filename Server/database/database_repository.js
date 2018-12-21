@@ -1,5 +1,6 @@
 const squel = require('squel');
 const runQuery = require('../pgConnection');
+const nodemailer = require('nodemailer');
 
 
 //  Database Query gets executed
@@ -738,10 +739,22 @@ async function generateUrl(req) {
         .set("token", token)
         .toString();
 
-    console.log(query, "QUERY");
+    let query1 = squel
+        .select()
+        .from('credential')
+        .where("username= ?", user)
+        .toString();
+
+    // console.log(query, "QUERY");
+
     try {
 
         let result = await queryExecute(query);
+        let result1 = await queryExecute(query1);
+
+        console.log(result1.rows[0], "RESULT");
+
+
 
         return token;
 
@@ -753,9 +766,51 @@ async function generateUrl(req) {
 
 }
 
+function sendMail(req) {
+
+    // let senderEmail = req.body.sendermailid;
+    let email = req.body.mailid;
+    let link = req.body.url;
+
+    let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            "type": "OAuth2",
+            "user": "tpatel@argusoft.in",
+            "clientId": "597636280030-n73n7sgnpubc7mk2uiu4gvol1nde0sbn.apps.googleusercontent.com",
+            "clientSecret": "lvpxXxqVO4r0NzH7cGHoT9O1",
+            "refreshToken": "1/e3CGzDk_eiOZLc8sQJhLNC9nSWlX10gpBAzMPPR-6wY",
+            "accessToken": "ya29.GltvBhLfb-6NB7WB1IkVfyh1kZhbiOFnbCKVxhXJezs4nuc3ezk7MK1UP1wAkVYfkLaKzrykVaa68HV1hpMZ9Q53iP1Et5kDv8HHwj6E5ULC9N4Tx_ldSMbqBzSE"
+        }
+    });
+
+    let mailOptions = {
+        from: 'tpatel@argusoft.in',
+        to: email,
+        subject: 'Survey Link',
+        text: `Click on the given Link to fill up the Survey Form ${link}`
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            callback(err);
+        } else {
+            callback(null, info);
+        }
+    })
+
+}
+
+
+
+
+
 
 
 module.exports = {
+
     CreateTable: CreateTable,
     viewTable: viewTable,
     deleteTable: deleteTable,
@@ -769,7 +824,9 @@ module.exports = {
     fetchFieldData: fetchFieldData,
     fieldEdit: fieldEdit,
     fieldDelete: fieldDelete,
-    generateUrl: generateUrl
+    generateUrl: generateUrl,
+    sendMail: sendMail
+
 }
 
 
