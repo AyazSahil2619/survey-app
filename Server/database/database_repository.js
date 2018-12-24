@@ -151,14 +151,14 @@ async function addColumn(req, res, id) {
 
     fieldsData.forEach((item) => {
         if (item.Konstraint == 'true') {
-            constraints = constraints + ' ' + escape(item.fieldname) + ',';
+            constraints = constraints + ' ' + item.fieldname + ',';
         }
         if (item.fieldtype == 'dropdown' || item.fieldtype == 'radio') {
-            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + 'text' + ',';
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text' + ',';
         } else if (item.fieldtype == 'checkbox') {
-            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + 'text[]' + ',';
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text[]' + ',';
         } else {
-            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + escape(item.fieldname) + '"' + ' ' + item.fieldtype + ',';
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + item.fieldtype + ',';
         }
     })
 
@@ -191,7 +191,7 @@ async function addColumn(req, res, id) {
 
         if (constraints) {
             console.log("2222")
-            let constraintQuery = `ALTER TABLE "${tablename}" ADD PRIMARY KEY (${constraints});`
+            let constraintQuery = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${constraints}");`
             console.log(constraintQuery, "CONSTRAINT QUERY")
             let constraintResult = await queryExecute(constraintQuery);
         }
@@ -317,7 +317,7 @@ async function deleteTable(id) {
         }
 
     } catch (err) {
-        return Promise.reject(err.message);
+        return Promise.reject(err);
     }
 
 }
@@ -487,10 +487,10 @@ async function fetchFieldData(tableid, fieldid) {
      c.databasevalue AS c_dbvalue,c.displayvalue AS c_dspvalue,
      r.databasevalue AS r_dbvalue,r.displayvalue AS r_dspvalue,
      f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid 
-    FROM public.fieldstable AS f 
-	FULL JOIN dropdowntable AS d ON d.tableid = f.tableid AND d.colname = f.fieldname 
-    FULL JOIN radiotable AS r ON r.tableid = f.tableid AND r.colname = f.fieldname 
-    FULL JOIN checkboxtable AS c ON c.tableid = f.tableid AND c.colname = f.fieldname where f.f_uid =${fieldid} ;`
+     FROM public.fieldstable AS f 
+	 FULL JOIN dropdowntable AS d ON d.tableid = f.tableid AND d.colname = f.fieldname 
+     FULL JOIN radiotable AS r ON r.tableid = f.tableid AND r.colname = f.fieldname 
+     FULL JOIN checkboxtable AS c ON c.tableid = f.tableid AND c.colname = f.fieldname where f.f_uid =${fieldid} ;`
 
     try {
         let response = await queryExecute(query);
@@ -601,11 +601,13 @@ async function fieldEdit(req, table_id, field_id) {
     try {
         let response = await queryExecute(query);
         let response1 = await queryExecute(query1);
-        let tablename = unescape(response.rows[0].tablename);
-        let prv_fieldname = unescape(response1.rows[0].fieldname);
+        let tablename = response.rows[0].tablename;
+        let prv_fieldname = response1.rows[0].fieldname;
         let prv_fieldtype = response1.rows[0].fieldtype;
 
-        let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}" SET DATA TYPE ${new_fieldtype} USING (${prv_fieldname} :: ${new_fieldtype});`
+        console.log(prv_fieldname, tablename, "PPPP");
+
+        let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}" SET DATA TYPE ${new_fieldtype} USING ("${prv_fieldname}" :: ${new_fieldtype});`
         console.log(query2, "QUERY 2");
         let response2 = await queryExecute(query2);
         console.log(response2, "RESPONSE2");
@@ -617,11 +619,13 @@ async function fieldEdit(req, table_id, field_id) {
             console.log(response3, "RESPONSE3");
         }
 
-        if (new_konstraint == true) {
+        if (new_konstraint) {
             console.log(new_konstraint, "IN HERE");
             let query5 = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${new_fieldname}")`
             let response5 = await queryExecute(query5);
         }
+
+        console.log(new_konstraint, "IN HERE");
 
 
         console.log(prv_fieldtype, "PREVIOUS FIELD TYPE");
@@ -706,7 +710,7 @@ async function fieldDelete(tableid, fieldid) {
 
         let response2 = await queryExecute(query2);
 
-        let query3 = `ALTER TABLE "${tablename}" DROP COLUMN IF EXISTS "${escape(fieldname)}" ; `
+        let query3 = `ALTER TABLE "${tablename}" DROP COLUMN IF EXISTS "${fieldname}" ; `
         console.log(query3, "QUERY3");
         let response3 = await queryExecute(query3);
 
@@ -778,16 +782,16 @@ function sendMail(req) {
         secure: true,
         auth: {
             "type": "OAuth2",
-            "user": "tpatel@argusoft.in",
-            "clientId": "597636280030-n73n7sgnpubc7mk2uiu4gvol1nde0sbn.apps.googleusercontent.com",
-            "clientSecret": "lvpxXxqVO4r0NzH7cGHoT9O1",
-            "refreshToken": "1/e3CGzDk_eiOZLc8sQJhLNC9nSWlX10gpBAzMPPR-6wY",
-            "accessToken": "ya29.GltvBhLfb-6NB7WB1IkVfyh1kZhbiOFnbCKVxhXJezs4nuc3ezk7MK1UP1wAkVYfkLaKzrykVaa68HV1hpMZ9Q53iP1Et5kDv8HHwj6E5ULC9N4Tx_ldSMbqBzSE"
+            "user": "sayaz@argusoft.in",
+            "clientId": "659347403046-4esj9f3orn7nbsprkqp4vo20d28366k2.apps.googleusercontent.com",
+            "clientSecret": "KKHnbrnZNDQkbZSMmjuLLzXF",
+            "refreshToken": "1/f370CyTdiVTzQI4r1mOi5yWf8_lISNiL6YBHVPvFCyw",
+            "accessToken": "ya29.Glt8BsLYtZ-HTyAjVgfqFT-N2A1A0ptrW0vItodl8btwSXU0Rtl4KZzfXPBZm3CH3ShBqVPXTVrrhHvDhT2NBtIFAlsqi0abDUKGeEoISWoNDjb9kZAGKvqFvJoJ"
         }
     });
 
     let mailOptions = {
-        from: 'tpatel@argusoft.in',
+        from: 'sayaz@argusoft.in',
         to: email,
         subject: 'Survey Link',
         text: `Click on the given Link to fill up the Survey Form ${link}`

@@ -1,5 +1,5 @@
 <div class="background_img">
-  <div *ngIf="show" class="container-fluid">
+  <div style="padding-top: 50px" *ngIf="show" class="container-fluid">
     <div class="card col-md-6 offset-md-3 text-black bg-light mb-3">
       <div class="card-header">
         <h3>Survey Data</h3>
@@ -64,18 +64,13 @@
       </div>
     </div>
   </div>
-  <div *ngIf="Submitshow">
-    <div style="padding: 200px" class="container">
+  <div *ngIf="submitted">
+    <div style="padding: 200px" class="container-fluid">
       <div class="card col-md-6 offset-md-3 text-black bg-light mb-3">
-        <div class="card-header">
-          <h3>Submission status</h3>
-        </div>
         <div class="card-body">
-          <p style="text-align: center">
+          <h3 style="text-align: center">
             {{status}}
-          </p>
-        </div>
-        <div class="card-footer">
+          </h3>
         </div>
       </div>
     </div>

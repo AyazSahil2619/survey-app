@@ -9,7 +9,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 
 import { UserServiceService } from '../user-service.service';
-import { ERROR_COLLECTOR_TOKEN } from '@angular/platform-browser-dynamic/src/compiler_factory';
+// import { ERROR_COLLECTOR_TOKEN } from '@angular/platform-browser-dynamic/src/compiler_factory';
 
 @Component({
   selector: 'app-fields-data',
@@ -117,7 +117,6 @@ export class FieldsDataComponent implements OnInit {
 
 
   formColumnArray() {
-    this.modalRef.hide();
 
     this.fieldForm.reset();
     this.constraints.setValue('false');
@@ -130,6 +129,7 @@ export class FieldsDataComponent implements OnInit {
         control.removeAt(0);
       }
     }
+    this.modalRef.hide();
 
 
   }
@@ -219,34 +219,25 @@ export class FieldsDataComponent implements OnInit {
     console.log(this.arrayList)
   }
 
-  addSuggestion() {
-    this.List.push(this._fb.group({
-      databaseValue: '',
-      displayValue: ''
-    }));
-
-  }
-
-  minus1(index) {
-    console.log(index, "OOO");
-    this.List.removeAt(index);
-  }
 
 
   Cancel() {
-    this.modalRef.hide();
-    this.fieldForm.reset();
-    this.constraints.setValue('false');
-    this.isDropdown = false;
-    this.isRadio = false;
 
     const control = <FormArray>this.fieldForm.controls['arrayList'];
-    console.log(control, 'control');
+
     if (control) {
       while (control.length !== 0) {
         control.removeAt(0);
       }
     }
+    this.fieldForm.reset();
+    this.constraints.setValue('false');
+    this.isDropdown = false;
+    this.isRadio = false;
+    this.isCheckbox = false;
+    this.fieldForm.removeControl('arrayList');
+    this.modalRef.hide();
+
   }
 
 
@@ -285,7 +276,7 @@ export class FieldsDataComponent implements OnInit {
       }, (err) => {
         this.modalRef.hide();
         this.messageService.add(
-          { severity: 'error', detail: 'Error', summary: 'Oops ! SOmething went wrong' });
+          { severity: 'error', detail: 'Error', summary: 'Oops ! Something went wrong' });
         console.log(err, "ERROR WHILE DELETING FIELD");
       })
 
@@ -367,28 +358,44 @@ export class FieldsDataComponent implements OnInit {
   }
 
   onSelect1() {
-    if (this.type.value == 'dropdown') {
-      this.fieldForm.addControl('List', this._fb.array([]));
-      this.isDropdown = true;
-      this.isRadio = false;
-      this.isCheckbox = false;
+    if (this.ListToEdit.length == 0) {
 
-    } else if (this.type.value == 'radio') {
-      this.fieldForm.addControl('List', this._fb.array([]));
-      this.isRadio = true;
-      this.isDropdown = false;
-      this.isCheckbox = false;
-    } else if (this.type.value == 'checkbox') {
-      this.fieldForm.addControl('List', this._fb.array([]));
-      this.isRadio = false;
-      this.isDropdown = false;
-      this.isCheckbox = true;
-    } else {
-      this.isDropdown = false;
-      this.isRadio = false;
-      this.isCheckbox = false;
+      if (this.type.value == 'dropdown') {
+        this.fieldForm.addControl('List', this._fb.array([]));
+        this.isDropdown = true;
+        this.isRadio = false;
+        this.isCheckbox = false;
 
+      } else if (this.type.value == 'radio') {
+        this.fieldForm.addControl('List', this._fb.array([]));
+        this.isRadio = true;
+        this.isDropdown = false;
+        this.isCheckbox = false;
+      } else if (this.type.value == 'checkbox') {
+        this.fieldForm.addControl('List', this._fb.array([]));
+        this.isRadio = false;
+        this.isDropdown = false;
+        this.isCheckbox = true;
+      } else {
+        this.isDropdown = false;
+        this.isRadio = false;
+        this.isCheckbox = false;
+
+      }
     }
+  }
+
+  addSuggestion() {
+    this.List.push(this._fb.group({
+      databaseValue: '',
+      displayValue: ''
+    }));
+
+  }
+
+  minus1(index) {
+    console.log(index, "OOO");
+    this.List.removeAt(index);
   }
 
 
@@ -440,20 +447,14 @@ export class FieldsDataComponent implements OnInit {
       }
     }
 
-    console.log("inhere");
+    this.fieldForm.removeControl('List');
+    this.fieldForm.reset();
     this.constraints.setValue('false');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
-    this.fieldForm.removeControl('List');
-    this.fieldForm.reset();
-
-
-    console.log(this.List, this.fieldForm.value, "")
-
-    this.fieldForm.reset();
     this.modalRef.hide();
-
+    console.log(this.List, this.fieldForm.value, "")
 
   }
 

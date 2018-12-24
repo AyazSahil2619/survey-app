@@ -41,6 +41,7 @@
     "@angular/cli": "~1.7.3",
     "@angular/compiler-cli": "^5.2.0",
     "@angular/language-service": "^5.2.0",
+    "@fortawesome/fontawesome-free": "^5.6.3",
     "@types/datatables.net": "^1.10.13",
     "@types/jasmine": "~2.8.3",
     "@types/jasminewd2": "~2.0.2",

@@ -6,8 +6,10 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class RoleGuard implements CanActivate {
 
-  constructor(private _auth: AuthService,
-    private _myRoute: Router) { }
+  constructor(
+    private _auth: AuthService,
+    private _myRoute: Router,
+  ) { }
 
     data:String;
 

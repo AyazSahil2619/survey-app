@@ -50,11 +50,6 @@ app.post('/login', passport.authenticate('local', {
 app.get('/islogin', check.islogin);
 app.get('/login', check.loginerr)
 
-// app.get('/logout', (req, res, next) => {
-//     console.log("******")
-//     next();
-// }, check.logout)
-
 app.get('/checkToken/:tableid/:token', operations.checkToken);
 app.get('/view/:id', operations.view);
 app.get('/dropdown/:id', operations.fetchDropdownList);
@@ -87,15 +82,15 @@ app.post('/sendMail', controller.sendMail);
 
 // Routes for operations in table
 app.get('/tablename/:id', operations.tablename);
-app.get('/view/:id', operations.view);
+// app.get('/view/:id', operations.view);
 app.put('/update/:id', operations.addDataToTable);
 app.get('/fetchdata/:id', operations.TableData);
 app.delete('/deletedata/:tableid/:rowid', operations.deleteData)
 app.get('/updatedata/:tableid/:uid', operations.getdetails)
 app.put('/updaterow/:id', operations.updateRow);
-app.get('/dropdown/:id', operations.fetchDropdownList);
-app.get('/radio/:id', operations.fetchRadioList);
-app.get('/checkbox/:id', operations.fetchCheckboxList);
+// app.get('/dropdown/:id', operations.fetchDropdownList);
+// app.get('/radio/:id', operations.fetchRadioList);
+// app.get('/checkbox/:id', operations.fetchCheckboxList);
 
 
 app.get('/loggedout', check.logout)

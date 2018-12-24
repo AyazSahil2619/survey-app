@@ -64,7 +64,7 @@ async function addDataToTable(req, res, id) {
     try {
         let res1 = await queryExecute(query1);
 
-        let tablename = unescape(res1.rows[0].tablename);
+        let tablename = res1.rows[0].tablename;
 
         // body.forEach((item) => {
         //     for (var key in item) {
@@ -96,11 +96,11 @@ async function addDataToTable(req, res, id) {
                         }
                     }
                     data = data.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-                    colquery = colquery + '"' + [keys] + '"' + ',';
+                    colquery = colquery + '"' + escape([keys]) + '"' + ',';
                     values = values + `'` + '{' + data + '}' + `'` + `,`
 
                 } else {
-                    colquery = colquery + '"' + [keys] + '"' + ',';
+                    colquery = colquery + '"' + escape([keys]) + '"' + ',';
                     values = values + `'` + element[keys] + `'` + ','
                 }
             }

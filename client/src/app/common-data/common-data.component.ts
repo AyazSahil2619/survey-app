@@ -33,7 +33,7 @@ export class CommonDataComponent implements OnInit {
   data1: Object = {};
   show: boolean = true;
   status: string;
-  Submitshow: boolean = false;
+  submitted: boolean = false;
 
   ngOnInit() {
 
@@ -148,13 +148,16 @@ export class CommonDataComponent implements OnInit {
     this._userService.insertData(this.table_id, this.data)
       .subscribe((response) => {
         console.log("Row added successfully");
-        this.Submitshow = true;
-        this.status = 'Your data has been saved successfully !!';
+        this.submitted = true;
+        this.show = false;
+        this.status = 'Your data has been saved successfully.. Thank You !!';
 
       }, (errResponse) => {
 
+        this.messageService.add(
+          { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}.... Key Must be Unique !!` });
         console.log(errResponse, "Error in adding row in table");
-        this.status = 'Something went wrong !!'
+        // this.status = `${errResponse.error.detail}.... Key Must be Unique !!`
       })
   }
 
