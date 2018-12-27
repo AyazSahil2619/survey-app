@@ -56,7 +56,7 @@ export class AddTableComponent implements OnInit {
 
     this.TableInfo.currentUser = this._auth.getToken();
 
-    this._userService.checkTablename(data).subscribe((response) => {
+    this._userService.checkTablename(data, null).subscribe((response) => {
       if (response) {
         console.log(this.TableInfo, "TABLE INFO");
         this._userService.createTable(this.TableInfo).subscribe((response) => {
@@ -70,12 +70,12 @@ export class AddTableComponent implements OnInit {
         }, (error) => {
           console.log(error, "ERROR");
           this.messageService
-            .add({ severity: 'error', detail: 'Error', summary: 'Whoops !! Table with this name Exists' });
+            .add({ severity: 'error', detail: 'Error', summary: 'Something went wrong !!' });
         })
       }
       else {
         this.messageService
-          .add({ severity: 'error', detail: 'Error', summary: 'Whoops !! Table with this name Exists' });
+          .add({ severity: 'error', detail: 'Error', summary: 'Whoops !! Survey with this name already Exists' });
       }
     }, ((errResponse) => {
 

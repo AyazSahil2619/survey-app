@@ -5,15 +5,42 @@ const nodemailer = require('nodemailer');
 
 //  Database Query gets executed
 async function queryExecute(query) {
+    const client = await runQuery.pool.connect();
+
+    let result
     try {
-        let result = await runQuery.pool.query(query);
-        return result;
-    } catch (err) {
-        console.log(err, "ERROR");
-        return Promise.reject(err)
+        await client.query('BEGIN');
+        try {
+            result = await client.query(query);
+            // await client.query('COMMIT');
+        } catch (err) {
+            console.log(err, "ERROR");
+            await client.query('ROLLBACK');
+            return Promise.reject(err);
+        }
+    } finally {
+        client.release();
     }
+    return result;
+
+
+    // try {
+    //     let result = await runQuery.pool.query(query);
+    //     return result;
+    // } catch (err) {
+    //     console.log(err, "ERROR");
+    //     return Promise.reject(err)
+    // }
 }
 
+
+
+async function _commitFunc() {
+
+    let commitQuery = 'COMMIT'
+    return await queryExecute(commitQuery);
+
+}
 
 
 
@@ -77,6 +104,8 @@ async function CreateTable(req, res) {
             .toString();
 
         let fieldstableResult = await queryExecute(fieldstableQuery);
+
+        await _commitFunc();
 
         return response2.rows[0];
 
@@ -208,6 +237,8 @@ async function addColumn(req, res, id) {
 
         }
 
+        await _commitFunc();
+
         return fieldsDataResult;
 
     } catch (err) {
@@ -231,6 +262,8 @@ async function viewTable() {
 
     try {
         let resp = await queryExecute(query);
+        await _commitFunc();
+
         let newArray = [];
 
         if (resp.rowCount > 0) {
@@ -307,6 +340,8 @@ async function deleteTable(id) {
         let query2 = `DROP TABLE "${resp.rows[0].tablename}"`;
         let resp2 = await queryExecute(query2);
         let resp1 = await queryExecute(query1);
+        await _commitFunc();
+
 
         if (resp1.rowCount > 0) {
             return;
@@ -322,6 +357,7 @@ async function deleteTable(id) {
 
 }
 
+
 //DATA to COLUMNS (modified by AND modified at) is added
 
 async function modifyTable(req, res, id) {
@@ -335,7 +371,9 @@ async function modifyTable(req, res, id) {
         .toString();
 
     try {
-        let resp = await queryExecute(query)
+        let resp = await queryExecute(query);
+        await _commitFunc();
+
         return resp;
     } catch (err) {
         return Promise.reject(err);
@@ -376,35 +414,69 @@ async function TableData(id) {
 }
 
 
+// Checking Table name from the existing table
+
+async function checkTablename(req, res, id) {
+    console.log(id, "IIIIDDDDDD");
+
+    if (id == 0) {
+        let query = squel
+            .select()
+            .from("mastertable")
+            .field("tablename")
+            .toString();
+        let check = true;
+
+        try {
+            let response = await queryExecute(query);
+            await _commitFunc();
 
 
-async function checkTablename(req, res) {
+            response.rows.forEach((item, index) => {
+                if (item.tablename === req.body.tablename) {
+                    check = false;
+                    return check;
+                }
+            });
+            return check;
 
-    let query = squel
-        .select()
-        .from("mastertable")
-        .field("tablename")
-        .toString();
-    let check = true;
+        } catch (err) {
+            console.log(err);
+            return Promise.reject(err)
+        }
+    } else {
+        let query = squel
+            .select()
+            .from("mastertable")
+            .field("id")
+            .field("tablename")
+            .toString();
+        let check = true;
 
-    try {
-        let response = await queryExecute(query);
+        try {
+            let response = await queryExecute(query);
 
-        response.rows.forEach((item, index) => {
-            if (item.tablename === req.body.tablename) {
-                check = false;
-                return check;
-            }
-        });
-        return check;
+            response.rows.forEach((item, index) => {
+                if (item.id != id) {
+                    if (item.tablename === req.body.tablename) {
+                        check = false;
+                        return check;
+                    }
+                }
+            });
+            return check;
 
-    } catch (err) {
-        console.log(err);
-        return Promise.reject(err)
+        } catch (err) {
+            console.log(err);
+            return Promise.reject(err)
+        }
     }
+
 
 }
 
+
+// Editinig table info 
 
 async function editTableInfo(req, res, id) {
 
@@ -434,13 +506,12 @@ async function editTableInfo(req, res, id) {
         }
 
         let mastertableResult = await queryExecute(updateMastertableQuery);
-        console.log(mastertableResult, "aaa")
+        console.log(mastertableResult, "aaa");
+
+        await _commitFunc();
 
         return mastertableResult;
 
-
-
-
     } catch (err) {
         console.log(err);
         return Promise.reject(err)
@@ -448,36 +519,7 @@ async function editTableInfo(req, res, id) {
 
 }
 
-async function check(req, res, id) {
 
-
-    let query = squel
-        .select()
-        .from("mastertable")
-        .field("id")
-        .field("tablename")
-        .toString();
-    let check = true;
-
-    try {
-        let response = await queryExecute(query);
-
-        response.rows.forEach((item, index) => {
-            if (item.id != id) {
-                if (item.tablename === req.body.tablename) {
-                    check = false;
-                    return check;
-                }
-            }
-        });
-        return check;
-
-    } catch (err) {
-        console.log(err);
-        return Promise.reject(err)
-    }
-
-}
 
 async function fetchFieldData(tableid, fieldid) {
 
@@ -511,6 +553,8 @@ async function fetchFieldData(tableid, fieldid) {
         })
 
         console.log(newArray, "NEW ARRAY");
+
+        await _commitFunc();
 
         return newArray;
         // return response.rows;
@@ -606,12 +650,12 @@ async function fieldEdit(req, table_id, field_id) {
         let prv_fieldtype = response1.rows[0].fieldtype;
 
         console.log(prv_fieldname, tablename, "PPPP");
-
-        let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}" SET DATA TYPE ${new_fieldtype} USING ("${prv_fieldname}" :: ${new_fieldtype});`
-        console.log(query2, "QUERY 2");
-        let response2 = await queryExecute(query2);
-        console.log(response2, "RESPONSE2");
-
+        if (prv_fieldtype != new_fieldtype) {
+            let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}" SET DATA TYPE ${new_fieldtype} USING ("${prv_fieldname}" :: ${new_fieldtype});`
+            console.log(query2, "QUERY 2");
+            let response2 = await queryExecute(query2);
+            console.log(response2, "RESPONSE2");
+        }
         if (prv_fieldname != new_fieldname) {
             let query3 = `ALTER TABLE "${tablename}"  RENAME COLUMN "${prv_fieldname}" TO "${new_fieldname}"`
             console.log(query3, "QUERY 3");
@@ -619,9 +663,12 @@ async function fieldEdit(req, table_id, field_id) {
             console.log(response3, "RESPONSE3");
         }
 
-        if (new_konstraint) {
+        if (new_konstraint == 'true') {
             console.log(new_konstraint, "IN HERE");
             let query5 = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${new_fieldname}")`
+            let response5 = await queryExecute(query5);
+        } else {
+            let query5 = `ALTER TABLE "${tablename}" DROP CONSTRAINT "${tablename}_pkey"`
             let response5 = await queryExecute(query5);
         }
 
@@ -658,6 +705,8 @@ async function fieldEdit(req, table_id, field_id) {
 
 
         let response4 = await queryExecute(query4);
+
+        await _commitFunc();
 
         return response4;
 
@@ -714,6 +763,11 @@ async function fieldDelete(tableid, fieldid) {
         console.log(query3, "QUERY3");
         let response3 = await queryExecute(query3);
 
+        let commitQuery = 'COMMIT'
+        let commitResponse = await queryExecute(commitQuery);
+
+        await _commitFunc();
+
         return response3;
 
     } catch (err) {
@@ -758,7 +812,7 @@ async function generateUrl(req) {
 
         console.log(result1.rows[0], "RESULT");
 
-
+        await _commitFunc();
 
         return token;
 
@@ -769,6 +823,8 @@ async function generateUrl(req) {
     }
 
 }
+
+// sending link in mail to the users  
 
 function sendMail(req) {
 
@@ -824,7 +880,7 @@ module.exports = {
     checkTablename: checkTablename,
     addColumn: addColumn,
     editTableInfo: editTableInfo,
-    check: check,
+    // check: check,
     fetchFieldData: fetchFieldData,
     fieldEdit: fieldEdit,
     fieldDelete: fieldDelete,
@@ -845,6 +901,49 @@ module.exports = {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// async function check(req, res, id) {
+
+
+//     let query = squel
+//         .select()
+//         .from("mastertable")
+//         .field("id")
+//         .field("tablename")
+//         .toString();
+//     let check = true;
+
+//     try {
+//         let response = await queryExecute(query);
+
+//         response.rows.forEach((item, index) => {
+//             if (item.id != id) {
+//                 if (item.tablename === req.body.tablename) {
+//                     check = false;
+//                     return check;
+//                 }
+//             }
+//         });
+//         return check;
+
+//     } catch (err) {
+//         console.log(err);
+//         return Promise.reject(err)
+//     }
+
+// }
 
 
 

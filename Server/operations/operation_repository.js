@@ -3,14 +3,30 @@ const runQuery = require('../pgConnection');
 
 
 async function queryExecute(query) {
+    const client = await runQuery.pool.connect();
 
+    let result
     try {
-        let res = await runQuery.pool.query(query);
-        return res;
-
-    } catch (err) {
-        return Promise.reject(err)
+        await client.query('BEGIN');
+        try {
+            result = await client.query(query);
+            // await client.query('COMMIT');
+        } catch (err) {
+            console.log(err, "ERROR");
+            await client.query('ROLLBACK');
+            return Promise.reject(err);
+        }
+    } finally {
+        client.release();
     }
+    return result;
+    // try {
+    //     let res = await runQuery.pool.query(query);
+    //     return res;
+
+    // } catch (err) {
+    //     return Promise.reject(err)
+    // }
 
 }
 async function view(req, res, id) {
@@ -119,6 +135,8 @@ async function addDataToTable(req, res, id) {
         console.log(query2, "QUERY2")
 
         let res2 = await queryExecute(query2);
+        await queryExecute('COMMIT');
+
 
         if (res2.rowCount > 0) {
             return res2;
@@ -126,7 +144,7 @@ async function addDataToTable(req, res, id) {
             return Promise.reject(err);
         }
     } catch (err) {
-        console.log(err);
+        console.log(err, "Error in adding data to table");
         return Promise.reject(err);
     }
 }
@@ -190,6 +208,8 @@ async function deleteData(tableid, rowid) {
             .toString();
 
         let res1 = await queryExecute(query1);
+
+        await queryExecute('COMMIT');
 
         return res1
 
@@ -317,6 +337,7 @@ async function updateRow(req, res, id) {
         let query1 = `UPDATE "${tablename}" SET ${values} WHERE ${condition};`
 
         let res1 = await queryExecute(query1);
+        await queryExecute('COMMIT');
 
         return res1;
 

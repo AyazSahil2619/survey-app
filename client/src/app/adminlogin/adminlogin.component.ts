@@ -12,6 +12,7 @@ import { AddTableComponent } from '../add-table/add-table.component';
 
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
+import { CommonModalComponent } from '../common-modal/common-modal.component';
 
 
 @Component({
@@ -32,11 +33,11 @@ export class AdminloginComponent implements OnInit {
   dtTrigger = new Subject();
   modalRef: BsModalRef;
   tableToDelete: any;
-  visibleSidebar2: any = false;
+  // visibleSidebar2: any = false;
 
-  opensidebar(){
-    this.visibleSidebar2 = true;
-  }
+  // opensidebar() {
+  //   this.visibleSidebar2 = true;
+  // }
 
   constructor(
     private _authService: AuthService,
@@ -66,6 +67,7 @@ export class AdminloginComponent implements OnInit {
         this._authService.logout();
         this._router.navigate(['/login']);
       }
+
       console.log('Error while fetching datas', err);
     })
   }
@@ -78,9 +80,19 @@ export class AdminloginComponent implements OnInit {
       });
   }
 
-  deleteModal(template: TemplateRef<any>, rowid) {
+  deleteModal(rowid) {
     this.tableToDelete = rowid;
-    this.modalRef = this.modalService.show(template);
+    const initialState = {
+      title: 'Do you want to delete this record ?'
+    };
+    this.modalRef = this.modalService.show(CommonModalComponent, { initialState });
+    this.modalRef.content.onClose.subscribe(result => {
+      if (result == true) {
+        this.confirm();
+      } else {
+        this.decline();
+      }
+    })
   }
 
 

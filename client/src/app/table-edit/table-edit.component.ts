@@ -207,7 +207,7 @@ export class TableEditComponent implements OnInit {
           console.log(errResponse, "Error while editing table")
         })
     } else {
-      this._userService.checkTablename(check)
+      this._userService.checkTablename(check, this.tableid)
         .subscribe((response) => {
           if (response) {
             this._userService.editTable(this.tableid, this.newColumns)

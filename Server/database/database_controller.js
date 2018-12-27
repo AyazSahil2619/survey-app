@@ -71,6 +71,7 @@ async function editTable(req, res) {
 
 async function checkTablename(req, res) {
     const id = parseInt(req.params.id, 10);
+    console.log(id, "IIIDDDD");
 
     try {
         let data = await repository.checkTablename(req, res, id)
@@ -106,17 +107,17 @@ async function editTableInfo(req, res) {
     }
 }
 
-async function check(req, res) {
-    const id = parseInt(req.params.id, 10);
+// async function check(req, res) {
+//     const id = parseInt(req.params.id, 10);
 
-    try {
-        let data = await repository.check(req, res, id)
-        res.status(200).json(data)
+//     try {
+//         let data = await repository.check(req, res, id)
+//         res.status(200).json(data)
 
-    } catch (err) {
-        res.status(400).json(err);
-    }
-}
+//     } catch (err) {
+//         res.status(400).json(err);
+//     }
+// }
 
 
 async function fetchFieldData(req, res) {
@@ -198,7 +199,7 @@ module.exports = {
     checkTablename: checkTablename,
     addColumn: addColumn,
     editTableInfo: editTableInfo,
-    check: check,
+    // check: check,
     fetchFieldData: fetchFieldData,
     fieldEdit: fieldEdit,
     fieldDelete: fieldDelete,

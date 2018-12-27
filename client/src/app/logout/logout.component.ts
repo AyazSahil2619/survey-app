@@ -25,12 +25,12 @@ export class LogoutComponent implements OnInit {
 
   logout() {
     this._userService.loggedout().subscribe((response) => {
+
       if (response.value) {
         this._authService.logout();
         console.log("LOGOUT SUCCESSFULLY");
-        // this.messageService.add(
-        //   { severity: 'success', summary: 'Log Out' });
         this._route.navigate(['/login']);
+
       } else {
         this.messageService.add(
           { severity: 'error', summary: `${response.msg}` });

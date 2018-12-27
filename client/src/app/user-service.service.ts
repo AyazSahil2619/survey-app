@@ -12,6 +12,7 @@ export class UserServiceService {
   }
 
   login(body): Observable<any> {
+    console.log(body, "BODY");
     return this._http.post('http://192.1.200.134:8080/login', body, { withCredentials: true });
   }
 
@@ -27,8 +28,12 @@ export class UserServiceService {
     return this._http.get('http://192.1.200.134:8080/loggedout', { withCredentials: true });
   }
 
-  checkTablename(tablename): Observable<any> {
-    return this._http.post('http://192.1.200.134:8080/checkTablename', tablename, { withCredentials: true })
+  checkTablename(tablename, tableid): Observable<any> {
+    if (tableid == null) {
+      tableid = 0;
+    }
+    console.log(tableid, "LLLL")
+    return this._http.post('http://192.1.200.134:8080/checkTablename/:id' + tableid, tablename, { withCredentials: true })
   }
 
   createTable(data): Observable<any> {
@@ -93,9 +98,9 @@ export class UserServiceService {
   fetchcheckboxValue(tableid): Observable<any> {
     return this._http.get('http://192.1.200.134:8080/checkbox/' + tableid, { withCredentials: true })
   }
-  checkTablenameforUpdate(tableid, tablename): Observable<any> {
-    return this._http.post('http://192.1.200.134:8080/checkTablenameforUpdate/' + tableid, tablename, { withCredentials: true })
-  }
+  // checkTablenameforUpdate(tableid, tablename): Observable<any> {
+  //   return this._http.post('http://192.1.200.134:8080/checkTablenameforUpdate/' + tableid, tablename, { withCredentials: true })
+  // }
   fetchFieldData(tableid, field_id) {
     return this._http.get('http://192.1.200.134:8080/fields/' + tableid + '/' + field_id, { withCredentials: true });
   }

@@ -11,6 +11,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { AddDataComponent } from '../add-data/add-data.component';
 import { UpdateDataComponent } from '../update-data/update-data.component';
 import { AuthService } from '../auth.service';
+import { CommonModalComponent } from '../common-modal/common-modal.component';
 
 // import { switchMap } from 'rxjs/operators';
 
@@ -107,9 +108,19 @@ export class ViewTableComponent implements OnInit {
 
 
 
-  deletedata(template: TemplateRef<any>, rowid) {
+  deletedata(rowid) {
     this.rowToDelete = rowid;
-    this.modalRef = this._modalService.show(template);
+    const initialState = {
+      title: 'Do you want to delete this record ?'
+    }
+    this.modalRef = this._modalService.show(CommonModalComponent, { initialState });
+    this.modalRef.content.onClose.subscribe(result => {
+      if (result == true) {
+        this.confirm();
+      } else {
+        this.decline();
+      }
+    })
   }
 
 

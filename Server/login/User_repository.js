@@ -56,7 +56,35 @@ async function login(username) {
 }
 
 
+async function check_login(req, res) {
+
+    console.log(req.body, "BODY");
+
+    const query = squel
+        .select()
+        .from("credential")
+        .where("username = ?", req.body.username)
+        .where("password = ?", req.body.password)
+        .toString();
+    try {
+        let response = await queryExecute(query)
+
+        console.log(response.rows[0], "RESPONSE");
+
+        if (response.rowCount > 0) {
+            return response.rows[0];
+        } else {
+            return null;
+        }
+
+    } catch (err) {
+
+        return Promise.reject(err);
+    }
+}
+
 module.exports = {
     insert: insert,
     login: login,
+    check_login: check_login
 }

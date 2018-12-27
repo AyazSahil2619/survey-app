@@ -64,7 +64,8 @@ export class EditTableComponent implements OnInit {
       time: Date(),
     };
 
-    this._userService.checkTablenameforUpdate(this.tableid, this.TableInfo).subscribe((response) => {
+    this._userService.checkTablename(this.TableInfo, this.tableid).subscribe((response) => {
+      // this._userService.checkTablenameforUpdate(this.tableid, this.TableInfo).subscribe((response) => {
       if (response) {
         this._userService.editTableInfo(this.tableid, this.TableInfo)
           .subscribe((response) => {
@@ -86,7 +87,7 @@ export class EditTableComponent implements OnInit {
       } else {
         console.log("error");
         this.messageService
-          .add({ severity: 'error', detail: 'Error', summary: 'Whoops !! Table with this name Exists' });
+          .add({ severity: 'error', detail: 'Error', summary: 'Whoops !! Survey with this name already Exists' });
       }
     })
 

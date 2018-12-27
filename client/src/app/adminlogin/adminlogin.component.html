@@ -26,8 +26,8 @@
             <a id="tablebutton" type="button" class="btn btn-primary btn-sm" (click)="viewTableData(row.id)">View</a>
             <a id="tablebutton" type="button" class="btn btncustom btn-sm" (click)="manage(row.id)">Manage</a>
             <a id="tablebutton" type="button" class="btn btn-warning btn-sm" (click)="edit(row.id)">Edit</a>
-            <!-- <a type="button" class="btn btn-warning" (click)="updatetable(row.id)">Edit</a> -->
-            <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deleteModal(templatedelete,row.id)">Delete</a>
+            <!-- <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deleteModal(templatedelete,row.id)">Delete</a> -->
+            <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deleteModal(row.id)">Delete</a>
           </td>
         </tr>
       </tbody>
@@ -39,6 +39,43 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- <ng-template #templatecreate>
   <app-add-table>
   </app-add-table>
@@ -46,7 +83,7 @@
 
 
 
-
+<!-- 
 <ng-template #templatedelete>
   <div class="modal-header">
     <h4 class="modal-title pull-left">Delete</h4>
@@ -61,7 +98,7 @@
     <a type="button" class="btn btn-primary btn-sm " (click)="confirm()">Confirm</a>
     <a type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>
   </div>
-</ng-template>
+</ng-template> -->
 
 
 

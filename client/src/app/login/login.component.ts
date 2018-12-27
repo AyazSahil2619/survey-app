@@ -39,26 +39,36 @@ export class LoginComponent implements OnInit {
     return this.loginDetails.get('password');
   }
 
+
+
   onSubmit() {
+    console.log("ON SUBMIT");
     if (this.loginDetails.value.username == '' && this.loginDetails.value.password == '') {
       this.messageService.add(
-        { severity: 'error',detail:'Required Fields', summary: 'USERNAME AND PASSWORD IS REQUIRED' });
+        { severity: 'error', detail: 'Required Fields', summary: 'USERNAME AND PASSWORD IS REQUIRED' });
     } else {
       this._userService.login(this.loginDetails.value).subscribe((data) => {
-        console.log(data, "in login submit")
-        if (data.msg === "INVALID") {
+
+        console.log(data, " 1  in login submit");
+
+        if (data.msg == "INVALID") {
           this.messageService.add(
             { severity: 'error', summary: 'INVALID USERNAME OR PASSWORD' });
+
         } else {
-          this._authService.sendToken(data.msg)
-          console.log(data.msg, "SUCCESS");
-          if (data.msg.role == 'admin') {
+          console.log("LOGING SUCCESS");
+          // this._authService.sendToken(data.msg);
+          this._authService.sendToken(data)
+          console.log(data, "SUCCESS");
+          if (data.role == 'admin') {
             this._router.navigate(['/adminlogin']);
-          } else if (data.msg.role == 'user') {
+          } else if (data.role == 'user') {
             this._router.navigate(['/userlogin']);
           }
         }
       }, (err) => {
+          this.messageService.add(
+            { severity: 'error', summary: 'Oops ! try again ..' });
         console.log(err, "login err");
       })
     }

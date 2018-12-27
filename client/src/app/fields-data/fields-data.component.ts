@@ -9,7 +9,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 
 import { UserServiceService } from '../user-service.service';
-// import { ERROR_COLLECTOR_TOKEN } from '@angular/platform-browser-dynamic/src/compiler_factory';
+import { CommonModalComponent } from '../common-modal/common-modal.component';
 
 @Component({
   selector: 'app-fields-data',
@@ -110,9 +110,8 @@ export class FieldsDataComponent implements OnInit {
 
   get List() { return this.fieldForm.get('List') as FormArray }
 
-
   addField(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template, { class: 'gray modal-lg' });
+    this.modalRef = this.modalService.show(template, { class: 'gray modal-lg', backdrop: 'static' });
   }
 
 
@@ -171,10 +170,18 @@ export class FieldsDataComponent implements OnInit {
         this.fetchFieldsData();
         this.messageService.add(
           { severity: 'success', summary: 'Fields Updated Successfully' });
-      }, (error) => {
-        this.messageService.add(
-          { severity: 'error', summary: 'Something went wrong' });
-        console.log(error, "ERROR WHILE ADDING COLUMN");
+      }, (errorResponse) => {
+        if (errorResponse.error.code == '23502') {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: 'Field contains null Value' });
+        } else if (errorResponse.error.code == '42P16') {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: 'Multiple Primary key not allowed' });
+        } else {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: 'Something went wrong' });
+        }
+        console.log(errorResponse, "ERROR WHILE ADDING COLUMN");
       })
 
   }
@@ -241,9 +248,19 @@ export class FieldsDataComponent implements OnInit {
   }
 
 
-  deleteModal(template: TemplateRef<any>, f_uid) {
+  deleteModal(f_uid) {
+    const initialState = {
+      title: 'Do you want to delete this field ?'
+    };
     this.fieldToDelete = f_uid;
-    this.modalRef = this.modalService.show(template);
+    this.modalRef = this.modalService.show(CommonModalComponent, { initialState });
+    this.modalRef.content.onClose.subscribe(result => {
+      if (result == true) {
+        this.confirm();
+      } else {
+        this.decline();
+      }
+    })
   }
 
 
@@ -349,7 +366,7 @@ export class FieldsDataComponent implements OnInit {
           this.isCheckbox = true;
       }
 
-      this.modalRef = this.modalService.show(template, { class: 'gray modal-lg' });
+      this.modalRef = this.modalService.show(template, { class: 'gray modal-lg', backdrop: 'static' });
 
 
     }, (err) => {

@@ -27,9 +27,22 @@ async function login(username) {
 }
 
 
+async function check_login(req, res) {
+
+    try {
+        let data = await User_repository.check_login(req, res);
+        return data;
+
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}
+
+
 
 module.exports = {
     insert: insert,
     login: login,
+    check_login: check_login
 
 }

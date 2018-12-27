@@ -18,7 +18,7 @@ async function login(username) {
 
     try {
         let data = await User_service.login(username);
-        return data ;
+        return data;
 
     } catch (err) {
         return err;
@@ -29,20 +29,50 @@ async function login(username) {
 async function comparePassword(form_password, db_password) {
     try {
         let isMatch = await compare(form_password, db_password)
-            return isMatch;
-        
+        return isMatch;
+
     } catch (err) {
         return false;
     }
-    
+
 }
- function compare(form_password, db_password){
-     return (form_password == db_password);
- }
+
+function compare(form_password, db_password) {
+    return (form_password == db_password);
+}
+
+
+
+async function check_login(req, res) {
+
+    try {
+        let data = await User_service.check_login(req, res);
+
+        console.log(data, "DATA");
+
+        if (data != null) {
+
+            req.session.user = data.username;
+            req.session.save();
+
+            res.status(200).json(data);
+        } else {
+            res.status(200).json({
+                msg: "INVALID"
+            });
+        }
+        // return data;
+
+    } catch (err) {
+        console.log(err, "ERROR IN LOGIN");
+        return err;
+    }
+}
 
 
 module.exports = {
     insert,
     login,
-    comparePassword
+    comparePassword,
+    check_login
 }
