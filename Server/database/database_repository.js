@@ -94,6 +94,7 @@ async function CreateTable(req, res) {
             label: false,
             fieldtype: 'serial',
             Konstraint: false,
+            u_konstraint: false,
             tableid: response2.rows[0].id
         })
 
@@ -133,7 +134,7 @@ async function addColumn(req, res, id) {
     let constraints = '';
     let list = [];
     let fieldtype = req.body.type;
-
+    let unique_key_constraint = req.body.unique_key;
 
     let optionData = [];
 
@@ -167,12 +168,14 @@ async function addColumn(req, res, id) {
         label: escape(req.body.label),
         fieldtype: req.body.type,
         Konstraint: req.body.constraints,
-        tableid: id
+        tableid: id,
+        u_konstraint: req.body.unique_key
     })
 
 
 
     console.log(fieldsData, "FIELDSDATA")
+
     console.log(optionData, "    optionData")
 
 
@@ -181,8 +184,7 @@ async function addColumn(req, res, id) {
     fieldsData.forEach((item) => {
         if (item.Konstraint == 'true') {
             constraints = constraints + ' ' + item.fieldname + ',';
-        }
-        if (item.fieldtype == 'dropdown' || item.fieldtype == 'radio') {
+        } else if (item.fieldtype == 'dropdown' || item.fieldtype == 'radio') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text' + ',';
         } else if (item.fieldtype == 'checkbox') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text[]' + ',';
@@ -214,14 +216,22 @@ async function addColumn(req, res, id) {
             let query1 = `ALTER TABLE "${tablename}" ${colquery} ;`
             console.log(query1, "QUERY");
             let addColumnResult = await queryExecute(query1);
+            console.log(fieldstableQuery, ">>>>>>>>>>>>>")
             fieldsDataResult = await queryExecute(fieldstableQuery);
+            console.log(fieldsDataResult, "RESULT NOW");
 
         }
 
         if (constraints) {
             console.log("2222")
             let constraintQuery = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${constraints}");`
-            console.log(constraintQuery, "CONSTRAINT QUERY")
+            console.log(constraintQuery, "CONSTRAINT QUERY 1111")
+            let constraintResult = await queryExecute(constraintQuery);
+        }
+
+        if (unique_key_constraint == 'true') {
+            let constraintQuery = `ALTER TABLE "${tablename}" ADD UNIQUE ("${escape(req.body.colname)}");`
+            console.log(constraintQuery, "CONSTRAINT QUERY 2222")
             let constraintResult = await queryExecute(constraintQuery);
         }
 
@@ -520,7 +530,6 @@ async function editTableInfo(req, res, id) {
 }
 
 
-
 async function fetchFieldData(tableid, fieldid) {
 
     console.log(tableid, fieldid, "OOO");
@@ -528,7 +537,7 @@ async function fetchFieldData(tableid, fieldid) {
     let query = `SELECT d.databasevalue AS d_dbvalue, d.displayvalue AS d_dspvalue,
      c.databasevalue AS c_dbvalue,c.displayvalue AS c_dspvalue,
      r.databasevalue AS r_dbvalue,r.displayvalue AS r_dspvalue,
-     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid 
+     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid,f.u_konstraint 
      FROM public.fieldstable AS f 
 	 FULL JOIN dropdowntable AS d ON d.tableid = f.tableid AND d.colname = f.fieldname 
      FULL JOIN radiotable AS r ON r.tableid = f.tableid AND r.colname = f.fieldname 
@@ -538,7 +547,7 @@ async function fetchFieldData(tableid, fieldid) {
         let response = await queryExecute(query);
         let newArray = [];
 
-        // console.log(response.rows);
+        console.log(response.rows);
 
         response.rows.forEach((item) => {
             let datas = {};
@@ -568,12 +577,23 @@ async function fetchFieldData(tableid, fieldid) {
 
 async function fieldEdit(req, table_id, field_id) {
 
+    colname: "Id1"
+    constraints: "true"
+    f_uid: 229
+    label: "Id1"
+    type: "integer"
+    unique_key: "false"
+    __proto__: Object
+
+
     console.log(table_id, "tableID");
     console.log(field_id, "Field id");
     console.log(req.body, "Body");
 
     // let body = [req.body];
     let colquery = '';
+    let fieldtype = req.body.type;
+    let unique_key_constraint = req.body.unique_key;
 
     let optionList = [];
     let optionData = [];
@@ -585,12 +605,12 @@ async function fieldEdit(req, table_id, field_id) {
     let new_fieldname = escape(req.body.colname);
     let new_fieldtype;
 
-    if (req.body.type == 'dropdown' || req.body.type == 'radio') {
+    if (fieldtype == 'dropdown' || fieldtype == 'radio') {
         new_fieldtype = 'text';
-    } else if (req.body.type == 'checkbox') {
+    } else if (fieldtype == 'checkbox') {
         new_fieldtype = 'text[]';
     } else {
-        new_fieldtype = req.body.type;
+        new_fieldtype = fieldtype;
     }
 
     let new_label = req.body.label;
@@ -632,7 +652,7 @@ async function fieldEdit(req, table_id, field_id) {
         .update()
         .table("fieldstable")
         .set("fieldname", new_fieldname)
-        .set("fieldtype", req.body.type)
+        .set("fieldtype", fieldtype)
         .set("label", new_label)
         .set("konstraint", new_konstraint)
         .where("f_uid = ?", field_id)
@@ -648,6 +668,7 @@ async function fieldEdit(req, table_id, field_id) {
         let tablename = response.rows[0].tablename;
         let prv_fieldname = response1.rows[0].fieldname;
         let prv_fieldtype = response1.rows[0].fieldtype;
+        let prv_konstraint = response1.rows[0].Konstraint;
 
         console.log(prv_fieldname, tablename, "PPPP");
         if (prv_fieldtype != new_fieldtype) {
@@ -664,12 +685,17 @@ async function fieldEdit(req, table_id, field_id) {
         }
 
         if (new_konstraint == 'true') {
-            console.log(new_konstraint, "IN HERE");
-            let query5 = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${new_fieldname}")`
-            let response5 = await queryExecute(query5);
-        } else {
-            let query5 = `ALTER TABLE "${tablename}" DROP CONSTRAINT "${tablename}_pkey"`
-            let response5 = await queryExecute(query5);
+            let query = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${new_fieldname}")`
+            let response = await queryExecute(query);
+        } else if (new_konstraint == 'false' && prv_konstraint == true) {
+            let query = `ALTER TABLE "${tablename}" DROP CONSTRAINT "${new_fieldname}_pkey"`
+            let response = await queryExecute(query);
+        } else if (unique_key_constraint == 'true') {
+            let query = `ALTER TABLE "${tablename}" ADD UNIQUE ("${new_fieldname}")`
+            let response = await queryExecute(query);
+        } else if (unique_key_constraint == 'false') {
+            // let query = `ALTER TABLE "${tablename}" DROP CONSTRAINT "${new_fieldname}_pkey"`
+            // let response = await queryExecute(query);
         }
 
         console.log(new_konstraint, "IN HERE");
@@ -694,7 +720,7 @@ async function fieldEdit(req, table_id, field_id) {
         if (optionData.length > 0) {
             let query7 = squel
                 .insert()
-                .into(`${req.body.type}table`)
+                .into(`${fieldtype}table`)
                 .setFieldsRows(optionData)
                 .toString();
 

@@ -3,6 +3,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { SelectItem } from 'primeng/api';
 
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -10,6 +11,7 @@ import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@ang
 
 import { UserServiceService } from '../user-service.service';
 import { CommonModalComponent } from '../common-modal/common-modal.component';
+import { validateConfig } from '@angular/router/src/config';
 
 @Component({
   selector: 'app-fields-data',
@@ -18,6 +20,8 @@ import { CommonModalComponent } from '../common-modal/common-modal.component';
 })
 export class FieldsDataComponent implements OnInit {
   fieldForm: FormGroup;
+
+  ConstraintOptions: any;
 
   constructor(
     private _route: ActivatedRoute,
@@ -28,7 +32,10 @@ export class FieldsDataComponent implements OnInit {
     private _fb: FormBuilder,
     private _userService: UserServiceService,
 
-  ) { }
+  ) {
+    this.ConstraintOptions = [{ label: 'Yes', value: 'true' },
+    { label: 'No', value: 'false' }]
+  }
 
   modalRef: BsModalRef;
 
@@ -77,7 +84,8 @@ export class FieldsDataComponent implements OnInit {
               label: item.label,
               type: item.fieldtype,
               constraints: item.konstraint,
-              f_uid: item.f_uid
+              f_uid: item.f_uid,
+              u_key: item.u_konstraint
             })
           }
         });
@@ -95,7 +103,8 @@ export class FieldsDataComponent implements OnInit {
         'colname': ['', Validators.required],
         'label': ['', Validators.required],
         'type': ['', Validators.required],
-        'constraints': ['false', Validators.required]
+        'constraints': ['false', Validators.required],
+        'unique_key': ['false', Validators.required]
       }
     )
   }
@@ -105,6 +114,7 @@ export class FieldsDataComponent implements OnInit {
   get label() { return this.fieldForm.get('label') }
   get type() { return this.fieldForm.get('type') }
   get constraints() { return this.fieldForm.get('constraints') }
+  get unique_key() { return this.fieldForm.get('unique_key') }
 
   get arrayList() { return this.fieldForm.get('arrayList') as FormArray }
 
@@ -119,6 +129,7 @@ export class FieldsDataComponent implements OnInit {
 
     this.fieldForm.reset();
     this.constraints.setValue('false');
+    this.unique_key.setValue('false');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
@@ -239,6 +250,7 @@ export class FieldsDataComponent implements OnInit {
     }
     this.fieldForm.reset();
     this.constraints.setValue('false');
+    this.unique_key.setValue('false');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
@@ -322,7 +334,8 @@ export class FieldsDataComponent implements OnInit {
               'colname': element.fieldname,
               'label': element.label,
               'constraints': element.konstraint,
-              'type': element.fieldtype
+              'type': element.fieldtype,
+              'unique_key': element.u_konstraint
             });
             this.fieldtype = element.fieldtype;
           }
@@ -467,6 +480,7 @@ export class FieldsDataComponent implements OnInit {
     this.fieldForm.removeControl('List');
     this.fieldForm.reset();
     this.constraints.setValue('false');
+    this.unique_key.setValue('false');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;

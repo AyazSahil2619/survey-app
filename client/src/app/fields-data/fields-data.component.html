@@ -13,6 +13,7 @@
             <th>Label</th>
             <th>Field type</th>
             <th>Primary ?</th>
+            <th>Unique ?</th>
             <th>Action</th>
           </tr>
           <tr *ngFor="let object of displayArray" [class]="object.f_uid > 0 ? 'unmodified':'modified'">
@@ -20,6 +21,7 @@
             <td>{{object.label}}</td>
             <td>{{object.type}}</td>
             <td>{{object.constraints}}</td>
+            <td>{{object.u_key}}</td>
             <td>
               <a (click)="updatefield(editFieldTemplate,object.f_uid)"><i class='fa fa-edit'></i></a>&nbsp;&nbsp;
               <!-- <a style="color: red" (click)="deleteModal(templatedelete,object.f_uid)"><i class='fa fa-close'></i></a> -->
@@ -56,7 +58,6 @@
               <input type="text" class="form-control" formControlName="colname" required>
               <span class="error" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
             </div>
-
             <div class="col-md-12">
               <label>Label <span class='asteriskcolor'>*</span></label>
               <input type="text" class="form-control" formControlName="label" required>
@@ -130,13 +131,31 @@
               </div>
             </div>
             <br>
-            <div class="col-md-12" *ngIf="!isDropdown && !isRadio && !isCheckbox">
-              <label>Primary Key</label>
-              <select type="text" class="form-control" formControlName="constraints" required>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
+            <div *ngIf="!isDropdown && !isRadio && !isCheckbox">
+
+              <div class="col-md-12">
+                <a data-target="#demo" data-toggle="collapse"><i class="far fa-greater-than"></i>
+                  Advance Options</a>
+              </div>
+              <div id="demo" class="collapse container">
+                <div>
+                  <br> <label>Primary Key</label><br>
+                  <p-selectButton [options]="ConstraintOptions" formControlName="constraints"></p-selectButton>
+                </div>
+                <!-- <div>
+                <label>Primary Key</label>
+                <select type="text" class="form-control" formControlName="constraints" required>
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div> -->
+                <div>
+                  <label>Unique Key</label><br>
+                  <p-selectButton [options]="ConstraintOptions" formControlName="unique_key"></p-selectButton>
+                </div>
+              </div>
             </div>
+
           </div>
         </fieldset><br><br>
         <div class="modal-footer">
@@ -248,12 +267,28 @@
               </div>
             </div>
             <br>
-            <div class="col-md-12" *ngIf="!isDropdown && !isRadio && !isCheckbox">
+            <!-- <div class="col-md-12" *ngIf="!isDropdown && !isRadio && !isCheckbox">
               <label>Primary Key</label>
               <select type="text" class="form-control" formControlName="constraints" required>
                 <option value="true">Yes</option>
                 <option value="false">No</option>
               </select>
+            </div> -->
+            <div *ngIf="!isDropdown && !isRadio && !isCheckbox">
+              <div class="col-md-12">
+                <a data-target="#demo" data-toggle="collapse"><i class="far fa-greater-than"></i>
+                  Advance Options</a>
+              </div>
+              <div id="demo" class="collapse container">
+                <div>
+                  <br> <label>Primary Key</label><br>
+                  <p-selectButton [options]="ConstraintOptions" formControlName="constraints"></p-selectButton>
+                </div>
+                <div>
+                  <label>Unique Key</label><br>
+                  <p-selectButton [options]="ConstraintOptions" formControlName="unique_key"></p-selectButton>
+                </div>
+              </div>
             </div>
           </div>
         </fieldset><br><br>

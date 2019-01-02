@@ -13,8 +13,8 @@
                 <td><label>{{x.label}} <span class="asteriskcolor">*</span></label></td>
 
                 <td *ngIf="x.fieldtype == 'text'">
-                  <input id="text" name="{{x.fieldname}}" #name1="ngModel" class="form-control" type="text"
-                    [(ngModel)]="data[x.fieldname]" required>
+                  <input id="text" name="{{x.fieldname}}" #name1="ngModel" class="form-control" type="text" [(ngModel)]="data[x.fieldname]"
+                    required>
                   <div *ngIf="f.submitted && name1.invalid">
                     <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
                   </div>
@@ -53,7 +53,8 @@
                     required email />
                   <div *ngIf="f.submitted && name2.invalid">
                     <div class="error" *ngIf="name2.errors.required">{{x.fieldname}} is required</div>
-                    <div class="error" *ngIf="name2.errors.email ">{{x.fieldname}} must be a valid email address(ex.
+                    <div class="error" *ngIf="!name2.errors.required && name2.errors.email ">{{x.fieldname}} must be a
+                      valid email address(ex.
                       abc@xyz.com)</div>
                   </div>
                 </td>
