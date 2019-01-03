@@ -5,7 +5,7 @@ async function view(req, res) {
     // console.log(id);
 
     try {
-        var data = await repository.view(req, res, id)
+        var data = await repository.view(id)
         res.status(200).json(data)
 
     } catch (err) {
@@ -16,7 +16,7 @@ async function view(req, res) {
 async function addDataToTable(req, res) {
     const id = parseInt(req.params.id, 10);
     try {
-        let data = await repository.addDataToTable(req, res, id);
+        let data = await repository.addDataToTable(req, id);
         res.status(200).json(data)
 
     } catch (err) {
@@ -28,7 +28,7 @@ async function TableData(req, res) {
     const id = parseInt(req.params.id, 10);
 
     try {
-        var data = await repository.TableData(req, res, id)
+        var data = await repository.TableData(id)
         res.status(200).json(data)
 
     } catch (err) {
@@ -68,7 +68,7 @@ async function updateRow(req, res) {
     const tableid = parseInt(req.params.id, 10);
 
     try {
-        let data = await repository.updateRow(req, res, tableid);
+        let data = await repository.updateRow(req, tableid);
         res.status(200).json(data)
 
     } catch (err) {

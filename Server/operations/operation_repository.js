@@ -1,7 +1,11 @@
 const squel = require('squel');
 const runQuery = require('../pgConnection');
 
-
+/**
+ * Database Query is Executed
+ * @param {String} query the database query which is to be executed
+ * @returns {Object[]} the result of running database query
+ */
 async function queryExecute(query) {
     const client = await runQuery.pool.connect();
 
@@ -10,9 +14,7 @@ async function queryExecute(query) {
         await client.query('BEGIN');
         try {
             result = await client.query(query);
-            // await client.query('COMMIT');
         } catch (err) {
-            console.log(err, "ERROR");
             await client.query('ROLLBACK');
             return Promise.reject(err);
         }
@@ -20,17 +22,15 @@ async function queryExecute(query) {
         client.release();
     }
     return result;
-    // try {
-    //     let res = await runQuery.pool.query(query);
-    //     return res;
-
-    // } catch (err) {
-    //     return Promise.reject(err)
-    // }
 
 }
-async function view(req, res, id) {
 
+/**
+ * Gets the list of records (i.e fields data) of specified table
+ * @param {Number} id the id of Specified table of which data is fetched 
+ * @returns {newArray :Object[]} the list of data/object of specified table
+ */
+async function view(id) {
 
     let query = squel
         .select()
@@ -61,14 +61,17 @@ async function view(req, res, id) {
     }
 }
 
-async function addDataToTable(req, res, id) {
+/**
+ * Inserting the data to table
+ * @param {Object} req Its body provide the data to inserted into  the table
+ * @param {Number} id  the table id on which changes is to be made
+ * @returns {Object[]} the result of running insert data query
+ */
+async function addDataToTable(req, id) {
 
     let body = [req.body];
     let colquery = '';
     let values = '';
-
-    // let checkboxValue = req.body.checkboxData;
-
 
     let query1 = squel
         .select()
@@ -76,31 +79,9 @@ async function addDataToTable(req, res, id) {
         .where("id =?", id)
         .toString();
 
-
     try {
         let res1 = await queryExecute(query1);
-
         let tablename = res1.rows[0].tablename;
-
-        // body.forEach((item) => {
-        //     for (var key in item) {
-        //         if (key != 'checkboxData') {
-        //             colquery = colquery + '"' + key + '"' + ',';
-        //             values = values + `'` + item[key] + `'` + ',';
-        //         } else if (key == 'checkboxData') {
-        //             checkboxValue.forEach((element) => {
-        //                 for (var keys in element) {
-        //                     colquery = colquery + '"' + keys + '"' + ',';
-        //                     values = values + `'` + '{' + element[keys] + '}' + `'` + ',';
-        //                 }
-        //             })
-
-        //         }
-        //     }
-        // })
-
-
-        console.log(body, "BODY");
 
         body.forEach(function (element) {
             for (var keys in element) {
@@ -122,9 +103,6 @@ async function addDataToTable(req, res, id) {
             }
         });
 
-        console.log("colquery", colquery);
-        console.log(values, "VALUES")
-
         colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
         values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
 
@@ -137,20 +115,22 @@ async function addDataToTable(req, res, id) {
         let res2 = await queryExecute(query2);
         await queryExecute('COMMIT');
 
-
         if (res2.rowCount > 0) {
             return res2;
         } else {
             return Promise.reject(err);
         }
     } catch (err) {
-        console.log(err, "Error in adding data to table");
         return Promise.reject(err);
     }
 }
 
-
-async function TableData(req, res, id) {
+/**
+ * Fetch all the records from the specified table
+ * @param {Number} id the table id of which records are to be fetched.
+ * @returns {Object[]} the list of record from specified table
+ */
+async function TableData(id) {
 
     let newArray = [];
     let query = squel
@@ -179,16 +159,19 @@ async function TableData(req, res, id) {
             newArray.push(datas);
         });
 
-        // console.log(newArray, "aaa");
         return newArray;
-
-        // return res1
 
     } catch (err) {
         return Promise.reject(err.message);
     }
 }
 
+/**
+ * Delete the record from the specified table
+ * @param {Number} tableid the id of the table in which the changes is to be made.
+ * @param {Number} rowid  the id of row which is to be deleted.
+ * @returns {Object[]} the result of running delete data query
+ */
 async function deleteData(tableid, rowid) {
 
     let query = squel
@@ -218,6 +201,12 @@ async function deleteData(tableid, rowid) {
     }
 }
 
+/**
+ * Fetch the deltails of specific row of specified table
+ * @param {Number} tableid the id of the table of which the data will be fetched
+ * @param {Number} uid the id of the row from a table 
+ * @returns {newArray: Object[]} the record of specified table 
+ */
 async function getdetails(tableid, uid) {
 
     let query = squel
@@ -250,12 +239,9 @@ async function getdetails(tableid, uid) {
             newArray.push(datas);
         });
 
-        console.log(newArray, "NEW ARRAY");
-
         newArray.forEach((item, index) => {
             for (var key in item) {
                 if (item[key] && typeof item[key] == 'object' && item[key].length != undefined) {
-                    console.log("IN HERE")
                     let data = {};
                     for (let i = 0; i < item[key].length; i++) {
 
@@ -266,8 +252,6 @@ async function getdetails(tableid, uid) {
             }
         })
 
-        console.log(newArray, "getdetails");
-
         return newArray;
 
     } catch (err) {
@@ -275,14 +259,17 @@ async function getdetails(tableid, uid) {
     }
 }
 
-
-async function updateRow(req, res, id) {
+/**
+ * Update/Edit the rrecords of specified table
+ * @param {Object} req It provides the data for updating the specified row.
+ * @param {Number} id  The table id in which the row is to be updated/edited.
+ * @returns {Object[]} The result of running update data query.
+ */
+async function updateRow(req, id) {
 
     let body = [req.body];
     let values = '';
     let condition = '';
-
-    console.log(body, "pppppp");
 
     body.forEach((element) => {
         for (var keys in element) {
@@ -308,8 +295,6 @@ async function updateRow(req, res, id) {
     });
 
     values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
-    console.log(values, "VALUES");
-
 
     let query = squel
         .select()
@@ -323,17 +308,6 @@ async function updateRow(req, res, id) {
         let res = await queryExecute(query);
         let tablename = res.rows[0].tablename;
 
-        // body.forEach((item, index) => {
-        //     for (var key in item) {
-        //         if (key != 'uid') {
-        //             // values = values + key + `=` + `'` + item[key] + `'` + ',';
-        //             values = values + '"' + escape(key) + '"' + `=` + `'` + item[key] + `'` + ',';
-        //         } else {
-        //             condition = key + `=` + `'` + item[key] + `'`
-        //         }
-        //     }
-        // })
-
         let query1 = `UPDATE "${tablename}" SET ${values} WHERE ${condition};`
 
         let res1 = await queryExecute(query1);
@@ -346,6 +320,11 @@ async function updateRow(req, res, id) {
     }
 }
 
+/**
+ * Fetch all the records of dropdown 
+ * @param {Number} tableid the id of the table of which the data is to be fetched
+ * @returns {Object[]} the list of record of specified table
+ */
 async function fetchDropdownList(tableid) {
 
     let query = squel
@@ -354,11 +333,9 @@ async function fetchDropdownList(tableid) {
         .where("tableid =?", tableid)
         .toString();
 
-    console.log(query, "1111")
     try {
         let res = await queryExecute(query);
         if (res.rowCount > 0) {
-            // console.log(res);
             return res.rows;
         } else {
             return false;
@@ -369,6 +346,11 @@ async function fetchDropdownList(tableid) {
     }
 }
 
+/**
+ * Fetch all the records of radiobutton 
+ * @param {Number} tableid the id of the table of which the data is to be fetched
+ * @returns {Object[]} the list of record of specified table
+ */
 async function fetchRadioList(tableid) {
 
     let query = squel
@@ -392,6 +374,11 @@ async function fetchRadioList(tableid) {
     }
 }
 
+/**
+ * Fetch all the records of checkbox 
+ * @param {Number} tableid the id of the table of which the data is to be fetched
+ * @returns {Object[]} the list of record of specified table
+ */
 async function fetchCheckboxList(tableid) {
 
     let query = squel
@@ -415,6 +402,11 @@ async function fetchCheckboxList(tableid) {
     }
 }
 
+/**
+ * Get the table name of specified id
+ * @param {Number} tableid the specified table id
+ * @returns {tablename : {String}} the specified table name.
+ */
 async function tablename(tableid) {
 
     let query = squel
@@ -423,11 +415,9 @@ async function tablename(tableid) {
         .where("id =?", tableid)
         .toString();
 
-    console.log(query, "1111")
     try {
         let res = await queryExecute(query);
         if (res.rowCount > 0) {
-            // console.log(res.rows[0]);
             let tablename = unescape(res.rows[0].tablename)
             return tablename;
         } else {
@@ -441,7 +431,12 @@ async function tablename(tableid) {
     }
 }
 
-
+/**
+ * Checking token from the records of database
+ * @param {Number} tableid the specified table id 
+ * @param {String} token  the token to be checked.
+ * @returns {Boolean} If true the token is a valid token .
+ */
 async function checkToken(tableid, token) {
 
     let query = squel

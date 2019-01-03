@@ -64,6 +64,8 @@ export class EditTableComponent implements OnInit {
       time: Date(),
     };
 
+    console.log(this.TableInfo,"123");
+
     this._userService.checkTablename(this.TableInfo, this.tableid).subscribe((response) => {
       // this._userService.checkTablenameforUpdate(this.tableid, this.TableInfo).subscribe((response) => {
       if (response) {

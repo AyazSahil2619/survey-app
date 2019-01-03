@@ -1,5 +1,5 @@
-.error {
-  color: red;
+.danger {
+  color: red !important;
 }
 
 .zindex {
@@ -39,6 +39,5 @@
 
 .header {
   background-color: #177d6b;
+  color: white;
 }
-
-

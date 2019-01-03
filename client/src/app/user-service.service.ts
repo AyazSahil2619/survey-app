@@ -33,7 +33,7 @@ export class UserServiceService {
       tableid = 0;
     }
     console.log(tableid, "LLLL")
-    return this._http.post(`${environment.ip}/checkTablename/:id` + tableid, tablename, { withCredentials: true })
+    return this._http.post(`${environment.ip}/checkTablename/` + tableid, tablename, { withCredentials: true })
   }
 
   createTable(data): Observable<any> {

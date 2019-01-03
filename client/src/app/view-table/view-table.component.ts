@@ -70,6 +70,16 @@ export class ViewTableComponent implements OnInit {
             })
           }
         })
+        if (this.colinfo1.length == 0 && this._auth.isRole() == 'admin') {
+          this.router.navigate(['/manage/' + this.table_id]);
+          this.messageService.add(
+            { severity: 'error', summary: 'No Fields ... Please add some fields...' });
+
+        } else if (this.colinfo1.length == 0 && this._auth.isRole() == 'user') {
+          this.messageService.add(
+            { severity: 'error', summary: 'Whoopss !! Nothing to view .. Fields are yet to be added ..' });
+          this.router.navigate([`/${this._auth.isRole()}login`]);
+        }
         console.log(this.colinfo1, "aaaa")
       }, (error) => {
         console.log(error, "error while fetching fields data")

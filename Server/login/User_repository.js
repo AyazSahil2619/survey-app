@@ -2,6 +2,11 @@ const squel = require('squel');
 const runQuery = require('../pgConnection');
 
 
+/**
+ * Database query execution
+ * @param {String} obj the query to be executed.
+ * @returns {Object[]} the result of the running query
+ */
 async function queryExecute(obj) {
 
     try {
@@ -12,7 +17,11 @@ async function queryExecute(obj) {
     }
 }
 
-
+/**
+ * Insert the data to the credential table
+ * @param {Object} [body] It provides the basic details of user to be inserted.
+ * @returns {Object[]} the result of running insert data query.
+ */
 async function insert(body) {
 
     let obj = squel
@@ -27,13 +36,18 @@ async function insert(body) {
     try {
         let response = await queryExecute(obj)
         return response;
+
     } catch (err) {
-        console.log(err);
         return Promise.reject(err)
     }
 
 }
 
+/**
+ * Get the details of User
+ * @param {String} username The name of the user to login.
+ * @returns {object} The details of the user if it exist.
+ */
 async function login(username) {
 
     const query = squel
@@ -55,7 +69,11 @@ async function login(username) {
     }
 }
 
-
+/**
+ * Checking the user with its credentials.
+ * @param {Object} [req] It provides the username and password.
+ * @returns {String} if user exist its credentials get returned else null.
+ */
 async function check_login(req, res) {
 
     console.log(req.body, "BODY");

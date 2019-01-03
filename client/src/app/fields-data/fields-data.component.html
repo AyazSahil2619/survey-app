@@ -3,7 +3,7 @@
     <div class="card col-md-10 offset-md-1 text-black bg-light">
       <div class="card-header">
         <h3>{{title}}</h3>
-        <a type="button" class="btn btn-primary cc btn-sm float-right" (click)="addField(addFieldTemplate)"><i class='fas fa-plus-circle'></i>
+        <a type="button" class="btn btn-primary cc btn-sm float-right" (click)="addField(addFieldTemplate)"><i class='fas fa-plus'></i>
           Add Field</a>
       </div>
       <div class="card-body">
@@ -21,11 +21,11 @@
             <td>{{object.label}}</td>
             <td>{{object.type}}</td>
             <td>{{object.constraints}}</td>
-            <td>{{object.u_key}}</td>
+            <td>{{object.unique_key}}</td>
             <td>
               <a (click)="updatefield(editFieldTemplate,object.f_uid)"><i class='fa fa-edit'></i></a>&nbsp;&nbsp;
-              <!-- <a style="color: red" (click)="deleteModal(templatedelete,object.f_uid)"><i class='fa fa-close'></i></a> -->
-              <a style="color: red" (click)="deleteModal(object.f_uid)"><i class='fa fa-close'></i></a>
+              <!-- <a class="danger" (click)="deleteModal(templatedelete,object.f_uid)"><i class='fa fa-close'></i></a> -->
+              <a class="danger" (click)="deleteModal(object.f_uid)"><i class='fa fa-close'></i></a>
             </td>
           </tr>
         </table>
@@ -46,7 +46,7 @@
     <div class="modal-header header">
       <h3>Survey Details</h3>
       <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-        <span aria-hidden="true">&times;</span>
+        <span class="cc" aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
@@ -56,12 +56,12 @@
             <div class="col-md-12">
               <label>Name <span class='asteriskcolor'>*</span></label>
               <input type="text" class="form-control" formControlName="colname" required>
-              <span class="error" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
+              <span class="danger" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
             </div>
             <div class="col-md-12">
               <label>Label <span class='asteriskcolor'>*</span></label>
               <input type="text" class="form-control" formControlName="label" required>
-              <span class="error" *ngIf="!label.valid && label.dirty">Label is required!</span>
+              <span class="danger" *ngIf="!label.valid && label.dirty">Label is required!</span>
             </div>
             <div class="col-md-12">
               <label>Field type <span class='asteriskcolor'>*</span></label>
@@ -75,7 +75,7 @@
                 <option value="radio">Radio</option>
                 <option value="checkbox">Checkbox</option>
               </select>
-              <span class="error" *ngIf="!type.valid && type.dirty">Field type is required!</span>
+              <span class="danger" *ngIf="!type.valid && type.dirty">Field type is required!</span>
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
@@ -88,7 +88,7 @@
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
                       <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue">&nbsp;&nbsp;&nbsp;
-                      <a style="color:red" (click)="minus(i)"><i class="fa fa-times"></i></a><br><br>
+                      <a class="danger" (click)="minus(i)"><i class="fa fa-times"></i></a><br><br>
                     </div>
                   </div>
                 </div>
@@ -106,7 +106,7 @@
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
                       <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue">&nbsp;&nbsp;
-                      <a style="color:red" (click)="minus(i)"><i class="fa fa-times"></i></a><br><br>
+                      <a class="danger" (click)="minus(i)"><i class="fa fa-times"></i></a><br><br>
                     </div>
                   </div>
                 </div>
@@ -124,7 +124,7 @@
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
                       <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue">&nbsp;&nbsp;
-                      <a style="color:red" (click)="minus(i)"><i class="fa fa-times"></i></a><br><br>
+                      <a class="danger" (click)="minus(i)"><i class="fa fa-times"></i></a><br><br>
                     </div>
                   </div>
                 </div>
@@ -134,7 +134,9 @@
             <div *ngIf="!isDropdown && !isRadio && !isCheckbox">
 
               <div class="col-md-12">
-                <a data-target="#demo" data-toggle="collapse"><i class="far fa-greater-than"></i>
+                <a data-target="#demo" data-toggle="collapse" (click)="click()">
+                  <span *ngIf="clicked"><i class="fas fa-angle-right"></i></span>
+                  <span *ngIf="!clicked"><i class="fas fa-angle-down"></i></span>
                   Advance Options</a>
               </div>
               <div id="demo" class="collapse container">
@@ -191,13 +193,13 @@
             <div class="col-md-12">
               <label>Name <span class='asteriskcolor'>*</span></label>
               <input type="text" class="form-control" formControlName="colname" required>
-              <span class="error" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
+              <span class="danger" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
             </div>
 
             <div class="col-md-12">
               <label>Label <span class='asteriskcolor'>*</span></label>
               <input type="text" class="form-control" formControlName="label" required>
-              <span class="error" *ngIf="!label.valid && label.dirty">Label is required!</span>
+              <span class="danger" *ngIf="!label.valid && label.dirty">Label is required!</span>
             </div>
             <div class="col-md-12">
               <label>Field type <span class='asteriskcolor'>*</span></label>
@@ -211,7 +213,7 @@
                 <option value="radio">Radio</option>
                 <option value="checkbox">Checkbox</option>
               </select>
-              <span class="error" *ngIf="!type.valid && type.dirty">Field type is required!</span>
+              <span class="danger" *ngIf="!type.valid && type.dirty">Field type is required!</span>
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
@@ -224,7 +226,7 @@
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
                       <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue">&nbsp;&nbsp;
-                      <a style="color:red" (click)="minus1(i)"><i class="fa fa-times"></i></a><br><br>
+                      <a class="danger" (click)="minus1(i)"><i class="fa fa-times"></i></a><br><br>
                     </div>
                   </div>
                 </div>
@@ -242,7 +244,7 @@
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
                       <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue">&nbsp;&nbsp;
-                      <a style="color:red" (click)="minus1(i)"><i class="fa fa-times"></i></a><br><br>
+                      <a class="danger" (click)="minus1(i)"><i class="fa fa-times"></i></a><br><br>
                     </div>
                   </div>
                 </div>
@@ -260,7 +262,7 @@
                     <div class="container-fluid row">
                       <input class="col-md-4 form-control" type="text" id="databasevalue" formControlName="databaseValue">&nbsp;&nbsp;
                       <input class="col-md-4 form-control" type="text" id="displayvalue" formControlName="displayValue">&nbsp;&nbsp;
-                      <a style="color:red" (click)="minus1(i)"><i class="fa fa-times"></i></a><br><br>
+                      <a class="danger" (click)="minus1(i)"><i class="fa fa-times"></i></a><br><br>
                     </div>
                   </div>
                 </div>
@@ -276,7 +278,9 @@
             </div> -->
             <div *ngIf="!isDropdown && !isRadio && !isCheckbox">
               <div class="col-md-12">
-                <a data-target="#demo" data-toggle="collapse"><i class="far fa-greater-than"></i>
+                <a data-target="#demo" data-toggle="collapse" (click)="click()">
+                  <span *ngIf="clicked"><i class="fas fa-angle-right"></i></span>
+                  <span *ngIf="!clicked"><i class="fas fa-angle-down"></i></span>
                   Advance Options</a>
               </div>
               <div id="demo" class="collapse container">
@@ -396,14 +400,14 @@
               <label><b>Name </b><span class='asteriskcolor'>*</span></label>
               <input type="text" class="form-control" #colname="ngModel" [(ngModel)]="column.colname" name="colname{{i}}"
                 required>
-              <span class="error" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
+              <span class="danger" *ngIf="!colname.valid && colname.dirty">Column Name is required!</span>
             </div>
 
             <div class="col-md-12">
               <label><b>Label </b><span class='asteriskcolor'>*</span></label>
               <input type="text" class="form-control" #label="ngModel" [(ngModel)]="column.label" name="label{{i}}"
                 required>
-              <span class="error" *ngIf="!label.valid && label.dirty">Label is required!</span>
+              <span class="danger" *ngIf="!label.valid && label.dirty">Label is required!</span>
             </div>
             <div class="col-md-6">
               <label><b>Field type </b><span class='asteriskcolor'>*</span></label>
@@ -416,7 +420,7 @@
                 <option value="date">Date</option>
                 <option value="dropdown">Dropdown</option>
               </select>
-              <span class="error" *ngIf="!type.valid && type.dirty">Field Name is required!</span>
+              <span class="danger" *ngIf="!type.valid && type.dirty">Field Name is required!</span>
             </div>
             <div class="col-md-6" *ngIf="column.type == 'dropdown'">
               <label><b>Dropdown Value </b><span class="asteriskcolor">*</span></label>

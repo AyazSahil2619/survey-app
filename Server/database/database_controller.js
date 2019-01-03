@@ -3,7 +3,7 @@ const repository = require('./database_repository');
 async function CreateTable(req, res) {
 
     try {
-        let data = await repository.CreateTable(req, res)
+        let data = await repository.CreateTable(req);
         res.status(200).json(data)
 
     } catch (err) {
@@ -14,7 +14,7 @@ async function CreateTable(req, res) {
 async function viewTable(req, res) {
 
     try {
-        let data = await repository.viewTable(req, res)
+        let data = await repository.viewTable()
         res.status(200).json(data)
 
     } catch (err) {
@@ -37,7 +37,7 @@ async function modifyTable(req, res) {
     const id = parseInt(req.params.id, 10);
 
     try {
-        let data = await repository.modifyTable(req, res, id)
+        let data = await repository.modifyTable(req, id)
         res.status(200).json(data)
 
     } catch (err) {
@@ -57,27 +57,16 @@ async function TableData(req, res) {
     }
 }
 
-async function editTable(req, res) {
-    const id = parseInt(req.params.id, 10);
-
-    try {
-        let data = await repository.editTable(req, res, id)
-        res.status(200).json(data)
-
-    } catch (err) {
-        res.status(400).json(err);
-    }
-}
-
 async function checkTablename(req, res) {
     const id = parseInt(req.params.id, 10);
-    console.log(id, "IIIDDDD");
+    console.log(id, "IIIIIIIDDDDDDDDDDDDDDD")
 
     try {
-        let data = await repository.checkTablename(req, res, id)
+        let data = await repository.checkTablename(req, id)
         res.status(200).json(data)
 
     } catch (err) {
+        console.log(err, "ERROR");
         res.status(400).json(err);
     }
 }
@@ -86,7 +75,7 @@ async function addColumn(req, res) {
     const id = parseInt(req.params.id, 10);
 
     try {
-        let data = await repository.addColumn(req, res, id)
+        let data = await repository.addColumn(req, id)
 
         res.status(200).json(data)
 
@@ -99,7 +88,7 @@ async function editTableInfo(req, res) {
     const id = parseInt(req.params.id, 10);
 
     try {
-        let data = await repository.editTableInfo(req, res, id)
+        let data = await repository.editTableInfo(req, id)
         res.status(200).json(data)
 
     } catch (err) {
@@ -107,23 +96,9 @@ async function editTableInfo(req, res) {
     }
 }
 
-// async function check(req, res) {
-//     const id = parseInt(req.params.id, 10);
-
-//     try {
-//         let data = await repository.check(req, res, id)
-//         res.status(200).json(data)
-
-//     } catch (err) {
-//         res.status(400).json(err);
-//     }
-// }
-
-
 async function fetchFieldData(req, res) {
     const tableid = parseInt(req.params.tableid, 10);
     const fieldid = parseInt(req.params.fieldid, 10)
-
 
     try {
         let data = await repository.fetchFieldData(tableid, fieldid)
@@ -152,14 +127,11 @@ async function fieldDelete(req, res) {
     const table_id = parseInt(req.params.tableid, 10);
     const field_id = parseInt(req.params.fieldid, 10);
 
-
     try {
-
         let data = await repository.fieldDelete(table_id, field_id)
         res.status(200).json(data)
 
     } catch (err) {
-        console.log(err, "!!!!!!!");
         res.status(400).json(err);
     }
 }
@@ -195,11 +167,9 @@ module.exports = {
     deleteTable: deleteTable,
     modifyTable: modifyTable,
     TableData: TableData,
-    editTable: editTable,
     checkTablename: checkTablename,
     addColumn: addColumn,
     editTableInfo: editTableInfo,
-    // check: check,
     fetchFieldData: fetchFieldData,
     fieldEdit: fieldEdit,
     fieldDelete: fieldDelete,

@@ -50,6 +50,7 @@ export class FieldsDataComponent implements OnInit {
   deleteColumnArray = [];
   fieldToDelete: any;
   ddList: Object[] = [];
+  clicked: boolean = true;
 
   ngOnInit() {
     this.formInitialization();
@@ -85,7 +86,7 @@ export class FieldsDataComponent implements OnInit {
               type: item.fieldtype,
               constraints: item.konstraint,
               f_uid: item.f_uid,
-              u_key: item.u_konstraint
+              unique_key: item.u_konstraint
             })
           }
         });
@@ -237,7 +238,9 @@ export class FieldsDataComponent implements OnInit {
     console.log(this.arrayList)
   }
 
-
+  click() {
+    this.clicked = !this.clicked;
+  }
 
   Cancel() {
 

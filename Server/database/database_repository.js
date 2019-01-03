@@ -3,38 +3,35 @@ const runQuery = require('../pgConnection');
 const nodemailer = require('nodemailer');
 
 
-//  Database Query gets executed
+/**
+ *  Database Query gets executed
+ * @param {String} [query] the query to be executed 
+ * @returns {Object[]}  The result get returned after Query execution
+ */
 async function queryExecute(query) {
-    const client = await runQuery.pool.connect();
+    const pool = await runQuery.pool.connect();
 
     let result
     try {
-        await client.query('BEGIN');
+        await pool.query('BEGIN');
         try {
-            result = await client.query(query);
-            // await client.query('COMMIT');
+            result = await pool.query(query);
         } catch (err) {
             console.log(err, "ERROR");
-            await client.query('ROLLBACK');
+            await pool.query('ROLLBACK');
             return Promise.reject(err);
         }
     } finally {
-        client.release();
+        pool.release();
     }
     return result;
-
-
-    // try {
-    //     let result = await runQuery.pool.query(query);
-    //     return result;
-    // } catch (err) {
-    //     console.log(err, "ERROR");
-    //     return Promise.reject(err)
-    // }
 }
 
 
-
+/**
+ *  Transaction gets Committed or End  
+ * @returns the result of running end query/transaction.
+ */
 async function _commitFunc() {
 
     let commitQuery = 'COMMIT'
@@ -43,11 +40,12 @@ async function _commitFunc() {
 }
 
 
-
-//  Creating TABLE in DATABASE And Inserting its Details into MASTERTABLE 
-async function CreateTable(req, res) {
-
-    console.log(req.body, "BODY");
+/**
+ * Creates a new Table into the database and inserting its details to Mastertable.
+ * @param {Object} req It provides the  name and description of table
+ * @returns {Object[]} The result of running create table query.
+ */
+async function CreateTable(req) {
 
     let query = '';
     let tablename = escape(req.body.tablename);
@@ -55,12 +53,7 @@ async function CreateTable(req, res) {
     let user = req.body.currentUser;
     let fieldsData = [];
 
-    // query = `CREATE TABLE IF NOT EXISTS "${tablename}" ();`
     query = `CREATE TABLE IF NOT EXISTS "${tablename}" (uid serial);`
-
-
-
-    console.log(query, "QUERY")
 
     let query1 = squel
         .insert()
@@ -69,10 +62,6 @@ async function CreateTable(req, res) {
         .set("\"Description\"", description)
         .set("createdby", user)
         .toString();
-
-    console.log(query1, "QUERY!");
-
-
 
     try {
         let response = await queryExecute(query);
@@ -86,8 +75,7 @@ async function CreateTable(req, res) {
             .toString();
 
         let response2 = await queryExecute(query2);
-
-        // console.log(response2.rows, "RESPONSE 2");
+        let table_id = response2.rows[0].id;
 
         fieldsData.push({
             fieldname: 'uid',
@@ -95,7 +83,7 @@ async function CreateTable(req, res) {
             fieldtype: 'serial',
             Konstraint: false,
             u_konstraint: false,
-            tableid: response2.rows[0].id
+            tableid: table_id
         })
 
         let fieldstableQuery = squel
@@ -105,28 +93,25 @@ async function CreateTable(req, res) {
             .toString();
 
         let fieldstableResult = await queryExecute(fieldstableQuery);
-
         await _commitFunc();
 
         return response2.rows[0];
 
     } catch (err) {
-        console.log(err, "Error while creating table");
         return Promise.reject(err.code)
     }
 
 }
 
 
-//  Adding Column to Table and data to (fieldstable and dropdowntable)
-
-async function addColumn(req, res, id) {
-
-
-
-    console.log(id, "BODY");
-
-    console.log(req.body, "BODY");
+/**
+ * Add new Field/column to specific table .
+ * @param {Object} req It provides details of fields (i.e. fieldname,fieldtype,constraints, 
+ * arrayList which contains radio, checkbox,dropdown values)
+ * @param {Number} id This id is the table Id to which field is added
+ * @returns {Object[]} The result of running insert data query.
+ */
+async function addColumn(req, id) {
 
     let body = [req.body];
     let fieldsData = [];
@@ -142,7 +127,6 @@ async function addColumn(req, res, id) {
         list = req.body.arrayList
     }
 
-
     if (list && list.length > 0) {
         list.forEach((item) => {
             optionData.push({
@@ -154,7 +138,6 @@ async function addColumn(req, res, id) {
 
         })
     }
-
 
     let query = squel
         .select()
@@ -172,19 +155,12 @@ async function addColumn(req, res, id) {
         u_konstraint: req.body.unique_key
     })
 
-
-
-    console.log(fieldsData, "FIELDSDATA")
-
-    console.log(optionData, "    optionData")
-
-
-
-
     fieldsData.forEach((item) => {
         if (item.Konstraint == 'true') {
             constraints = constraints + ' ' + item.fieldname + ',';
-        } else if (item.fieldtype == 'dropdown' || item.fieldtype == 'radio') {
+        }
+
+        if (item.fieldtype == 'dropdown' || item.fieldtype == 'radio') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text' + ',';
         } else if (item.fieldtype == 'checkbox') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text[]' + ',';
@@ -192,7 +168,6 @@ async function addColumn(req, res, id) {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + item.fieldtype + ',';
         }
     })
-
 
     constraints = constraints.replace(/(^[,\s]+)|([,\s]+$)/g, '')
     colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
@@ -209,29 +184,20 @@ async function addColumn(req, res, id) {
         let response = await queryExecute(query);
         let fieldsDataResult;
         let tablename = response.rows[0].tablename;
-        console.log(tablename, "TABLENAME");
 
         if (fieldsData.length != 0) {
-            console.log("1111")
             let query1 = `ALTER TABLE "${tablename}" ${colquery} ;`
-            console.log(query1, "QUERY");
             let addColumnResult = await queryExecute(query1);
-            console.log(fieldstableQuery, ">>>>>>>>>>>>>")
             fieldsDataResult = await queryExecute(fieldstableQuery);
-            console.log(fieldsDataResult, "RESULT NOW");
-
         }
 
         if (constraints) {
-            console.log("2222")
             let constraintQuery = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${constraints}");`
-            console.log(constraintQuery, "CONSTRAINT QUERY 1111")
             let constraintResult = await queryExecute(constraintQuery);
         }
 
         if (unique_key_constraint == 'true') {
             let constraintQuery = `ALTER TABLE "${tablename}" ADD UNIQUE ("${escape(req.body.colname)}");`
-            console.log(constraintQuery, "CONSTRAINT QUERY 2222")
             let constraintResult = await queryExecute(constraintQuery);
         }
 
@@ -252,8 +218,6 @@ async function addColumn(req, res, id) {
         return fieldsDataResult;
 
     } catch (err) {
-        console.log(err, "ERROR");
-
         return Promise.reject(err);
     }
 }
@@ -261,8 +225,10 @@ async function addColumn(req, res, id) {
 
 
 
-// Fetching DATA from MASTERTABLE
-
+/**
+ * Get the list of table .
+ * @returns {newArray:[Object]} The list of record from mastertable.
+ */
 async function viewTable() {
 
     let query = squel
@@ -302,8 +268,11 @@ async function viewTable() {
     }
 }
 
-
-// Deleting fields from fieldstable, row from mastertable and the table itself
+/**
+ * Delete the table from database and its subsequent data from related table.
+ * @param {number} [id] This id is the table id for specified table.
+ * @returns {Object[]} The result of running delete data query.
+ */
 async function deleteTable(id) {
 
     let query = squel
@@ -367,10 +336,14 @@ async function deleteTable(id) {
 
 }
 
-
-//DATA to COLUMNS (modified by AND modified at) is added
-
-async function modifyTable(req, res, id) {
+/**
+ * Update the column (i.e modified by AND modified at)
+ * @param {String} [req] Its body provide the current user and time at which
+ *  the changes has been made to database
+ * @param {number} [id] this is the table is to which the changes has been made.
+ * @returns {Object[]} The result of running update data query
+ */
+async function modifyTable(req, id) {
 
     let query = squel
         .update()
@@ -391,8 +364,11 @@ async function modifyTable(req, res, id) {
 }
 
 
-// Fetching Table Information  (is to be modified for editing table)
-
+/**
+ * Gets the details of specific table (i.e tablename , description) 
+ * @param {number} [id] The specified table id which details is to be fetched
+ * @returns {newArray : Object[]} It return the data of specific table 
+ */
 async function TableData(id) {
 
     let query = squel
@@ -423,12 +399,17 @@ async function TableData(id) {
     }
 }
 
+/**
+ * Check the table name from existing list of records
+ * @param {Object} [req] Its body provide the specified table name which is to be checked
+ * @param {nummber} [id] This is the current table id 
+ * @returns {check:{boolean}} if true then the current table name can be used to create a new table
+ */
+async function checkTablename(req, id) {
 
-// Checking Table name from the existing table
-
-async function checkTablename(req, res, id) {
-    console.log(id, "IIIIDDDDDD");
-
+    console.log(req.body,"BODY");
+    console.log(id,"Id")
+    
     if (id == 0) {
         let query = squel
             .select()
@@ -486,12 +467,13 @@ async function checkTablename(req, res, id) {
 }
 
 
-// Editinig table info 
-
-async function editTableInfo(req, res, id) {
-
-    console.log(req.body, "BODY");
-    console.log(id, "ID");
+/**
+ * Update/Edit/Rename the table data (i.e table name AND description)
+ * @param {Object} [req] Its body provide the table name and description
+ * @param {number} [id] the TAble id of current table which is to be modified
+ * @returns {object[]} the result of running update data query.
+ */
+async function editTableInfo(req, id) {
 
     let newData = req.body;
 
@@ -506,8 +488,6 @@ async function editTableInfo(req, res, id) {
     try {
 
         let response = await TableData(id);
-        console.log(response[0], "RESPONSE")
-
         let oldTablename = escape(response[0].tablename);
 
         if (oldTablename != newData.tablename) {
@@ -516,20 +496,23 @@ async function editTableInfo(req, res, id) {
         }
 
         let mastertableResult = await queryExecute(updateMastertableQuery);
-        console.log(mastertableResult, "aaa");
-
         await _commitFunc();
 
         return mastertableResult;
 
     } catch (err) {
-        console.log(err);
         return Promise.reject(err)
     }
 
 }
 
-
+/**
+ * Gets the details of fields (i.e. fieldname , fieldtype, constraint, 
+ * values of dropdown,radio or checkbox if it exist)
+ * @param {Number} tableid the id of specified table
+ * @param {Number} fieldid the id of specified field of the specific table
+ * @returns {newArray : object[]} It contains the details of specified field
+ */
 async function fetchFieldData(tableid, fieldid) {
 
     console.log(tableid, fieldid, "OOO");
@@ -547,8 +530,6 @@ async function fetchFieldData(tableid, fieldid) {
         let response = await queryExecute(query);
         let newArray = [];
 
-        console.log(response.rows);
-
         response.rows.forEach((item) => {
             let datas = {};
 
@@ -561,36 +542,26 @@ async function fetchFieldData(tableid, fieldid) {
 
         })
 
-        console.log(newArray, "NEW ARRAY");
-
         await _commitFunc();
 
         return newArray;
-        // return response.rows;
 
     } catch (err) {
-        console.log(err);
         return Promise.reject(err)
     }
 
 }
 
+/**
+ * Update/Edit the field of specific table
+ * @param {Object} req Its body provides the table data (i.e fieldname, fieldtype, constraint,
+ *  ArrayList : value of checkbox, radio, dropdown)
+ * @param {Number} table_id the id of specified table
+ * @param {Number} field_id the id of specified field
+ * @returns {Object []} the result of running update data query.
+ */
 async function fieldEdit(req, table_id, field_id) {
 
-    colname: "Id1"
-    constraints: "true"
-    f_uid: 229
-    label: "Id1"
-    type: "integer"
-    unique_key: "false"
-    __proto__: Object
-
-
-    console.log(table_id, "tableID");
-    console.log(field_id, "Field id");
-    console.log(req.body, "Body");
-
-    // let body = [req.body];
     let colquery = '';
     let fieldtype = req.body.type;
     let unique_key_constraint = req.body.unique_key;
@@ -616,7 +587,6 @@ async function fieldEdit(req, table_id, field_id) {
     let new_label = req.body.label;
     let new_konstraint = req.body.constraints;
 
-    console.log(new_fieldtype, "LLL");
 
     if (optionList.length > 0) {
 
@@ -628,10 +598,6 @@ async function fieldEdit(req, table_id, field_id) {
                 tableid: table_id,
             })
         })
-
-        console.log(optionList, "optionList");
-        console.log(optionData, "optionData");
-
     }
 
 
@@ -655,11 +621,10 @@ async function fieldEdit(req, table_id, field_id) {
         .set("fieldtype", fieldtype)
         .set("label", new_label)
         .set("konstraint", new_konstraint)
+        .set("u_konstraint", unique_key_constraint)
         .where("f_uid = ?", field_id)
         .toString()
 
-
-    console.log(query4, "QUERY 4")
 
 
     try {
@@ -668,40 +633,32 @@ async function fieldEdit(req, table_id, field_id) {
         let tablename = response.rows[0].tablename;
         let prv_fieldname = response1.rows[0].fieldname;
         let prv_fieldtype = response1.rows[0].fieldtype;
-        let prv_konstraint = response1.rows[0].Konstraint;
+        let prv_konstraint = response1.rows[0].konstraint;
+        let prv_u_konstraint = response1.rows[0].u_konstraint;
 
-        console.log(prv_fieldname, tablename, "PPPP");
         if (prv_fieldtype != new_fieldtype) {
-            let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}" SET DATA TYPE ${new_fieldtype} USING ("${prv_fieldname}" :: ${new_fieldtype});`
-            console.log(query2, "QUERY 2");
+            let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}"
+                             SET DATA TYPE ${new_fieldtype} USING ("${prv_fieldname}" :: ${new_fieldtype});`
             let response2 = await queryExecute(query2);
-            console.log(response2, "RESPONSE2");
         }
         if (prv_fieldname != new_fieldname) {
             let query3 = `ALTER TABLE "${tablename}"  RENAME COLUMN "${prv_fieldname}" TO "${new_fieldname}"`
-            console.log(query3, "QUERY 3");
             let response3 = await queryExecute(query3);
-            console.log(response3, "RESPONSE3");
         }
 
         if (new_konstraint == 'true') {
             let query = `ALTER TABLE "${tablename}" ADD PRIMARY KEY ("${new_fieldname}")`
             let response = await queryExecute(query);
         } else if (new_konstraint == 'false' && prv_konstraint == true) {
-            let query = `ALTER TABLE "${tablename}" DROP CONSTRAINT "${new_fieldname}_pkey"`
+            let query = `ALTER TABLE "${tablename}" DROP CONSTRAINT "${tablename}_pkey"`
             let response = await queryExecute(query);
         } else if (unique_key_constraint == 'true') {
             let query = `ALTER TABLE "${tablename}" ADD UNIQUE ("${new_fieldname}")`
             let response = await queryExecute(query);
-        } else if (unique_key_constraint == 'false') {
-            // let query = `ALTER TABLE "${tablename}" DROP CONSTRAINT "${new_fieldname}_pkey"`
-            // let response = await queryExecute(query);
+        } else if (unique_key_constraint == 'false' && prv_u_konstraint == true) {
+            let query = `ALTER TABLE "${tablename}" DROP CONSTRAINT "${tablename}_${new_fieldname}_key"`
+            let response = await queryExecute(query);
         }
-
-        console.log(new_konstraint, "IN HERE");
-
-
-        console.log(prv_fieldtype, "PREVIOUS FIELD TYPE");
 
         if (prv_fieldtype == 'dropdown' || prv_fieldtype == 'radio' || prv_fieldtype == 'checkbox') {
 
@@ -712,7 +669,6 @@ async function fieldEdit(req, table_id, field_id) {
                 .where("colname = ?", prv_fieldname)
                 .toString()
 
-            console.log(query6, "QUERY6");
             let response6 = await queryExecute(query6);
 
         }
@@ -723,8 +679,6 @@ async function fieldEdit(req, table_id, field_id) {
                 .into(`${fieldtype}table`)
                 .setFieldsRows(optionData)
                 .toString();
-
-            console.log(query7, "QUERY7");
 
             let response7 = await queryExecute(query7);
         }
@@ -737,17 +691,18 @@ async function fieldEdit(req, table_id, field_id) {
         return response4;
 
     } catch (err) {
-        console.log(err);
         return Promise.reject(err)
     }
 
 }
 
-
+/**
+ * Delete the specified field from a table
+ * @param {Number} tableid the Id of table to which execution will be made.
+ * @param {Number} fieldid The Id of field which is to be deleted.
+ * @returns {Object[]} the result of running delete data query.
+ */
 async function fieldDelete(tableid, fieldid) {
-    console.log("HERE");
-
-    console.log(tableid, fieldid, "OOO");
 
     let query = squel
         .select()
@@ -786,7 +741,6 @@ async function fieldDelete(tableid, fieldid) {
         let response2 = await queryExecute(query2);
 
         let query3 = `ALTER TABLE "${tablename}" DROP COLUMN IF EXISTS "${fieldname}" ; `
-        console.log(query3, "QUERY3");
         let response3 = await queryExecute(query3);
 
         let commitQuery = 'COMMIT'
@@ -797,23 +751,22 @@ async function fieldDelete(tableid, fieldid) {
         return response3;
 
     } catch (err) {
-        console.log(err);
         return Promise.reject(err)
     }
 
 }
 
 
-
+/**
+ * Insert the token generated into the table
+ * @param {Object} req Its body provides the following data (i.e current user, tableid )
+ * @returns {Token:{String}} It returns the token generated randomly for specified table
+ */
 async function generateUrl(req) {
-
-    console.log(req.body, "BODY");
 
     let token = Math.random().toString(36).substr(2);
     let user = req.body.user;
     let tableid = req.body.tableid;
-
-    console.log(token, "TOKEN");
 
     let query = squel
         .insert()
@@ -829,29 +782,26 @@ async function generateUrl(req) {
         .where("username= ?", user)
         .toString();
 
-    // console.log(query, "QUERY");
-
     try {
 
         let result = await queryExecute(query);
         let result1 = await queryExecute(query1);
-
-        console.log(result1.rows[0], "RESULT");
 
         await _commitFunc();
 
         return token;
 
     } catch (err) {
-
-        console.log(err, "ERRORRRRR");
         return Promise.reject(err);
     }
 
 }
 
-// sending link in mail to the users  
-
+/**
+ * Sending mail to the specified user
+ * @param {Object} req Its body provides sender mail id, the url 
+ * @returns
+ */
 function sendMail(req) {
 
     // let senderEmail = req.body.sendermailid;
@@ -902,11 +852,9 @@ module.exports = {
     deleteTable: deleteTable,
     modifyTable: modifyTable,
     TableData: TableData,
-    // editTable: editTable,
     checkTablename: checkTablename,
     addColumn: addColumn,
     editTableInfo: editTableInfo,
-    // check: check,
     fetchFieldData: fetchFieldData,
     fieldEdit: fieldEdit,
     fieldDelete: fieldDelete,
