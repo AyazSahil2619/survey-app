@@ -43,15 +43,15 @@ app.use(bodyparser.urlencoded({
 }));
 
 
-app.use((req, res, next) => {
+// app.use((req, res, next) => {
 
-    console.log(req.cookies.user_id, "COOKIES");
+//     console.log(req.cookies.user_id, "COOKIES");
 
-    if (!req.session.user && req.cookies.user_id) {
-        res.clearCookie('user_id');
-    }
-    next();
-})
+//     if (!req.session.user && req.cookies.user_id) {
+//         res.clearCookie('user_id');
+//     }
+//     next();
+// })
 
 
 // Routes for registration

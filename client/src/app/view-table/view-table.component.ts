@@ -203,6 +203,8 @@ export class ViewTableComponent implements OnInit {
       .subscribe((response) => {
 
         this.modalRef.hide();
+        this.messageService.add(
+          { severity: 'success', detail: 'Success', summary: 'Mail Sent successfully !!' });
 
       }, (error) => {
 

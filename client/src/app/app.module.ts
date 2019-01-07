@@ -36,6 +36,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { PreventGuardGuard } from './prevent-guard.guard';
 import { CommonDataComponent } from './common-data/common-data.component';
 import { CommonModalComponent } from './common-modal/common-modal.component';
+import { OverviewComponent } from './overview/overview.component';
 
 
 @NgModule({
@@ -57,6 +58,7 @@ import { CommonModalComponent } from './common-modal/common-modal.component';
     NavbarComponent,
     CommonDataComponent,
     CommonModalComponent,
+    OverviewComponent,
   ],
   imports: [
     BrowserModule,
@@ -84,7 +86,10 @@ import { CommonModalComponent } from './common-modal/common-modal.component';
     MessageService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [CommonModalComponent]
+  entryComponents: [
+    CommonModalComponent,
+    OverviewComponent
+  ]
 
 })
 export class AppModule { }

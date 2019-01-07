@@ -20,6 +20,7 @@ import { EditTableComponent } from './edit-table/edit-table.component';
 import { AboutComponent } from './about/about.component';
 import { PreventGuardGuard } from './prevent-guard.guard';
 import { CommonDataComponent } from './common-data/common-data.component';
+import { OverviewComponent } from './overview/overview.component';
 
 const routes: Routes = [
   { path: 'home', redirectTo: 'adminlogin' },

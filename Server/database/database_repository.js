@@ -407,9 +407,9 @@ async function TableData(id) {
  */
 async function checkTablename(req, id) {
 
-    console.log(req.body,"BODY");
-    console.log(id,"Id")
-    
+    console.log(req.body, "BODY");
+    console.log(id, "Id")
+
     if (id == 0) {
         let query = squel
             .select()
@@ -584,7 +584,7 @@ async function fieldEdit(req, table_id, field_id) {
         new_fieldtype = fieldtype;
     }
 
-    let new_label = req.body.label;
+    let new_label = escape(req.body.label);
     let new_konstraint = req.body.constraints;
 
 

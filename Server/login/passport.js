@@ -117,7 +117,7 @@ function logout(req, res, next) {
 
 function isLoggedIn(req, res, next) {
 
-    console.log(req.session.user, req.cookies.user_id);
+    console.log(req.session.user,"======", req.cookies.user_id);
 
     if (req.session.user && req.cookies.user_id) {
         next();

@@ -51,6 +51,8 @@ export class FieldsDataComponent implements OnInit {
   fieldToDelete: any;
   ddList: Object[] = [];
   clicked: boolean = true;
+  counter: Number;
+
 
   ngOnInit() {
     this.formInitialization();
@@ -90,6 +92,7 @@ export class FieldsDataComponent implements OnInit {
             })
           }
         });
+        this.counter = this.displayArray.length;
         console.log(this.displayArray, "CURRENT");
       }, function (errResponse) {
         console.error(errResponse, 'Error while fetching field data ');
@@ -122,6 +125,7 @@ export class FieldsDataComponent implements OnInit {
   get List() { return this.fieldForm.get('List') as FormArray }
 
   addField(template: TemplateRef<any>) {
+    console.log(template, "PPPPPP");
     this.modalRef = this.modalService.show(template, { class: 'gray modal-lg', backdrop: 'static' });
   }
 
@@ -181,7 +185,7 @@ export class FieldsDataComponent implements OnInit {
       .subscribe((response) => {
         this.fetchFieldsData();
         this.messageService.add(
-          { severity: 'success', summary: 'Fields Updated Successfully' });
+          { severity: 'success', summary: 'Field Added Successfully' });
       }, (errorResponse) => {
         if (errorResponse.error.code == '23502') {
           this.messageService.add(
@@ -445,6 +449,7 @@ export class FieldsDataComponent implements OnInit {
             this.displayArray.push(this.fieldForm.value);
           }
         })
+        this.clearData();
         this.modalRef.hide();
         this.messageService.add(
           { severity: 'success', detail: 'Success', summary: 'Field edited Successfully' });
@@ -452,16 +457,20 @@ export class FieldsDataComponent implements OnInit {
       }, (errResponse) => {
 
         if (errResponse.error.code == 42804) {
+          this.clearData();
           this.modalRef.hide();
           this.messageService.add(
             { severity: 'error', detail: 'Error', summary: 'Invalid FieldType Conversion' });
         }
         if (errResponse.error.code == '42P16') {
+          this.clearData();
           this.modalRef.hide();
           this.messageService.add(
             { severity: 'error', detail: 'Error', summary: `Multiple Primary key not allowed` });
         }
         if (errResponse.error.code == 42701) {
+          this.clearData();
+          this.modalRef.hide();
           this.messageService.add(
             { key: 'buzz', severity: 'error', detail: 'Error', summary: `Field Name must be Unique` });
         }
@@ -470,7 +479,7 @@ export class FieldsDataComponent implements OnInit {
 
   }
 
-  editCancel() {
+  clearData() {
 
     const control = <FormArray>this.fieldForm.controls['List'];
 

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserServiceService } from '../user-service.service';
 import { ToastModule } from 'primeng/toast';
-import {MessageService} from 'primeng/api';
+import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -12,11 +13,13 @@ import {MessageService} from 'primeng/api';
 export class RegistrationComponent implements OnInit {
 
   constructor(private _userService: UserServiceService,
-    private Toast:ToastModule,
-    private messageService: MessageService) { }
+    private Toast: ToastModule,
+    private messageService: MessageService,
+    private _router: Router
+  ) { }
 
   registrationDetails: FormGroup;
-  
+
   ngOnInit() {
     this.formInitialization();
   }
@@ -31,19 +34,19 @@ export class RegistrationComponent implements OnInit {
   }
 
 
-   
+
   onSubmit() {
     this._userService.registration(this.registrationDetails.value).subscribe((data) => {
+      this._router.navigate(['/login']);
       this.messageService.add(
-        {severity:'success', summary:'Registered Successfully'}
+        { severity: 'success', summary: 'Registered Successfully' }
       );
-  
       // console.log("REGISTERED SUCCESSFULLY");
     }, (err) => {
       // console.log(err.error.detail,"Error while registering")
-      
+
       this.messageService.add(
-        {severity:'error', summary:`${err.error.detail}`}
+        { severity: 'error', summary: `${err.error.detail}` }
       );
     })
   }
@@ -55,7 +58,7 @@ export class RegistrationComponent implements OnInit {
   }
   get email() {
     return this.registrationDetails.get('email');
-  } 
+  }
   get password() {
     return this.registrationDetails.get('password');
   }

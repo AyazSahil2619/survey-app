@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { AuthService } from '../auth.service';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { OverviewComponent } from '../overview/overview.component';
 
 @Component({
   selector: 'app-navbar',
@@ -8,11 +10,14 @@ import { AuthService } from '../auth.service';
 })
 export class NavbarComponent implements OnInit {
 
-  constructor(public auth: AuthService) { }
+  constructor(public auth: AuthService,
+    private modalService: BsModalService,
+  ) { }
 
   ngOnInit() {
   }
 
+  modalRef: BsModalRef;
   show: boolean;
 
   openNav() {
@@ -28,4 +33,8 @@ export class NavbarComponent implements OnInit {
     document.getElementById("main").style.marginLeft = "0";
   }
 
+
+  overView(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(OverviewComponent, { class: 'gray modal-lg', backdrop: 'static' });
+  }
 }

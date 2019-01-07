@@ -76,8 +76,6 @@ async function login(username) {
  */
 async function check_login(req, res) {
 
-    console.log(req.body, "BODY");
-
     const query = squel
         .select()
         .from("credential")
@@ -86,8 +84,6 @@ async function check_login(req, res) {
         .toString();
     try {
         let response = await queryExecute(query)
-
-        console.log(response.rows[0], "RESPONSE");
 
         if (response.rowCount > 0) {
             return response.rows[0];

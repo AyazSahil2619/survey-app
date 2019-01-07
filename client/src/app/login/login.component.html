@@ -1,6 +1,6 @@
-<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU'
-  crossorigin='anonymous'>
-<div class="login_background">
+<!-- <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU'
+  crossorigin='anonymous'> -->
+<!-- <div class="login_background">
   <app-navbar>
     <div style="padding-top: 50px" class="container">
       <div class="card col-md-5 offset-md-3 text-black bg-light ">
@@ -41,16 +41,41 @@
       </div>
     </div>
   </app-navbar>
+</div> -->
+
+
+
+
+<div class="login_background">
+  <app-navbar>
+    <div class="wrapper animated bounce">
+      <h1>Survey</h1>
+      <hr>
+      <form name="form" [formGroup]="loginDetails" (ngSubmit)="onSubmit()" novalidate>
+        <div>
+          <label id="icon" for="username"><i class="fas fa-user"></i></label>
+          <input type="text" placeholder="Username" formControlName="username" required>
+          <div *ngIf="username.errors">
+            <div class="alert" *ngIf="username.errors.required && username.dirty">User Name is required</div>
+          </div>
+        </div>
+        <div>
+          <label id="icon" for="password"><i class="fas fa-key"></i></label>
+          <input type="password" placeholder="Password" formControlName="password" required>
+          <div *ngIf="password.errors">
+            <div class="alert" *ngIf="password.errors.required && password.dirty">Password is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="submit" value="Sign In" class="form-control">
+        </div>
+        <hr>
+        <div class="crtacc"><a routerLink="/registration">Create Account</a></div>
+      </form>
+    </div>
+  </app-navbar>
 </div>
 <p-toast></p-toast>
-
-
-
-
-
-
-
-
 
 
 
