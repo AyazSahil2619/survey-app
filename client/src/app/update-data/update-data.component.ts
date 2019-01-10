@@ -63,7 +63,9 @@ export class UpdateDataComponent implements OnInit {
             this.colinfo1.push({
               fieldname: item.fieldname,
               label: item.label,
-              fieldtype: item.fieldtype
+              fieldtype: item.fieldtype,
+              isRequired: item.required,
+              length: item.text_length
             })
           }
         });
@@ -183,11 +185,15 @@ export class UpdateDataComponent implements OnInit {
       }, (errResponse) => {
         console.log(errResponse);
 
-        this.onClose.next(false);
-
-        this.messageService.add(
-          { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });
-        console.error(errResponse, 'Error while updating data.');
+        // this.onClose.next(false);
+        if (errResponse.error.code == 22001) {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: `Value too long for type character varying` });
+        } else {
+          this.messageService.add(
+            { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });
+          console.error(errResponse, 'Error while updating data.');
+        }
       });
   }
 

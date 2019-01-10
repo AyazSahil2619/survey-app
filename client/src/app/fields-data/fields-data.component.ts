@@ -52,6 +52,7 @@ export class FieldsDataComponent implements OnInit {
   ddList: Object[] = [];
   clicked: boolean = true;
   counter: Number;
+  isLength: Boolean = false;
 
 
   ngOnInit() {
@@ -88,7 +89,8 @@ export class FieldsDataComponent implements OnInit {
               type: item.fieldtype,
               constraints: item.konstraint,
               f_uid: item.f_uid,
-              unique_key: item.u_konstraint
+              unique_key: item.u_konstraint,
+              required_key: item.required
             })
           }
         });
@@ -108,7 +110,9 @@ export class FieldsDataComponent implements OnInit {
         'label': ['', Validators.required],
         'type': ['', Validators.required],
         'constraints': ['false', Validators.required],
-        'unique_key': ['false', Validators.required]
+        'unique_key': ['false', Validators.required],
+        'required_key': ['true', Validators.required],
+        'text_length': ['null', Validators.required]
       }
     )
   }
@@ -119,6 +123,9 @@ export class FieldsDataComponent implements OnInit {
   get type() { return this.fieldForm.get('type') }
   get constraints() { return this.fieldForm.get('constraints') }
   get unique_key() { return this.fieldForm.get('unique_key') }
+  get required_key() { return this.fieldForm.get('required_key') }
+  get text_length() { return this.fieldForm.get('text_length') }
+
 
   get arrayList() { return this.fieldForm.get('arrayList') as FormArray }
 
@@ -135,9 +142,14 @@ export class FieldsDataComponent implements OnInit {
     this.fieldForm.reset();
     this.constraints.setValue('false');
     this.unique_key.setValue('false');
+    this.required_key.setValue('true');
+    this.text_length.setValue('null');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
+    this.isLength = false;
+    this.fieldForm.removeControl('arrayList');
+
     const control = <FormArray>this.fieldForm.controls['arrayList'];
     if (control) {
       while (control.length !== 0) {
@@ -145,7 +157,6 @@ export class FieldsDataComponent implements OnInit {
       }
     }
     this.modalRef.hide();
-
 
   }
 
@@ -205,25 +216,32 @@ export class FieldsDataComponent implements OnInit {
 
   onSelect() {
 
-    if (this.type.value == 'dropdown') {
+    if (this.type.value == 'short_text' || this.type.value == 'long_text') {
+      this.isLength = true;
+    } else if (this.type.value == 'dropdown') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isDropdown = true;
       this.isRadio = false;
       this.isCheckbox = false;
+      this.isLength = false;
     } else if (this.type.value == 'radio') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isRadio = true;
       this.isDropdown = false;
       this.isCheckbox = false;
+      this.isLength = false;
     } else if (this.type.value == 'checkbox') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isRadio = false;
       this.isDropdown = false;
       this.isCheckbox = true;
+      this.isLength = false;
     } else {
       this.isDropdown = false;
       this.isRadio = false;
       this.isCheckbox = false;
+      this.isLength = false;
+
 
     }
   }
@@ -244,26 +262,6 @@ export class FieldsDataComponent implements OnInit {
 
   click() {
     this.clicked = !this.clicked;
-  }
-
-  Cancel() {
-
-    const control = <FormArray>this.fieldForm.controls['arrayList'];
-
-    if (control) {
-      while (control.length !== 0) {
-        control.removeAt(0);
-      }
-    }
-    this.fieldForm.reset();
-    this.constraints.setValue('false');
-    this.unique_key.setValue('false');
-    this.isDropdown = false;
-    this.isRadio = false;
-    this.isCheckbox = false;
-    this.fieldForm.removeControl('arrayList');
-    this.modalRef.hide();
-
   }
 
 
@@ -342,7 +340,9 @@ export class FieldsDataComponent implements OnInit {
               'label': element.label,
               'constraints': element.konstraint,
               'type': element.fieldtype,
-              'unique_key': element.u_konstraint
+              'unique_key': element.u_konstraint,
+              'required_key': element.required,
+              'text_length': element.text_length
             });
             this.fieldtype = element.fieldtype;
           }
@@ -365,7 +365,7 @@ export class FieldsDataComponent implements OnInit {
         }
       });
 
-      console.log(this.ListToEdit, this.ListToEdit.length, "LLLlllllllllll");
+      console.log(this.fieldForm.value, this.fieldtype, this.ListToEdit, this.ListToEdit.length, "LLLlllllllllll");
 
       if (this.ListToEdit.length > 0) {
         this.fieldForm.addControl('List', this._fb.array([]));
@@ -382,8 +382,13 @@ export class FieldsDataComponent implements OnInit {
           this.isDropdown = true;
         } else if (this.fieldtype == 'radio') {
           this.isRadio = true;
-        } else if (this.fieldtype == 'checkbox')
+        } else if (this.fieldtype == 'checkbox') {
           this.isCheckbox = true;
+        }
+      }
+
+      if (this.fieldtype == 'short_text' || this.fieldtype == 'long_text') {
+        this.isLength = true;
       }
 
       this.modalRef = this.modalService.show(template, { class: 'gray modal-lg', backdrop: 'static' });
@@ -396,27 +401,33 @@ export class FieldsDataComponent implements OnInit {
 
   onSelect1() {
     if (this.ListToEdit.length == 0) {
-
-      if (this.type.value == 'dropdown') {
+      if (this.type.value == 'short_text' || this.type.value == 'long_text') {
+        this.isLength = true;
+      } else if (this.type.value == 'dropdown') {
         this.fieldForm.addControl('List', this._fb.array([]));
         this.isDropdown = true;
         this.isRadio = false;
         this.isCheckbox = false;
+        this.isLength = false;
 
       } else if (this.type.value == 'radio') {
         this.fieldForm.addControl('List', this._fb.array([]));
         this.isRadio = true;
         this.isDropdown = false;
         this.isCheckbox = false;
+        this.isLength = false;
+
       } else if (this.type.value == 'checkbox') {
         this.fieldForm.addControl('List', this._fb.array([]));
         this.isRadio = false;
         this.isDropdown = false;
+        this.isLength = false;
         this.isCheckbox = true;
       } else {
         this.isDropdown = false;
         this.isRadio = false;
         this.isCheckbox = false;
+        this.isLength = false;
 
       }
     }
@@ -493,9 +504,12 @@ export class FieldsDataComponent implements OnInit {
     this.fieldForm.reset();
     this.constraints.setValue('false');
     this.unique_key.setValue('false');
+    this.required_key.setValue('true');
+    this.text_length.setValue('null');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
+    this.isLength = false;
     this.modalRef.hide();
     console.log(this.List, this.fieldForm.value, "")
 
@@ -530,6 +544,27 @@ export class FieldsDataComponent implements OnInit {
 
 
 
+ // Cancel() {
+
+
+  //   this.fieldForm.reset();
+  //   this.constraints.setValue('false');
+  //   this.unique_key.setValue('false');
+  //   this.required_key.setValue('false');
+  //   this.isDropdown = false;
+  //   this.isRadio = false;
+  //   this.isCheckbox = false;
+  //   this.fieldForm.removeControl('arrayList');
+  //   const control = <FormArray>this.fieldForm.controls['arrayList'];
+
+  //   if (control) {
+  //     while (control.length !== 0) {
+  //       control.removeAt(0);
+  //     }
+  //   }
+  //   this.modalRef.hide();
+
+  // }
 
 
 

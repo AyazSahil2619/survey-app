@@ -59,14 +59,12 @@ async function TableData(req, res) {
 
 async function checkTablename(req, res) {
     const id = parseInt(req.params.id, 10);
-    console.log(id, "IIIIIIIDDDDDDDDDDDDDDD")
 
     try {
         let data = await repository.checkTablename(req, id)
         res.status(200).json(data)
 
     } catch (err) {
-        console.log(err, "ERROR");
         res.status(400).json(err);
     }
 }

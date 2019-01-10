@@ -83,6 +83,8 @@ async function CreateTable(req) {
             fieldtype: 'serial',
             Konstraint: false,
             u_konstraint: false,
+            required: false,
+            text_length: 0,
             tableid: table_id
         })
 
@@ -119,8 +121,16 @@ async function addColumn(req, id) {
     let constraints = '';
     let list = [];
     let fieldtype = req.body.type;
-    let unique_key_constraint = req.body.unique_key;
+    let text_length;
+    if ((req.body.type == 'short_text' || req.body.type == 'long_text') && (req.body.text_length > 0 && req.body.text_length < 2000)) {
+        text_length = req.body.text_length;
+    } else if (req.body.type != 'short_text' && req.body.type != 'long_text') {
+        text_length = 0;
+    } else {
+        text_length = 200;
+    }
 
+    let unique_key_constraint = req.body.unique_key;
     let optionData = [];
 
     if (req.body.arrayList && req.body.arrayList.length > 0) {
@@ -152,7 +162,9 @@ async function addColumn(req, id) {
         fieldtype: req.body.type,
         Konstraint: req.body.constraints,
         tableid: id,
-        u_konstraint: req.body.unique_key
+        u_konstraint: req.body.unique_key,
+        required: req.body.required_key,
+        text_length: text_length
     })
 
     fieldsData.forEach((item) => {
@@ -164,12 +176,16 @@ async function addColumn(req, id) {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text' + ',';
         } else if (item.fieldtype == 'checkbox') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text[]' + ',';
+        } else if (item.fieldtype == 'email') {
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'varchar' + ',';
+        } else if (item.fieldtype == 'short_text' || item.fieldtype == 'long_text') {
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `varchar(${text_length})` + ',';
         } else {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + item.fieldtype + ',';
         }
     })
 
-    constraints = constraints.replace(/(^[,\s]+)|([,\s]+$)/g, '')
+    constraints = constraints.replace(/(^[,\s]+)|([,\s]+$)/g, '');
     colquery = colquery.replace(/(^[,\s]+)|([,\s]+$)/g, '');
 
     if (fieldsData.length != 0) {
@@ -179,6 +195,8 @@ async function addColumn(req, id) {
             .setFieldsRows(fieldsData)
             .toString();
     }
+
+    console.log(fieldstableQuery, "QUERRY");
 
     try {
         let response = await queryExecute(query);
@@ -520,7 +538,7 @@ async function fetchFieldData(tableid, fieldid) {
     let query = `SELECT d.databasevalue AS d_dbvalue, d.displayvalue AS d_dspvalue,
      c.databasevalue AS c_dbvalue,c.displayvalue AS c_dspvalue,
      r.databasevalue AS r_dbvalue,r.displayvalue AS r_dspvalue,
-     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid,f.u_konstraint 
+     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid,f.u_konstraint,f.required,f.text_length
      FROM public.fieldstable AS f 
 	 FULL JOIN dropdowntable AS d ON d.tableid = f.tableid AND d.colname = f.fieldname 
      FULL JOIN radiotable AS r ON r.tableid = f.tableid AND r.colname = f.fieldname 
@@ -553,7 +571,7 @@ async function fetchFieldData(tableid, fieldid) {
 }
 
 /**
- * Update/Edit the field of specific table
+ * Update/Edit the specified field of a table
  * @param {Object} req Its body provides the table data (i.e fieldname, fieldtype, constraint,
  *  ArrayList : value of checkbox, radio, dropdown)
  * @param {Number} table_id the id of specified table
@@ -562,17 +580,29 @@ async function fetchFieldData(tableid, fieldid) {
  */
 async function fieldEdit(req, table_id, field_id) {
 
+    console.log(req.body, "REACHING FIELD EDIT");
+
     let colquery = '';
     let fieldtype = req.body.type;
     let unique_key_constraint = req.body.unique_key;
-
+    let required_key = req.body.required_key;
     let optionList = [];
     let optionData = [];
+    let text_length;
+
+    if (fieldtype == 'short_text' || fieldtype == 'long_text' && (req.body.text_length && req.body.text_length > 0)) {
+        text_length = req.body.text_length
+    } else if (fieldtype != 'short_text' || fieldtype != 'long_text') {
+        text_length = 0;
+    } else {
+        text_length = 200;
+    }
+
+    console.log(text_length, "SSSSS");
 
     if (req.body.List && req.body.List.length > 0) {
         optionList = req.body.List;
     }
-
     let new_fieldname = escape(req.body.colname);
     let new_fieldtype;
 
@@ -580,6 +610,10 @@ async function fieldEdit(req, table_id, field_id) {
         new_fieldtype = 'text';
     } else if (fieldtype == 'checkbox') {
         new_fieldtype = 'text[]';
+    } else if (fieldtype == 'email') {
+        new_fieldtype = 'varchar';
+    } else if (fieldtype == 'short_text' || fieldtype == 'long_text') {
+        new_fieldtype = `varchar(${text_length})`;
     } else {
         new_fieldtype = fieldtype;
     }
@@ -622,6 +656,8 @@ async function fieldEdit(req, table_id, field_id) {
         .set("label", new_label)
         .set("konstraint", new_konstraint)
         .set("u_konstraint", unique_key_constraint)
+        .set("required", required_key)
+        .set("text_length", text_length)
         .where("f_uid = ?", field_id)
         .toString()
 
@@ -636,6 +672,7 @@ async function fieldEdit(req, table_id, field_id) {
         let prv_konstraint = response1.rows[0].konstraint;
         let prv_u_konstraint = response1.rows[0].u_konstraint;
 
+        console.log(prv_fieldtype != new_fieldtype, "ssss")
         if (prv_fieldtype != new_fieldtype) {
             let query2 = ` ALTER TABLE "${tablename}" ALTER COLUMN "${prv_fieldname}"
                              SET DATA TYPE ${new_fieldtype} USING ("${prv_fieldname}" :: ${new_fieldtype});`
@@ -691,6 +728,7 @@ async function fieldEdit(req, table_id, field_id) {
         return response4;
 
     } catch (err) {
+        console.log("ERROR ===", err);
         return Promise.reject(err)
     }
 

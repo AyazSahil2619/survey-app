@@ -64,15 +64,20 @@ export class AddDataComponent implements OnInit {
     this._userService.getById(this.table_id)
       .subscribe((response) => {
         let colinfo = response;
+        console.log(colinfo, "LLLL")
         colinfo.forEach((item, index) => {
           if (item.fieldname != 'uid') {
             this.colinfo1.push({
               fieldname: item.fieldname,
               label: item.label,
-              fieldtype: item.fieldtype
+              fieldtype: item.fieldtype,
+              isRequired: item.required,
+              length: item.text_length
             })
           }
         });
+
+        console.log(this.colinfo1, "INFO");
         // for display table id in frontend
         // this.id = response[0].tableid;
 
@@ -183,10 +188,13 @@ export class AddDataComponent implements OnInit {
           })
       }, (errResponse) => {
         console.log(errResponse, "Error in adding row in table");
-
-        this.messageService.add(
-          { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
-        this.onClose.next(false);
+        if (errResponse.error.code == 22001) {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: `Value too long for type character varying` });
+        } else {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
+        }// this.onClose.next(false);
       })
   }
 

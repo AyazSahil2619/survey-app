@@ -10,18 +10,18 @@
           <form name="form" (ngSubmit)="f.form.valid && submit()" #f="ngForm" novalidate>
             <table class="table">
               <tr *ngFor="let x of colinfo1 ">
-                <td><label>{{x.label}} <span class="asteriskcolor">*</span></label></td>
+                <td><label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label></td>
 
-                <td *ngIf="x.fieldtype == 'text'">
-                  <input id="text" name="{{x.fieldname}}" #name1="ngModel" class="form-control" type="text" [(ngModel)]="data[x.fieldname]"
-                    required>
+                <td *ngIf="x.fieldtype == 'short_text' || x.fieldtype == 'long_text'">
+                  <input id="text" name="{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control"
+                    type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
                   <div *ngIf="f.submitted && name1.invalid">
                     <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'dropdown'">
                   <select class="form-control" name="{{x.fieldname}}" #name5="ngModel" [(ngModel)]="data[x.fieldname]"
-                    required>
+                    [required]="x.isRequired">
                     <ng-container *ngFor="let y of ddinfo1">
                       <ng-container *ngIf="y.colname == x.fieldname">
                         <option [ngValue]="y.dspValue">{{y.dspValue}}</option>
@@ -35,7 +35,7 @@
                       <!-- <input type="radio" name="name6{{x.fieldname}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
                       [value]="y.dspValue" required> {{y.dspValue}}<br> -->
                       <p-radioButton name="{{x.fieldname}}" label="{{y.dspValue}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
-                        [value]="y.dspValue" required></p-radioButton><br>
+                        [value]="y.dspValue" [required]="x.isRequired"></p-radioButton><br>
                     </ng-container>
                   </ng-container>
                 </td>
@@ -44,30 +44,31 @@
                     <ng-container *ngIf="y.colname == x.fieldname">
                       <!-- <input type="checkbox" name="{{i}}{{x.fieldname}}" [(ngModel)]="data[x.fieldname][y.dspValue]">
                     {{y.dspValue}}<br>  -->
-                      <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"></p-checkbox><br>
+                      <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"
+                        [required]="x.isRequired"></p-checkbox><br>
                     </ng-container>
                   </ng-container>
                 </td>
-                <td *ngIf="x.fieldtype == 'varchar'">
+                <td *ngIf="x.fieldtype == 'email'">
                   <input type="text" class="form-control" name="{{x.fieldname}}" [(ngModel)]="data[x.fieldname]" #name2="ngModel"
-                    required email />
+                    [required]="x.isRequired" email />
                   <div *ngIf="f.submitted && name2.invalid">
                     <div class="error" *ngIf="name2.errors.required">{{x.fieldname}} is required</div>
-                    <div class="error" *ngIf="!name2.errors.required && name2.errors.email ">{{x.fieldname}} must be a
+                    <div class="error" *ngIf="name2.errors.email ">{{x.fieldname}} must be a
                       valid email address(ex.
                       abc@xyz.com)</div>
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'date'">
                   <input id="date" name="{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
-                    required>
+                    [required]="x.isRequired">
                   <div *ngIf="f.submitted && name3.invalid">
                     <div class="error" *ngIf="name3.errors.required">{{x.fieldname}} is required</div>
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'integer' || x.fieldtype == 'bigint' ">
                   <input id="number" name="name4{{x.fieldname}}" #name4="ngModel" class="form-control" type="number"
-                    [(ngModel)]="data[x.fieldname]" required>
+                    [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
                   <div *ngIf="f.submitted && name4.invalid">
                     <div class="error" *ngIf="name4.errors.required">{{x.fieldname}} is required</div>
                     <div class="error" *ngIf="name4.errors.number">{{x.fieldname}} must be a Number</div>

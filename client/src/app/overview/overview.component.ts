@@ -36,7 +36,6 @@ export class OverviewComponent implements OnInit {
   index = 0;
   currentTablename: String;
 
-
   fetchTableId() {
     this._userService.fetchMastertableData()
       .subscribe((response) => {
@@ -109,12 +108,12 @@ export class OverviewComponent implements OnInit {
 
 
   rerender() {
-    if(this.dtElement.dtInstance){
-    this.dtElement.dtInstance
-      .then((dtInstance: DataTables.Api) => {
-        dtInstance.destroy();
-        this.dtTrigger.next();
-      });
+    if (this.dtElement.dtInstance) {
+      this.dtElement.dtInstance
+        .then((dtInstance: DataTables.Api) => {
+          dtInstance.destroy();
+          this.dtTrigger.next();
+        });
+    }
   }
-}
 }

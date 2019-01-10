@@ -80,10 +80,10 @@
           </div>
           <div class="form-group">
             <input type="password" class="form-control" placeholder="Password" name="password" formControlName="password"
-              required>
-            <div *ngIf="password.errors">
-              <div class="error" *ngIf="password.errors.required && password.dirty">Password is required</div>
-            </div>
+              minlength="5" required>
+            <div class="error" *ngIf="password.errors?.minlength && (password.dirty || password.touched)">Password
+              must be atleast
+              of 5 character</div>
           </div>
           <div class="form-group">
             <select type="text" class="form-control" placeholder="Role" name="role" formControlName="role" required>

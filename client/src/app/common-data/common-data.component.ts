@@ -55,7 +55,10 @@ export class CommonDataComponent implements OnInit {
                   this.colinfo1.push({
                     fieldname: item.fieldname,
                     label: item.label,
-                    fieldtype: item.fieldtype
+                    fieldtype: item.fieldtype,
+                    isRequired: item.required,
+                    length: item.text_length
+
                   })
                 }
               });

@@ -43,6 +43,11 @@
   color: white;
 }
 
+.alert {
+  font-size: smaller;
+  margin-left: -12px !important;
+}
+
 /* .pointer {
   cursor: pointer;
 } */

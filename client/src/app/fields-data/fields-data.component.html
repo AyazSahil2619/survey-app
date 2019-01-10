@@ -12,6 +12,7 @@
             <th>Name</th>
             <th>Label</th>
             <th>Field type</th>
+            <th>Required ?</th>
             <th>Primary ?</th>
             <th>Unique ?</th>
             <th>Action</th>
@@ -20,6 +21,7 @@
             <td>{{object.colname}}</td>
             <td>{{object.label}}</td>
             <td>{{object.type}}</td>
+            <td>{{object.required_key}}</td>
             <td>{{object.constraints}}</td>
             <td>{{object.unique_key}}</td>
             <td>
@@ -66,16 +68,24 @@
             <div class="col-md-12">
               <label>Field type <span class='asteriskcolor'>*</span></label>
               <select type="text" class="form-control" formControlName="type" (change)="onSelect()" required>
-                <option value="text">Text</option>
+                <!-- <option value="text">Text</option> -->
+                <option value="short_text">Short Text</option>
+                <option value="long_text">Long Text</option>
                 <option value="integer">Number</option>
                 <option value="bigint">Big Number</option>
-                <option value="varchar">Email</option>
+                <option value="email">Email</option>
                 <option value="date">Date</option>
                 <option value="dropdown">Dropdown</option>
                 <option value="radio">Radio</option>
                 <option value="checkbox">Checkbox</option>
               </select>
               <span class="danger" *ngIf="!type.valid && type.dirty">Field type is required!</span>
+            </div>
+            <div class="col-md-12" *ngIf="isLength">
+              <label>Max Length <span class='asteriskcolor'>*</span></label>
+              <input type="number" class="form-control" formControlName="text_length">
+              <span class="alert">Default value would be set to 100</span>
+              <!-- <span class="danger" *ngIf="!text_length.valid && colname.dirty">Text Length is required!</span> -->
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
@@ -131,8 +141,11 @@
               </div>
             </div>
             <br>
+            <div class="container">
+              <label>Required</label><br>
+              <p-selectButton [options]="ConstraintOptions" formControlName="required_key"></p-selectButton>
+            </div>
             <div *ngIf="!isDropdown && !isRadio && !isCheckbox">
-
               <div class="col-md-12">
                 <a data-target="#demo" data-toggle="collapse" (click)="click()">
                   <span *ngIf="clicked"><i class="fas fa-angle-right"></i></span>
@@ -162,7 +175,7 @@
         </fieldset><br><br>
         <div class="modal-footer">
           <input class="btn btn-primary float-right" [disabled]="!fieldForm.valid" type="submit">
-          <input type="button" class="btn btn-warning float-right" (click)="Cancel()" value="Cancel">
+          <input type="button" class="btn btn-warning float-right" (click)="formColumnArray()" value="Cancel">
         </div>
       </form>
     </div>
@@ -204,16 +217,24 @@
             <div class="col-md-12">
               <label>Field type <span class='asteriskcolor'>*</span></label>
               <select type="text" class="form-control" formControlName="type" (change)="onSelect1()" required>
-                <option value="text">Text</option>
+                <!-- <option value="text">Text</option> -->
+                <option value="short_text">Short Text</option>
+                <option value="long_text">Long Text</option>
                 <option value="integer">Number</option>
                 <option value="bigint">Big Number</option>
-                <option value="varchar">Email</option>
+                <option value="email">Email</option>
                 <option value="date">Date</option>
                 <option value="dropdown">Dropdown</option>
                 <option value="radio">Radio</option>
                 <option value="checkbox">Checkbox</option>
               </select>
               <span class="danger" *ngIf="!type.valid && type.dirty">Field type is required!</span>
+            </div>
+            <div class="col-md-12" *ngIf="isLength">
+              <label>Max Length <span class='asteriskcolor'>*</span></label>
+              <input type="number" class="form-control" formControlName="text_length">
+              <span class="alert">Default value would be set to 200</span>
+              <!-- <span class="danger" *ngIf="!text_length.valid && colname.dirty">Text Length is required!</span> -->
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
@@ -269,6 +290,10 @@
               </div>
             </div>
             <br>
+            <div class="container">
+              <label>Required</label><br>
+              <p-selectButton [options]="ConstraintOptions" formControlName="required_key"></p-selectButton>
+            </div>
             <!-- <div class="col-md-12" *ngIf="!isDropdown && !isRadio && !isCheckbox">
               <label>Primary Key</label>
               <select type="text" class="form-control" formControlName="constraints" required>

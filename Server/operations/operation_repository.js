@@ -15,6 +15,7 @@ async function queryExecute(query) {
         try {
             result = await client.query(query);
         } catch (err) {
+            console.log(err, "ERROR");
             await client.query('ROLLBACK');
             return Promise.reject(err);
         }
@@ -127,7 +128,7 @@ async function addDataToTable(req, id) {
 
 /**
  * Fetch all the records from the specified table
- * @param {Number} id the table id of which records are to be fetched.
+ * @param {Number} [id] the table id of which records are to be fetched.
  * @returns {Object[]} the list of record from specified table
  */
 async function TableData(id) {
@@ -149,6 +150,8 @@ async function TableData(id) {
             .toString();
         let res1 = await queryExecute(query1);
 
+        console.log("RESPONSE", res1.rows);
+
         res1.rows.forEach((item) => {
             let datas = {};
 
@@ -158,6 +161,8 @@ async function TableData(id) {
             }
             newArray.push(datas);
         });
+
+        console.log("New Array", newArray);
 
         return newArray;
 
@@ -233,8 +238,10 @@ async function getdetails(tableid, uid) {
             let datas = {};
 
             for (var key in item) {
-                keys = unescape(key);
-                datas[keys] = item[key];
+                if (item[key] != null) {
+                    keys = unescape(key);
+                    datas[keys] = item[key];
+                }
             }
             newArray.push(datas);
         });
@@ -270,13 +277,11 @@ async function updateRow(req, id) {
     let body = [req.body];
     let values = '';
     let condition = '';
-
     body.forEach((element) => {
         for (var keys in element) {
             if (keys == 'uid') {
                 condition = keys + `=` + `'` + element[keys] + `'`
             } else {
-
                 if (typeof element[keys] == 'object') {
                     let data = '';
                     for (var key in element[keys]) {
@@ -309,6 +314,8 @@ async function updateRow(req, id) {
         let tablename = res.rows[0].tablename;
 
         let query1 = `UPDATE "${tablename}" SET ${values} WHERE ${condition};`
+
+        console.log(query1, "QUERY!!!!");
 
         let res1 = await queryExecute(query1);
         await queryExecute('COMMIT');
