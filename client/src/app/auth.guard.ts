@@ -8,7 +8,8 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-  constructor(private _router: Router,
+  constructor(
+    private _router: Router,
     private auth: AuthService) { }
 
   canActivate(
@@ -18,11 +19,12 @@ export class AuthGuard implements CanActivate {
     // console.log(this._router.url,"OOOOO");
 
     if (this.auth.isLoggednIn()) {
+
       console.log("LOGIN");
       return true;
     } else {
       console.log(" NOT LOGIN");
-
+      // this._router.navigate(['/logout']);
       this._router.navigate(['/login']);
       return false;
     }

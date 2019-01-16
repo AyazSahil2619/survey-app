@@ -119,7 +119,6 @@ async function fetchRadioList(req, res) {
 async function fetchCheckboxList(req, res) {
 
     const tableid = parseInt(req.params.id, 10);
-    console.log(tableid, "111");
 
     try {
         let data = await repository.fetchCheckboxList(tableid);
@@ -134,8 +133,6 @@ async function checkToken(req, res) {
 
     const tableid = parseInt(req.params.tableid, 10);
     const token = req.params.token;
-
-    console.log(tableid, token, "))))");
 
     try {
         let data = await repository.checkToken(tableid, token);

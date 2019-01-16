@@ -76,7 +76,7 @@ import { CarouselModule } from 'primeng/carousel';
     RadioButtonModule,
     SidebarModule,
     SelectButtonModule,
-    CarouselModule
+    CarouselModule,
 
   ],
   providers: [

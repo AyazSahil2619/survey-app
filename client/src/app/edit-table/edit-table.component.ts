@@ -34,7 +34,7 @@ export class EditTableComponent implements OnInit {
     this._userService.tableInfo(this.tableid)
       .subscribe((response) => {
         let data = response;
-
+        console.log(data, "LLL")
         this.oldtablename = data[0].tablename;
         this.TableInfo = {
           tablename: data[0].tablename,
@@ -64,7 +64,7 @@ export class EditTableComponent implements OnInit {
       time: Date(),
     };
 
-    console.log(this.TableInfo,"123");
+    console.log(this.TableInfo, "123");
 
     this._userService.checkTablename(this.TableInfo, this.tableid).subscribe((response) => {
       // this._userService.checkTablenameforUpdate(this.tableid, this.TableInfo).subscribe((response) => {

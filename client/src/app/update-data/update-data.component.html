@@ -10,9 +10,17 @@
             <table class="table ">
               <tr *ngFor="let x of colinfo1">
                 <td><label><b>{{x.label}} </b><span *ngIf="x.isRequired" class="astericks">*</span></label></td>
-                <td *ngIf="x.fieldtype == 'short_text' || x.fieldtype == 'long_text'">
+                <td *ngIf="x.fieldtype == 'short_text'">
                   <input name="name1{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control" type="text"
                     [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
+                  <div *ngIf="f.submitted && name1.invalid">
+                    <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
+                  </div>
+                </td>
+                <td *ngIf="x.fieldtype == 'long_text'">
+                  <textarea name="name1{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control"
+                    type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></textarea>
+
                   <div *ngIf="f.submitted && name1.invalid">
                     <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
                   </div>
@@ -56,9 +64,11 @@
                   </ng-container>
                 </td>
                 <td *ngIf="x.fieldtype == 'date'">
-                  <!-- <p-calendar name="name3{{x.fieldname}}" [(ngModel)]="data[x.fieldname]"></p-calendar> -->
-                  <input name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
-                    [required]="x.isRequired" date>
+                  <!-- <p-calendar name="{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></p-calendar> -->
+                  <!-- <input name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
+                    [required]="x.isRequired"> -->
+                  <input type="date" class="form-control" name="{{x.fieldname}}" #name3="ngModel" [ngModel]="data[x.fieldname] | date:'yyyy-MM-dd'"
+                    (ngModelChange)="data[x.fieldname] = $event" [required]="x.isRequired">
                   <div *ngIf="f.submitted && name3.invalid">
                     <div class="error" *ngIf="name3.errors.required">{{x.fieldname}} is required</div>
                   </div>

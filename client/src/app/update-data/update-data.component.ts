@@ -4,10 +4,14 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { UserServiceService } from '../user-service.service';
 
+import { CalendarModule } from 'primeng/calendar';
+
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
 import { Subject } from 'rxjs';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-update-data',
@@ -76,8 +80,10 @@ export class UpdateDataComponent implements OnInit {
       );
   }
   DataInfo() {
+    moment().format();
     this._userService.dataToEdit(this.table_id, this.row_id)
       .subscribe((response) => {
+      
         this.data = response[0];
         console.log(this.data, "data");
 

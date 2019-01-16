@@ -49,7 +49,7 @@ async function CreateTable(req) {
 
     let query = '';
     let tablename = escape(req.body.tablename);
-    let description = req.body.description;
+    let description = escape(req.body.description);
     let user = req.body.currentUser;
     let fieldsData = [];
 
@@ -127,14 +127,16 @@ async function addColumn(req, id) {
     } else if (req.body.type != 'short_text' && req.body.type != 'long_text') {
         text_length = 0;
     } else {
-        text_length = 200;
+        text_length = 100;
     }
 
     let unique_key_constraint = req.body.unique_key;
     let optionData = [];
 
-    if (req.body.arrayList && req.body.arrayList.length > 0) {
+    if ((fieldtype == 'dropdown' || fieldtype == 'radio' || fieldtype == 'checkbox') && (req.body.arrayList && req.body.arrayList.length > 0)) {
         list = req.body.arrayList
+    } else {
+        list = [];
     }
 
     if (list && list.length > 0) {
@@ -180,6 +182,8 @@ async function addColumn(req, id) {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'varchar' + ',';
         } else if (item.fieldtype == 'short_text' || item.fieldtype == 'long_text') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `varchar(${text_length})` + ',';
+        } else if (item.fieldtype == 'date') {
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `timestamp with time zone` + ',';
         } else {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + item.fieldtype + ',';
         }
@@ -265,7 +269,7 @@ async function viewTable() {
                 let datas = {};
 
                 for (var key in item) {
-                    if (key == 'tablename') {
+                    if (key == 'tablename' || key == 'Description') {
                         datas[key] = unescape(item[key]);
                     } else {
                         datas[key] = item[key];
@@ -401,7 +405,7 @@ async function TableData(id) {
             let datas = {};
 
             for (var key in item) {
-                if (key == 'tablename') {
+                if (key == 'tablename' || key == 'Description') {
                     datas[key] = unescape(item[key]);
                 } else {
                     datas[key] = item[key];
@@ -499,7 +503,7 @@ async function editTableInfo(req, id) {
         .update()
         .table('mastertable')
         .set('tablename', escape(newData.tablename))
-        .set('"Description"', newData.description)
+        .set('"Description"', escape(newData.description))
         .where('id=?', id)
         .toString();
 
@@ -507,8 +511,8 @@ async function editTableInfo(req, id) {
 
         let response = await TableData(id);
         let oldTablename = escape(response[0].tablename);
-
-        if (oldTablename != newData.tablename) {
+        console.log(oldTablename != escape(newData.tablename), "LLLL");
+        if (oldTablename != escape(newData.tablename)) {
             let query = `ALTER TABLE "${oldTablename}"  RENAME TO "${escape(newData.tablename)}";`
             let tableResult = await queryExecute(query);
         }
@@ -519,6 +523,7 @@ async function editTableInfo(req, id) {
         return mastertableResult;
 
     } catch (err) {
+        console.log(err, "Error")
         return Promise.reject(err)
     }
 
@@ -590,18 +595,33 @@ async function fieldEdit(req, table_id, field_id) {
     let optionData = [];
     let text_length;
 
-    if (fieldtype == 'short_text' || fieldtype == 'long_text' && (req.body.text_length && req.body.text_length > 0)) {
-        text_length = req.body.text_length
-    } else if (fieldtype != 'short_text' || fieldtype != 'long_text') {
-        text_length = 0;
+    // if ((fieldtype == 'short_text' || fieldtype == 'long_text') && (req.body.text_length && req.body.text_length > 0)) {
+    //     text_length = req.body.text_length;
+    //     console.log("IF");
+    // } else if (fieldtype != 'short_text' || fieldtype != 'long_text') {
+    //     text_length = 0;
+    //     console.log("ELSE IF");
+
+    // } else {
+    //     console.log("ELSE");
+    //     text_length = 100;
+    // }
+
+    if (fieldtype == 'short_text' || fieldtype == 'long_text') {
+        if (req.body.text_length && req.body.text_length > 0) {
+            text_length = req.body.text_length;
+        } else {
+            text_length = 100;
+        }
     } else {
-        text_length = 200;
+        text_length = 0;
     }
 
-    console.log(text_length, "SSSSS");
 
-    if (req.body.List && req.body.List.length > 0) {
+    if ((fieldtype == 'dropdown' || fieldtype == 'radio' || fieldtype == 'checkbox') && (req.body.List && req.body.List.length > 0)) {
         optionList = req.body.List;
+    } else {
+        optionList = [];
     }
     let new_fieldname = escape(req.body.colname);
     let new_fieldtype;
@@ -711,6 +731,7 @@ async function fieldEdit(req, table_id, field_id) {
         }
 
         if (optionData.length > 0) {
+            console.log("INSIDE OPTION DATA ")
             let query7 = squel
                 .insert()
                 .into(`${fieldtype}table`)
@@ -718,6 +739,8 @@ async function fieldEdit(req, table_id, field_id) {
                 .toString();
 
             let response7 = await queryExecute(query7);
+            console.log("INSIDE OPTION DATA 22222")
+
         }
 
 

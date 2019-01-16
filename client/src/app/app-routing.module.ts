@@ -28,7 +28,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [PreventGuardGuard] },
   { path: 'adminlogin', component: AdminloginComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
   { path: 'createTable', component: AddTableComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'admin' } },
-  { path: 'logout', component: LogoutComponent, canActivate: [AuthGuard] },
+  { path: 'logout', component: LogoutComponent },
   { path: 'userlogin', component: UserloginComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'user' } },
   { path: 'viewTable/:id', component: ViewTableComponent, canActivate: [AuthGuard] },
   { path: 'insertRow/:id', component: AddDataComponent, canActivate: [AuthGuard] },

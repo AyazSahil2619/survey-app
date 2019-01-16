@@ -16,9 +16,14 @@
         </thead>
         <tbody>
           <tr *ngFor="let row of datas">
-            <td *ngFor="let column of colinfo1">{{row[column.fieldname]}}</td>
+            <td *ngFor="let column of colinfo1">
+              <div *ngIf="column.fieldtype =='date'">{{row[column.fieldname] | date:'medium'}}</div>
+              <div *ngIf="column.fieldtype !='date'">{{row[column.fieldname]}}</div>
+            </td>
+            <!-- <td </td> -->
             <td>
-              <a id="tablebutton" type="button" class="btn btn-primary btn-sm" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;
+              <a id="
+                tablebutton" type="button" class="btn btn-primary btn-sm" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;
               <!-- <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deletedata(templatedelete,row.uid)">Delete</a> -->
               <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deletedata(row.uid)">Delete</a>
             </td>

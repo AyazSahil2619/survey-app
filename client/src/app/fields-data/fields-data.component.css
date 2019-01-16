@@ -16,8 +16,12 @@
   padding-right: 0 !important;
 }
 
-.labels {
-  margin-left: 150px;
+.displaylabels {
+  margin-left: 130px;
+}
+
+.databaselabels {
+  margin-left: 25px;
 }
 
 .unmodified {

@@ -112,7 +112,8 @@ export class FieldsDataComponent implements OnInit {
         'constraints': ['false', Validators.required],
         'unique_key': ['false', Validators.required],
         'required_key': ['true', Validators.required],
-        'text_length': ['null', Validators.required]
+        'text_length': ['null', Validators.required],
+
       }
     )
   }
@@ -218,24 +219,30 @@ export class FieldsDataComponent implements OnInit {
 
     if (this.type.value == 'short_text' || this.type.value == 'long_text') {
       this.isLength = true;
+      this.isDropdown = false;
+      this.isRadio = false;
+      this.isCheckbox = false;
     } else if (this.type.value == 'dropdown') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isDropdown = true;
       this.isRadio = false;
       this.isCheckbox = false;
-      this.isLength = false;
+      this.reset();
+
     } else if (this.type.value == 'radio') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isRadio = true;
       this.isDropdown = false;
       this.isCheckbox = false;
-      this.isLength = false;
+      this.reset();
+
     } else if (this.type.value == 'checkbox') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isRadio = false;
       this.isDropdown = false;
       this.isCheckbox = true;
-      this.isLength = false;
+      this.reset();
+
     } else {
       this.isDropdown = false;
       this.isRadio = false;
@@ -254,8 +261,8 @@ export class FieldsDataComponent implements OnInit {
 
   add() {
     this.arrayList.push(this._fb.group({
-      databaseValue: '',
-      displayValue: ''
+      databaseValue: ['', [Validators.required]],
+      displayValue: ['', [Validators.required,]]
     }));
     console.log(this.arrayList)
   }
@@ -264,6 +271,12 @@ export class FieldsDataComponent implements OnInit {
     this.clicked = !this.clicked;
   }
 
+  reset() {
+    this.isLength = false;
+    this.constraints.setValue('false');
+    this.unique_key.setValue('false');
+    this.text_length.setValue('null');
+  }
 
   deleteModal(f_uid) {
     const initialState = {
@@ -400,37 +413,40 @@ export class FieldsDataComponent implements OnInit {
   }
 
   onSelect1() {
-    if (this.ListToEdit.length == 0) {
-      if (this.type.value == 'short_text' || this.type.value == 'long_text') {
-        this.isLength = true;
-      } else if (this.type.value == 'dropdown') {
-        this.fieldForm.addControl('List', this._fb.array([]));
-        this.isDropdown = true;
-        this.isRadio = false;
-        this.isCheckbox = false;
-        this.isLength = false;
+    // if (this.ListToEdit.length == 0) {
+    if (this.type.value == 'short_text' || this.type.value == 'long_text') {
+      this.isLength = true;
+      this.isDropdown = false;
+      this.isRadio = false;
+      this.isCheckbox = false;
+    } else if (this.type.value == 'dropdown') {
+      this.fieldForm.addControl('List', this._fb.array([]));
+      this.isDropdown = true;
+      this.isRadio = false;
+      this.isCheckbox = false;
+      this.reset();
 
-      } else if (this.type.value == 'radio') {
-        this.fieldForm.addControl('List', this._fb.array([]));
-        this.isRadio = true;
-        this.isDropdown = false;
-        this.isCheckbox = false;
-        this.isLength = false;
+    } else if (this.type.value == 'radio') {
+      this.fieldForm.addControl('List', this._fb.array([]));
+      this.isRadio = true;
+      this.isDropdown = false;
+      this.isCheckbox = false;
+      this.reset();
 
-      } else if (this.type.value == 'checkbox') {
-        this.fieldForm.addControl('List', this._fb.array([]));
-        this.isRadio = false;
-        this.isDropdown = false;
-        this.isLength = false;
-        this.isCheckbox = true;
-      } else {
-        this.isDropdown = false;
-        this.isRadio = false;
-        this.isCheckbox = false;
-        this.isLength = false;
+    } else if (this.type.value == 'checkbox') {
+      this.fieldForm.addControl('List', this._fb.array([]));
+      this.isRadio = false;
+      this.isDropdown = false;
+      this.isCheckbox = true;
+      this.reset();
+    } else {
+      this.isDropdown = false;
+      this.isRadio = false;
+      this.isCheckbox = false;
+      this.isLength = false;
 
-      }
     }
+    // }
   }
 
   addSuggestion() {

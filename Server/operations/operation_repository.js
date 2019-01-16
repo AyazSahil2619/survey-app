@@ -162,6 +162,7 @@ async function TableData(id) {
             newArray.push(datas);
         });
 
+
         console.log("New Array", newArray);
 
         return newArray;
@@ -207,7 +208,7 @@ async function deleteData(tableid, rowid) {
 }
 
 /**
- * Fetch the deltails of specific row of specified table
+ * Fetch the details of specific row of specified table
  * @param {Number} tableid the id of the table of which the data will be fetched
  * @param {Number} uid the id of the row from a table 
  * @returns {newArray: Object[]} the record of specified table 
@@ -234,6 +235,9 @@ async function getdetails(tableid, uid) {
             .toString();
 
         let res1 = await queryExecute(query1);
+
+        console.log(res1.rows, "RES1");
+
         res1.rows.forEach((item) => {
             let datas = {};
 
@@ -245,6 +249,8 @@ async function getdetails(tableid, uid) {
             }
             newArray.push(datas);
         });
+
+        console.log(newArray, "NewArray");
 
         newArray.forEach((item, index) => {
             for (var key in item) {
@@ -258,6 +264,8 @@ async function getdetails(tableid, uid) {
                 }
             }
         })
+
+        console.log(newArray, "11111111111111NewArray");
 
         return newArray;
 

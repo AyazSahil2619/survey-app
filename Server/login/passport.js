@@ -102,8 +102,15 @@ function login(req, res, next) {
 function logout(req, res, next) {
     if (req.session.user && req.cookies.user_id) {
         req.session.destroy();
+        res.clearCookie();
+        console.log(req.cookies.user_id, "CHECKING COOKIES AFTER LOG OUT ");
+        res.clearCookie('"'+req.cookies.user_id+'"');
+        console.log(req.cookies.user_id, "CHECKING COOKIES AFTER LOG OUT ");
+        
         res.clearCookie('user_id');
 
+        console.log(req.cookies.user_id, "CHECKING COOKIES AFTER LOG OUT ");
+        res.clearCookie('user_id', { path: '/' });
         console.log(req.cookies.user_id, "CHECKING COOKIES AFTER LOG OUT ");
 
         res.status(200).json({
@@ -117,7 +124,7 @@ function logout(req, res, next) {
 
 function isLoggedIn(req, res, next) {
 
-    console.log(req.session.user,"======", req.cookies.user_id);
+    console.log(req.session.user, "======", req.cookies.user_id);
 
     if (req.session.user && req.cookies.user_id) {
         next();
@@ -131,13 +138,11 @@ function isLoggedIn(req, res, next) {
 
 function isNotLoggedIn(req, res, next) {
     if (req.session.user && req.cookies.user_id) {
-
         res.status(401).json({
             msg: 'Logout First'
         });
         res.end();
     } else {
-        console.log("IN HERE");
         next();
     }
 }
