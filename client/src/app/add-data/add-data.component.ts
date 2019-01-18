@@ -4,6 +4,7 @@ import { UserServiceService } from '../user-service.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
+import { RatingModule } from 'primeng/rating';
 
 import { CalendarModule } from 'primeng/calendar';
 
@@ -74,7 +75,8 @@ export class AddDataComponent implements OnInit {
               label: item.label,
               fieldtype: item.fieldtype,
               isRequired: item.required,
-              length: item.text_length
+              length: item.text_length,
+              rating: item.rating
             })
           }
         });

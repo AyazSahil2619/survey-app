@@ -31,7 +31,7 @@ export class RoleGuard implements CanActivate {
     } else {
 
       this.messageService.add(
-        { severity: 'error', detail: 'Access Forbidden', summary: 'Sorry ! You are not allowed to access this Page.' });
+        { severity: 'error', detail: 'Access Forbidden', summary: 'Sorry ! You are not allowed to access the requested Page.' });
 
       this._myRoute.navigate([`/${this._auth.isRole()}login`]);
 

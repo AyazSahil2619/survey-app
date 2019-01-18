@@ -38,6 +38,8 @@ import { CommonDataComponent } from './common-data/common-data.component';
 import { CommonModalComponent } from './common-modal/common-modal.component';
 import { OverviewComponent } from './overview/overview.component';
 import { CarouselModule } from 'primeng/carousel';
+import { RatingModule } from 'primeng/rating';
+
 
 
 @NgModule({
@@ -77,6 +79,7 @@ import { CarouselModule } from 'primeng/carousel';
     SidebarModule,
     SelectButtonModule,
     CarouselModule,
+    RatingModule
 
   ],
   providers: [

@@ -85,6 +85,7 @@ async function CreateTable(req) {
             u_konstraint: false,
             required: false,
             text_length: 0,
+            rating: 0,
             tableid: table_id
         })
 
@@ -122,22 +123,34 @@ async function addColumn(req, id) {
     let list = [];
     let fieldtype = req.body.type;
     let text_length;
+    let rating;
+
     if ((req.body.type == 'short_text' || req.body.type == 'long_text') && (req.body.text_length > 0 && req.body.text_length < 2000)) {
         text_length = req.body.text_length;
     } else if (req.body.type != 'short_text' && req.body.type != 'long_text') {
         text_length = 0;
     } else {
         text_length = 100;
+
+    }
+
+    if (fieldtype == 'star_rating' && req.body.rating != null) {
+        rating = req.body.rating;
+    } else {
+        rating = 0;
     }
 
     let unique_key_constraint = req.body.unique_key;
     let optionData = [];
 
-    if ((fieldtype == 'dropdown' || fieldtype == 'radio' || fieldtype == 'checkbox') && (req.body.arrayList && req.body.arrayList.length > 0)) {
-        list = req.body.arrayList
+    if (fieldtype == 'dropdown' || fieldtype == 'radio' || fieldtype == 'checkbox') {
+        if (req.body.arrayList && req.body.arrayList.length > 0) {
+            list = req.body.arrayList
+        }
     } else {
         list = [];
     }
+
 
     if (list && list.length > 0) {
         list.forEach((item) => {
@@ -157,7 +170,6 @@ async function addColumn(req, id) {
         .where("id=?", id)
         .toString();
 
-
     fieldsData.push({
         fieldname: escape(req.body.colname),
         label: escape(req.body.label),
@@ -166,7 +178,8 @@ async function addColumn(req, id) {
         tableid: id,
         u_konstraint: req.body.unique_key,
         required: req.body.required_key,
-        text_length: text_length
+        text_length: text_length,
+        rating: rating
     })
 
     fieldsData.forEach((item) => {
@@ -184,6 +197,8 @@ async function addColumn(req, id) {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `varchar(${text_length})` + ',';
         } else if (item.fieldtype == 'date') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `timestamp with time zone` + ',';
+        } else if (item.fieldtype == 'star_rating') {
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `integer` + ',';
         } else {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + item.fieldtype + ',';
         }
@@ -199,8 +214,6 @@ async function addColumn(req, id) {
             .setFieldsRows(fieldsData)
             .toString();
     }
-
-    console.log(fieldstableQuery, "QUERRY");
 
     try {
         let response = await queryExecute(query);
@@ -543,7 +556,7 @@ async function fetchFieldData(tableid, fieldid) {
     let query = `SELECT d.databasevalue AS d_dbvalue, d.displayvalue AS d_dspvalue,
      c.databasevalue AS c_dbvalue,c.displayvalue AS c_dspvalue,
      r.databasevalue AS r_dbvalue,r.displayvalue AS r_dspvalue,
-     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid,f.u_konstraint,f.required,f.text_length
+     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid,f.u_konstraint,f.required,f.text_length,f.rating
      FROM public.fieldstable AS f 
 	 FULL JOIN dropdowntable AS d ON d.tableid = f.tableid AND d.colname = f.fieldname 
      FULL JOIN radiotable AS r ON r.tableid = f.tableid AND r.colname = f.fieldname 
@@ -594,18 +607,8 @@ async function fieldEdit(req, table_id, field_id) {
     let optionList = [];
     let optionData = [];
     let text_length;
+    let rating;
 
-    // if ((fieldtype == 'short_text' || fieldtype == 'long_text') && (req.body.text_length && req.body.text_length > 0)) {
-    //     text_length = req.body.text_length;
-    //     console.log("IF");
-    // } else if (fieldtype != 'short_text' || fieldtype != 'long_text') {
-    //     text_length = 0;
-    //     console.log("ELSE IF");
-
-    // } else {
-    //     console.log("ELSE");
-    //     text_length = 100;
-    // }
 
     if (fieldtype == 'short_text' || fieldtype == 'long_text') {
         if (req.body.text_length && req.body.text_length > 0) {
@@ -615,6 +618,13 @@ async function fieldEdit(req, table_id, field_id) {
         }
     } else {
         text_length = 0;
+        rating = 0;
+    }
+
+    if (fieldtype == 'star_rating' && req.body.rating != null) {
+        rating = req.body.rating;
+    } else {
+        rating = 0;
     }
 
 
@@ -634,6 +644,8 @@ async function fieldEdit(req, table_id, field_id) {
         new_fieldtype = 'varchar';
     } else if (fieldtype == 'short_text' || fieldtype == 'long_text') {
         new_fieldtype = `varchar(${text_length})`;
+    } else if (fieldtype == 'star_rating') {
+        new_fieldtype = `integer`;
     } else {
         new_fieldtype = fieldtype;
     }
@@ -678,6 +690,7 @@ async function fieldEdit(req, table_id, field_id) {
         .set("u_konstraint", unique_key_constraint)
         .set("required", required_key)
         .set("text_length", text_length)
+        .set("rating", rating)
         .where("f_uid = ?", field_id)
         .toString()
 
@@ -743,7 +756,7 @@ async function fieldEdit(req, table_id, field_id) {
 
         }
 
-
+        console.log(query4, "QUERY4")
         let response4 = await queryExecute(query4);
 
         await _commitFunc();

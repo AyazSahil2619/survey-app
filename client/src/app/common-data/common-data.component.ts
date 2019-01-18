@@ -57,7 +57,8 @@ export class CommonDataComponent implements OnInit {
                     label: item.label,
                     fieldtype: item.fieldtype,
                     isRequired: item.required,
-                    length: item.text_length
+                    length: item.text_length,
+                    rating: item.rating
 
                   })
                 }

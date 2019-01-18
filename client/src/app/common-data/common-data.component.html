@@ -9,11 +9,18 @@
           <table class="table">
             <tr *ngFor="let x of colinfo1 ">
               <td><label><b>{{x.label}} </b><span *ngIf="x.isRequired" class="asteriskcolor">*</span></label></td>
-              <td *ngIf="x.fieldtype == 'short_text' || x.fieldtype == 'long_text'">
+              <td *ngIf="x.fieldtype == 'short_text'">
                 <input id="text" name="name1{{x.fieldname}}" #name1="ngModel" class="form-control" type="text"
                   [(ngModel)]="data[x.fieldname]" [maxlength]="x.length" [required]="x.isRequired">
                 <div *ngIf="F.submitted && name1.invalid">
                   <span class="error" *ngIf="!name1.valid && name1.dirty">{{x.fieldname}} is required!</span>
+                </div>
+              </td>
+              <td *ngIf="x.fieldtype == 'long_text'">
+                <textarea id="text" name="{{x.fieldname}}" [maxlength]="x.length" #name8="ngModel" class="form-control"
+                  type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></textarea>
+                <div *ngIf="F.submitted && name8.invalid">
+                  <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
                 </div>
               </td>
               <td *ngIf="x.fieldtype == 'dropdown'">
@@ -56,6 +63,13 @@
                 <input id="number" name="name4{{x.fieldname}}" #name4="ngModel" class="form-control" type="number"
                   [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
                 <span class="error" *ngIf="!name4.valid && name4.dirty">{{x.fieldname}} is required!</span>
+              </td>
+              <td *ngIf="x.fieldtype == 'star_rating' ">
+                <p-rating name="name7{{x.fieldname}}" #name7="ngModel" stars="{{x.rating}}" [(ngModel)]="data[x.fieldname]"
+                  [required]="x.isRequired" [cancel]="false"></p-rating>
+                <div *ngIf="F.submitted && name7.invalid">
+                  <div class="error" *ngIf="name7.errors.required">{{x.fieldname}} is required</div>
+                </div>
               </td>
           </table>
           <div class="card-footer">

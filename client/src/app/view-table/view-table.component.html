@@ -18,9 +18,13 @@
           <tr *ngFor="let row of datas">
             <td *ngFor="let column of colinfo1">
               <div *ngIf="column.fieldtype =='date'">{{row[column.fieldname] | date:'medium'}}</div>
-              <div *ngIf="column.fieldtype !='date'">{{row[column.fieldname]}}</div>
+              <div *ngIf="column.fieldtype !='date' && column.fieldtype != 'star_rating'">{{row[column.fieldname]}}</div>
+              <div *ngIf="column.fieldtype =='star_rating'">
+                <p-rating stars="{{row[column.fieldname]}}" readonly="true" [cancel]="false">
+                </p-rating>
+              </div>
+
             </td>
-            <!-- <td </td> -->
             <td>
               <a id="
                 tablebutton" type="button" class="btn btn-primary btn-sm" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;

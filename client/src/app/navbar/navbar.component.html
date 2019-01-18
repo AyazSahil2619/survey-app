@@ -7,8 +7,8 @@
   <a routerLink=""><i class="fas fa-phone"></i> Contact</a>
 </div>
 
-<nav class="navbar">
-  <ul class="nav">
+<nav *ngIf="auth.isLoggednIn()" class="navbar">
+  <ul class=" nav">
     <span *ngIf="auth.isLoggednIn() && !show" style="font-size:30px;cursor:pointer" (click)="openNav()">&#9776;</span>
     <a *ngIf="!auth.isLoggednIn()" routerLink="/registration">Registration</a>
     <a *ngIf="!auth.isLoggednIn()" routerLink="/login">Login</a>

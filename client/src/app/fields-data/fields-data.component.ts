@@ -22,6 +22,8 @@ export class FieldsDataComponent implements OnInit {
   fieldForm: FormGroup;
 
   ConstraintOptions: any;
+  numbers: any;
+  i = 0;
 
   constructor(
     private _route: ActivatedRoute,
@@ -33,6 +35,7 @@ export class FieldsDataComponent implements OnInit {
     private _userService: UserServiceService,
 
   ) {
+    this.numbers = Array.from(new Array(10), (x, i) => i + 1)
     this.ConstraintOptions = [{ label: 'Yes', value: 'true' },
     { label: 'No', value: 'false' }]
   }
@@ -53,6 +56,7 @@ export class FieldsDataComponent implements OnInit {
   clicked: boolean = true;
   counter: Number;
   isLength: Boolean = false;
+  isRating: Boolean = false;
 
 
   ngOnInit() {
@@ -113,6 +117,7 @@ export class FieldsDataComponent implements OnInit {
         'unique_key': ['false', Validators.required],
         'required_key': ['true', Validators.required],
         'text_length': ['null', Validators.required],
+        'rating': ['null', Validators.required]
 
       }
     )
@@ -126,14 +131,14 @@ export class FieldsDataComponent implements OnInit {
   get unique_key() { return this.fieldForm.get('unique_key') }
   get required_key() { return this.fieldForm.get('required_key') }
   get text_length() { return this.fieldForm.get('text_length') }
+  get rating() { return this.fieldForm.get('rating') }
 
 
   get arrayList() { return this.fieldForm.get('arrayList') as FormArray }
 
-  get List() { return this.fieldForm.get('List') as FormArray }
+  // get List() { return this.fieldForm.get('List') as FormArray }
 
   addField(template: TemplateRef<any>) {
-    console.log(template, "PPPPPP");
     this.modalRef = this.modalService.show(template, { class: 'gray modal-lg', backdrop: 'static' });
   }
 
@@ -145,10 +150,13 @@ export class FieldsDataComponent implements OnInit {
     this.unique_key.setValue('false');
     this.required_key.setValue('true');
     this.text_length.setValue('null');
+    this.rating.setValue('null');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
     this.isLength = false;
+    this.isRating = false;
+
     this.fieldForm.removeControl('arrayList');
 
     const control = <FormArray>this.fieldForm.controls['arrayList'];
@@ -214,7 +222,6 @@ export class FieldsDataComponent implements OnInit {
 
   }
 
-
   onSelect() {
 
     if (this.type.value == 'short_text' || this.type.value == 'long_text') {
@@ -222,6 +229,8 @@ export class FieldsDataComponent implements OnInit {
       this.isDropdown = false;
       this.isRadio = false;
       this.isCheckbox = false;
+      this.isRating = false;
+
     } else if (this.type.value == 'dropdown') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isDropdown = true;
@@ -243,28 +252,35 @@ export class FieldsDataComponent implements OnInit {
       this.isCheckbox = true;
       this.reset();
 
+    } else if (this.type.value == 'star_rating') {
+      this.isRating = true;
+      this.isLength = false;
+      this.isRadio = false;
+      this.isDropdown = false;
+      this.isCheckbox = false;
+      this.reset();
+
     } else {
       this.isDropdown = false;
       this.isRadio = false;
       this.isCheckbox = false;
       this.isLength = false;
-
-
+      this.isRating = false;
     }
   }
 
 
-  minus(index) {
+  deleteSuggestion(index) {
     console.log(index, "OOO");
     this.arrayList.removeAt(index);
   }
 
-  add() {
+  addSuggestion() {
     this.arrayList.push(this._fb.group({
       databaseValue: ['', [Validators.required]],
       displayValue: ['', [Validators.required,]]
     }));
-    console.log(this.arrayList)
+    // console.log(this.arrayList)
   }
 
   click() {
@@ -272,6 +288,7 @@ export class FieldsDataComponent implements OnInit {
   }
 
   reset() {
+    // this.isRating = false;
     this.isLength = false;
     this.constraints.setValue('false');
     this.unique_key.setValue('false');
@@ -355,8 +372,12 @@ export class FieldsDataComponent implements OnInit {
               'type': element.fieldtype,
               'unique_key': element.u_konstraint,
               'required_key': element.required,
-              'text_length': element.text_length
+              'text_length': element.text_length,
+              'rating': parseInt(element.rating)
+
             });
+            console.log(typeof element.text_length, "LLLL");
+
             this.fieldtype = element.fieldtype;
           }
           else if (key == 'c_dbValue' || key == 'c_dspvalue') {
@@ -381,14 +402,16 @@ export class FieldsDataComponent implements OnInit {
       console.log(this.fieldForm.value, this.fieldtype, this.ListToEdit, this.ListToEdit.length, "LLLlllllllllll");
 
       if (this.ListToEdit.length > 0) {
-        this.fieldForm.addControl('List', this._fb.array([]));
+        // this.fieldForm.addControl('List', this._fb.array([]));
+        this.fieldForm.addControl('arrayList', this._fb.array([]));
         this.ListToEdit.forEach((item) => {
-          this.List.push(this._fb.group({
+          // this.List.push(this._fb.group({
+          this.arrayList.push(this._fb.group({
             databaseValue: item.databasevalue,
             displayValue: item.displayvalue
           }));
         });
-        console.log(this.List, "111111111");
+        console.log(this.arrayList, "111111111");
 
 
         if (this.fieldtype == 'dropdown') {
@@ -402,6 +425,8 @@ export class FieldsDataComponent implements OnInit {
 
       if (this.fieldtype == 'short_text' || this.fieldtype == 'long_text') {
         this.isLength = true;
+      } else if (this.fieldtype == 'star_rating') {
+        this.isRating = true;
       }
 
       this.modalRef = this.modalService.show(template, { class: 'gray modal-lg', backdrop: 'static' });
@@ -412,55 +437,6 @@ export class FieldsDataComponent implements OnInit {
     })
   }
 
-  onSelect1() {
-    // if (this.ListToEdit.length == 0) {
-    if (this.type.value == 'short_text' || this.type.value == 'long_text') {
-      this.isLength = true;
-      this.isDropdown = false;
-      this.isRadio = false;
-      this.isCheckbox = false;
-    } else if (this.type.value == 'dropdown') {
-      this.fieldForm.addControl('List', this._fb.array([]));
-      this.isDropdown = true;
-      this.isRadio = false;
-      this.isCheckbox = false;
-      this.reset();
-
-    } else if (this.type.value == 'radio') {
-      this.fieldForm.addControl('List', this._fb.array([]));
-      this.isRadio = true;
-      this.isDropdown = false;
-      this.isCheckbox = false;
-      this.reset();
-
-    } else if (this.type.value == 'checkbox') {
-      this.fieldForm.addControl('List', this._fb.array([]));
-      this.isRadio = false;
-      this.isDropdown = false;
-      this.isCheckbox = true;
-      this.reset();
-    } else {
-      this.isDropdown = false;
-      this.isRadio = false;
-      this.isCheckbox = false;
-      this.isLength = false;
-
-    }
-    // }
-  }
-
-  addSuggestion() {
-    this.List.push(this._fb.group({
-      databaseValue: '',
-      displayValue: ''
-    }));
-
-  }
-
-  minus1(index) {
-    console.log(index, "OOO");
-    this.List.removeAt(index);
-  }
 
 
   editFormSubmit() {
@@ -476,7 +452,7 @@ export class FieldsDataComponent implements OnInit {
             this.displayArray.push(this.fieldForm.value);
           }
         })
-        this.clearData();
+        this.formColumnArray();
         this.modalRef.hide();
         this.messageService.add(
           { severity: 'success', detail: 'Success', summary: 'Field edited Successfully' });
@@ -484,19 +460,19 @@ export class FieldsDataComponent implements OnInit {
       }, (errResponse) => {
 
         if (errResponse.error.code == 42804) {
-          this.clearData();
+          this.formColumnArray();
           this.modalRef.hide();
           this.messageService.add(
             { severity: 'error', detail: 'Error', summary: 'Invalid FieldType Conversion' });
         }
         if (errResponse.error.code == '42P16') {
-          this.clearData();
+          this.formColumnArray();
           this.modalRef.hide();
           this.messageService.add(
             { severity: 'error', detail: 'Error', summary: `Multiple Primary key not allowed` });
         }
         if (errResponse.error.code == 42701) {
-          this.clearData();
+          this.formColumnArray();
           this.modalRef.hide();
           this.messageService.add(
             { key: 'buzz', severity: 'error', detail: 'Error', summary: `Field Name must be Unique` });
@@ -506,33 +482,123 @@ export class FieldsDataComponent implements OnInit {
 
   }
 
-  clearData() {
-
-    const control = <FormArray>this.fieldForm.controls['List'];
-
-    if (control) {
-      while (control.length !== 0) {
-        control.removeAt(0);
-      }
-    }
-
-    this.fieldForm.removeControl('List');
-    this.fieldForm.reset();
-    this.constraints.setValue('false');
-    this.unique_key.setValue('false');
-    this.required_key.setValue('true');
-    this.text_length.setValue('null');
-    this.isDropdown = false;
-    this.isRadio = false;
-    this.isCheckbox = false;
-    this.isLength = false;
-    this.modalRef.hide();
-    console.log(this.List, this.fieldForm.value, "")
-
-  }
-
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ======================================== changes made List to  arrayLIst
+
+
+  // onSelect1() {
+  //   console.log("ON SELECT !")
+  //   // if (this.ListToEdit.length == 0) {
+  //   if (this.type.value == 'short_text' || this.type.value == 'long_text') {
+  //     this.isLength = true;
+  //     this.isDropdown = false;
+  //     this.isRadio = false;
+  //     this.isCheckbox = false;
+  //     this.isRating = false;
+  //   } else if (this.type.value == 'dropdown') {
+  //     this.fieldForm.addControl('List', this._fb.array([]));
+  //     this.isDropdown = true;
+  //     this.isRadio = false;
+  //     this.isCheckbox = false;
+  //     this.reset();
+
+  //   } else if (this.type.value == 'radio') {
+  //     this.fieldForm.addControl('List', this._fb.array([]));
+  //     this.isRadio = true;
+  //     this.isDropdown = false;
+  //     this.isCheckbox = false;
+  //     this.reset();
+
+  //   } else if (this.type.value == 'checkbox') {
+  //     this.fieldForm.addControl('List', this._fb.array([]));
+  //     this.isRadio = false;
+  //     this.isDropdown = false;
+  //     this.isCheckbox = true;
+  //     this.reset();
+  //   } else if (this.type.value == 'star_rating') {
+  //     console.log("IS RATING");
+  //     this.isRating = true;
+  //     this.isRadio = false;
+  //     this.isDropdown = false;
+  //     this.isCheckbox = false;
+  //     this.isLength = false;
+  //     this.reset();
+
+  //   } else {
+  //     this.isDropdown = false;
+  //     this.isRadio = false;
+  //     this.isCheckbox = false;
+  //     this.isLength = false;
+  //     this.isRating = false;
+
+  //   }
+  //   // }
+  // }
+
+  // addSuggestion() {
+  //   this.List.push(this._fb.group({
+  //     databaseValue: '',
+  //     displayValue: ''
+  //   }));
+
+  // }
+
+  // minus1(index) {
+  //   console.log(index, "OOO");
+  //   this.List.removeAt(index);
+  // }
+
+
+
+
+  // clearData() {
+
+  //   const control = <FormArray>this.fieldForm.controls['List'];
+
+  //   if (control) {
+  //     while (control.length !== 0) {
+  //       control.removeAt(0);
+  //     }
+  //   }
+
+  //   this.fieldForm.removeControl('List');
+  //   this.fieldForm.reset();
+  //   this.constraints.setValue('false');
+  //   this.unique_key.setValue('false');
+  //   this.required_key.setValue('true');
+  //   this.text_length.setValue('null');
+  //   this.isDropdown = false;
+  //   this.isRadio = false;
+  //   this.isCheckbox = false;
+  //   this.isLength = false;
+  //   this.isRating = false;
+  //   this.modalRef.hide();
+  //   console.log(this.arrayList, this.fieldForm.value, "")
+
+  // }
+
+
+
+
+
+// =====================================================================================    changes made Lsit to array List
 
 
 

@@ -208,7 +208,7 @@ async function deleteData(tableid, rowid) {
 }
 
 /**
- * Fetch the details of specific row of specified table
+ * Fetch the details of specified row of specified table
  * @param {Number} tableid the id of the table of which the data will be fetched
  * @param {Number} uid the id of the row from a table 
  * @returns {newArray: Object[]} the record of specified table 

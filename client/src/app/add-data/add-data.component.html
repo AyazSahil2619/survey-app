@@ -26,26 +26,6 @@
                     <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
                   </div>
                 </td>
-                <td *ngIf="x.fieldtype == 'dropdown'">
-                  <select class="form-control" name="{{x.fieldname}}" #name5="ngModel" [(ngModel)]="data[x.fieldname]"
-                    [required]="x.isRequired">
-                    <ng-container *ngFor="let y of ddinfo1">
-                      <ng-container *ngIf="y.colname == x.fieldname">
-                        <option [ngValue]="y.dspValue">{{y.dspValue}}</option>
-                      </ng-container>
-                    </ng-container>
-                  </select>
-                </td>
-                <td *ngIf="x.fieldtype == 'radio'">
-                  <ng-container *ngFor="let y of radioList">
-                    <ng-container *ngIf="y.colname == x.fieldname">
-                      <!-- <input type="radio" name="name6{{x.fieldname}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
-                      [value]="y.dspValue" required> {{y.dspValue}}<br> -->
-                      <p-radioButton name="{{x.fieldname}}" label="{{y.dspValue}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
-                        [value]="y.dspValue" [required]="x.isRequired"></p-radioButton><br>
-                    </ng-container>
-                  </ng-container>
-                </td>
                 <td *ngIf="x.fieldtype == 'checkbox'">
                   <ng-container *ngFor="let y of checkboxList;let i = index">
                     <ng-container *ngIf="y.colname == x.fieldname">
@@ -67,10 +47,6 @@
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'date'">
-                  <!-- <p-calendar showTime="true" name="{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname]"
-                    dateFormat="dd/mm/yy" hourFormat="12" [showIcon]="true" [minDate]="now" [defaultDate]="now"
-                    [required]="x.isRequired" [showButtonBar]="true" [inputStyle]="{'width':'100%'}">
-                  </p-calendar> -->
                   <!-- <p-calendar name="{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname] "
                     [required]="x.isRequired"></p-calendar> -->
                   <input id="date" name="{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
@@ -87,6 +63,33 @@
                   <div *ngIf="f.submitted && name4.invalid">
                     <div class="error" *ngIf="name4.errors.required">{{x.fieldname}} is required</div>
                     <div class="error" *ngIf="name4.errors.number">{{x.fieldname}} must be a Number</div>
+                  </div>
+                </td>
+                <td *ngIf="x.fieldtype == 'dropdown'">
+                  <select class="form-control" name="{{x.fieldname}}" #name5="ngModel" [(ngModel)]="data[x.fieldname]"
+                    [required]="x.isRequired">
+                    <ng-container *ngFor="let y of ddinfo1">
+                      <ng-container *ngIf="y.colname == x.fieldname">
+                        <option [ngValue]="y.dspValue">{{y.dspValue}}</option>
+                      </ng-container>
+                    </ng-container>
+                  </select>
+                </td>
+                <td *ngIf="x.fieldtype == 'radio'">
+                  <ng-container *ngFor="let y of radioList">
+                    <ng-container *ngIf="y.colname == x.fieldname">
+                      <!-- <input type="radio" name="name6{{x.fieldname}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
+                        [value]="y.dspValue" required> {{y.dspValue}}<br> -->
+                      <p-radioButton name="{{x.fieldname}}" label="{{y.dspValue}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
+                        [value]="y.dspValue" [required]="x.isRequired"></p-radioButton><br>
+                    </ng-container>
+                  </ng-container>
+                </td>
+                <td *ngIf="x.fieldtype == 'star_rating' ">
+                  <p-rating name="name7{{x.fieldname}}" #name7="ngModel" stars="{{x.rating}}" [(ngModel)]="data[x.fieldname]"
+                    [required]="x.isRequired" [cancel]="false"></p-rating>
+                  <div *ngIf="f.submitted && name7.invalid">
+                    <div class="error" *ngIf="name7.errors.required">{{x.fieldname}} is required</div>
                   </div>
                 </td>
             </table>

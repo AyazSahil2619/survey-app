@@ -12,9 +12,9 @@
             <th>Name</th>
             <th>Label</th>
             <th>Field type</th>
-            <th>Required ?</th>
-            <th>Primary ?</th>
-            <th>Unique ?</th>
+            <th>Is Required ?</th>
+            <th>Is Primary ?</th>
+            <th>Is Unique ?</th>
             <th>Action</th>
           </tr>
           <tr *ngFor="let object of displayArray" [class]="object.f_uid > counter1 ? 'modified':'unmodified'">
@@ -80,6 +80,7 @@
                 <option value="dropdown">Dropdown</option>
                 <option value="radio">Radio</option>
                 <option value="checkbox">Checkbox</option>
+                <option value="star_rating">Star Rating</option>
               </select>
               <span class="danger" *ngIf="!type.valid && type.dirty">Field type is required!</span>
             </div>
@@ -91,7 +92,7 @@
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right cc" (click)="add()"><i class='fas fa-plus'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right cc" (click)="addSuggestion()"><i class='fas fa-plus'></i></a><br><br>
               <label class="databaselabels">Database Value <span class="asteriskcolor">*</span></label>
               <label class="displaylabels">Display Value <span class="asteriskcolor">*</span></label>
               <div formArrayName="arrayList">
@@ -110,7 +111,7 @@
                           <div *ngIf="dropdown.hasError('required', 'displayValue')"> Display value is required</div>
                         </div>
                       </div>
-                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="minus(i)"><i
+                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
                           class="fa fa-times"></i></a>
                     </div>
                   </div>
@@ -120,7 +121,7 @@
             <br>
             <div class="col-md-12" *ngIf="isRadio">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right cc" (click)="add()"><i class='fas fa-plus'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right cc" (click)="addSuggestion()"><i class='fas fa-plus'></i></a><br><br>
               <label class="databaselabels">Database Value <span class="asteriskcolor">*</span></label>
               <label class="displaylabels">Display Value <span class="asteriskcolor">*</span></label>
               <div formArrayName="arrayList">
@@ -139,7 +140,7 @@
                           <div *ngIf="radio.hasError('required', 'displayValue')"> Display value is required</div>
                         </div>
                       </div>
-                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="minus(i)"><i
+                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
                           class="fa fa-times"></i></a>
                     </div>
                   </div>
@@ -149,7 +150,7 @@
             <br>
             <div class="col-md-12" *ngIf="isCheckbox">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
-              <a type="button" class="btn btn-primary float-right cc" (click)="add()"><i class='fas fa-plus'></i></a><br><br>
+              <a type="button" class="btn btn-primary float-right cc" (click)="addSuggestion()"><i class='fas fa-plus'></i></a><br><br>
               <label class="databaselabels">Database Value <span class="asteriskcolor">*</span></label>
               <label class="displaylabels">Display Value <span class="asteriskcolor">*</span></label>
               <div formArrayName="arrayList">
@@ -168,7 +169,7 @@
                           <div *ngIf="checkbox.hasError('required', 'displayValue')"> Display value is required</div>
                         </div>
                       </div>
-                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="minus(i)"><i
+                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
                           class="fa fa-times"></i></a>
                     </div>
                   </div>
@@ -183,11 +184,21 @@
                   <option value="false">No</option>
                 </select>
               </div> -->
+            <div *ngIf="isRating" class="col-md-12">
+              <label>Rating Amount <span class='asteriskcolor'>*</span></label>
+              <select type="text" class="form-control" formControlName="rating" required>
+                <ng-container *ngFor="let number of numbers">
+                  <option [ngValue]="number">{{number}}</option>
+                </ng-container>
+              </select>
+              <!-- <input type="text" class="form-control" formControlName="rating" required> -->
+              <span class="danger" *ngIf="!rating.valid && rating.dirty">Rating Amount is required!</span>
+            </div>
             <div class="container">
               <label>Required</label><br>
               <p-selectButton [options]="ConstraintOptions" formControlName="required_key"></p-selectButton>
             </div>
-            <div *ngIf="!isDropdown && !isRadio && !isCheckbox">
+            <div *ngIf="!isDropdown && !isRadio && !isCheckbox && !isRating">
               <div class="col-md-12">
                 <span *ngIf="clicked"><i class="fas fa-angle-right"></i></span>
                 <span *ngIf="!clicked"><i class="fas fa-angle-down"></i></span>
@@ -261,6 +272,7 @@
                 <option value="dropdown">Dropdown</option>
                 <option value="radio">Radio</option>
                 <option value="checkbox">Checkbox</option>
+                <option value="star_rating">Star Rating</option>
               </select>
               <span class="danger" *ngIf="!type.valid && type.dirty">Field type is required!</span>
             </div>
@@ -275,8 +287,8 @@
               <a type="button" class="btn btn-primary float-right cc" (click)="addSuggestion()"><i class='fas fa-plus'></i></a><br><br>
               <label class="databaselabels">Database Value <span class="asteriskcolor">*</span></label>
               <label class="displaylabels">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="List">
-                <div *ngFor="let dropdown of List.controls; let i=index">
+              <div formArrayName="arrayList">
+                <div *ngFor="let dropdown of arrayList.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <div class="col-md-4">
@@ -291,7 +303,7 @@
                           <div *ngIf="dropdown.hasError('required', 'displayValue')"> Display value is required</div>
                         </div>
                       </div>
-                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="minus1(i)"><i
+                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
                           class="fa fa-times"></i></a>
                     </div>
                   </div>
@@ -304,8 +316,8 @@
               <a type="button" class="btn btn-primary float-right cc" (click)="addSuggestion()"><i class='fas fa-plus'></i></a><br><br>
               <label class="databaselabels">Database Value <span class="asteriskcolor">*</span></label>
               <label class="displaylabels">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="List">
-                <div *ngFor="let radio of List.controls; let i=index">
+              <div formArrayName="arrayList">
+                <div *ngFor="let radio of arrayList.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <div class="col-md-4">
@@ -320,7 +332,7 @@
                           <div *ngIf="radio.hasError('required', 'displayValue')"> Display value is required</div>
                         </div>
                       </div>
-                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="minus1(i)"><i
+                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
                           class="fa fa-times"></i></a>
                     </div>
                   </div>
@@ -333,8 +345,8 @@
               <a type="button" class="btn btn-primary float-right cc" (click)="addSuggestion()"><i class='fas fa-plus'></i></a><br><br>
               <label class="databaselabels">Database Value <span class="asteriskcolor">*</span></label>
               <label class="displaylabels">Display Value <span class="asteriskcolor">*</span></label>
-              <div formArrayName="List">
-                <div *ngFor="let checkbox of List.controls; let i=index">
+              <div formArrayName="arrayList">
+                <div *ngFor="let checkbox of arrayList.controls; let i=index">
                   <div [formGroupName]="i">
                     <div class="container-fluid row">
                       <div class="col-md-4">
@@ -349,7 +361,7 @@
                           <div *ngIf="checkbox.hasError('required', 'displayValue')"> Display value is required</div>
                         </div>
                       </div>
-                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="minus1(i)"><i
+                      <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
                           class="fa fa-times"></i></a>
                     </div>
                   </div>
@@ -357,18 +369,17 @@
               </div>
             </div>
             <br>
+            <div class="col-md-12" *ngIf="isRating">
+              <label>Rating Amount <span class='asteriskcolor'>*</span></label>
+              <select type="text" class="form-control" formControlName="rating" required>
+                <option *ngFor="let number of numbers" [ngValue]="number">{{number}}</option>
+              </select>
+            </div>
             <div class="container">
               <label>Required</label><br>
               <p-selectButton [options]="ConstraintOptions" formControlName="required_key"></p-selectButton>
             </div>
-            <!-- <div class="col-md-12" *ngIf="!isDropdown && !isRadio && !isCheckbox">
-              <label>Primary Key</label>
-              <select type="text" class="form-control" formControlName="constraints" required>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </div> -->
-            <div *ngIf="!isDropdown && !isRadio && !isCheckbox">
+            <div *ngIf="!isDropdown && !isRadio && !isCheckbox && !isRating">
               <div class="col-md-12">
 
                 <span *ngIf="clicked"><i class="fas fa-angle-right"></i></span>
@@ -390,7 +401,7 @@
         </fieldset><br><br>
         <div class="modal-footer">
           <input class="btn btn-primary float-right" [disabled]="!fieldForm.valid" type="submit">
-          <input type="button" class="btn btn-warning float-right" (click)="clearData()" value="Cancel">
+          <input type="button" class="btn btn-warning float-right" (click)="formColumnArray()" value="Cancel">
         </div>
       </form>
     </div>

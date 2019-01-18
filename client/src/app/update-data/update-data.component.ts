@@ -69,7 +69,8 @@ export class UpdateDataComponent implements OnInit {
               label: item.label,
               fieldtype: item.fieldtype,
               isRequired: item.required,
-              length: item.text_length
+              length: item.text_length,
+              rating: item.rating
             })
           }
         });
@@ -80,10 +81,9 @@ export class UpdateDataComponent implements OnInit {
       );
   }
   DataInfo() {
-    moment().format();
     this._userService.dataToEdit(this.table_id, this.row_id)
       .subscribe((response) => {
-      
+
         this.data = response[0];
         console.log(this.data, "data");
 

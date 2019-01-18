@@ -55,3 +55,11 @@
 /* .pointer {
   cursor: pointer;
 } */
+
+/* 
+.label {
+  width: 40px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+} */
