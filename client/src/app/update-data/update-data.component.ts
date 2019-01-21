@@ -32,8 +32,8 @@ export class UpdateDataComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.ColumnData();
     this.DataInfo();
+    this.ColumnData();
     this.ddinfo();
     this.radioInfo();
     this.checkboxInfo();
@@ -42,7 +42,7 @@ export class UpdateDataComponent implements OnInit {
   }
 
   ddinfo1: any = [];
-  colinfo1: Object[] = [];
+  colinfo1: any = [];
   radioList: Object[] = [];
   data = {};
   data1: Object = {};
@@ -83,7 +83,7 @@ export class UpdateDataComponent implements OnInit {
   DataInfo() {
     this._userService.dataToEdit(this.table_id, this.row_id)
       .subscribe((response) => {
-
+        console.log(response, "in data")
         this.data = response[0];
         console.log(this.data, "data");
 
@@ -151,6 +151,7 @@ export class UpdateDataComponent implements OnInit {
               dspValue: item.displayvalue,
               colname: item.colname
             })
+            this.data[this.checkboxList[index].colname] = {};
           });
           console.log(this.checkboxList, "checkboxList");
         } else {
@@ -175,6 +176,15 @@ export class UpdateDataComponent implements OnInit {
   updateData() {
     console.log(this.data, "11");
     console.log(this.data1, "2211");
+
+    if (Object.keys(this.data).length == 1) {
+      this.colinfo1.forEach(element => {
+        this.data[element.fieldname] = null;
+      });
+    }
+
+    console.log(this.data, "1122222222");
+
 
     this._userService.tableRowEdit(this.table_id, this.data)
       .subscribe((response) => {

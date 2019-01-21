@@ -1,4 +1,5 @@
 const squel = require('squel');
+const multer = require('multer');
 const runQuery = require('../pgConnection');
 
 /**
@@ -70,6 +71,10 @@ async function view(id) {
  */
 async function addDataToTable(req, id) {
 
+    console.log(req, "Request");
+    console.log(req.body, "Body");
+    console.log(req.file, "File");
+
     let body = [req.body];
     let colquery = '';
     let values = '';
@@ -86,7 +91,7 @@ async function addDataToTable(req, id) {
 
         body.forEach(function (element) {
             for (var keys in element) {
-                if (typeof element[keys] == 'object') {
+                if (typeof element[keys] == 'object' && element[keys] != null) {
                     let data = '';
                     for (var key in element[keys]) {
                         if (element[keys][key]) {
@@ -97,9 +102,12 @@ async function addDataToTable(req, id) {
                     colquery = colquery + '"' + escape([keys]) + '"' + ',';
                     values = values + `'` + '{' + data + '}' + `'` + `,`
 
-                } else {
+                } else if (element[keys] != null) {
                     colquery = colquery + '"' + escape([keys]) + '"' + ',';
                     values = values + `'` + element[keys] + `'` + ','
+                } else {
+                    colquery = colquery + '"' + escape([keys]) + '"' + ',';
+                    values = values + null + ','
                 }
             }
         });
@@ -282,6 +290,8 @@ async function getdetails(tableid, uid) {
  */
 async function updateRow(req, id) {
 
+    console.log(req.body, "BODy");
+
     let body = [req.body];
     let values = '';
     let condition = '';
@@ -290,7 +300,7 @@ async function updateRow(req, id) {
             if (keys == 'uid') {
                 condition = keys + `=` + `'` + element[keys] + `'`
             } else {
-                if (typeof element[keys] == 'object') {
+                if (typeof element[keys] == 'object' && element[keys] != null) {
                     let data = '';
                     for (var key in element[keys]) {
                         if (element[keys][key]) {
@@ -300,8 +310,10 @@ async function updateRow(req, id) {
                     data = data.replace(/(^[,\s]+)|([,\s]+$)/g, '');
                     values = values + '"' + escape(keys) + '"' + `=` + `'` + '{' + data + '}' + `'` + ',';
 
-                } else {
+                } else if (element[keys] != null) {
                     values = values + '"' + escape(keys) + '"' + `=` + `'` + element[keys] + `'` + ',';
+                } else {
+                    values = values + '"' + escape(keys) + '"' + `=` + null + ',';
                 }
             }
         }
@@ -309,6 +321,7 @@ async function updateRow(req, id) {
 
     values = values.replace(/(^[,\s]+)|([,\s]+$)/g, '');
 
+    console.log(values, "Values");
     let query = squel
         .select()
         .from("mastertable")

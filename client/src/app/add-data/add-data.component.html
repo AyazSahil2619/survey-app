@@ -11,17 +11,16 @@
             <table class="table">
               <tr *ngFor="let x of colinfo1 ">
                 <td><label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label></td>
-
                 <td *ngIf="x.fieldtype == 'short_text'">
-                  <input id="text" name="{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control"
-                    type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
-                  <div *ngIf="f.submitted && name1.invalid">
-                    <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
+                  <input name="name0{{x.fieldname}}" [maxlength]="x.length" #name0="ngModel" class="form-control" type="text"
+                    [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
+                  <div *ngIf="f.submitted && name0.invalid">
+                    <div class="error" *ngIf="name0.errors.required">{{x.fieldname}} is required</div>
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'long_text'">
-                  <textarea id="text" name="{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control"
-                    type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></textarea>
+                  <textarea name="name1{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control"
+                    type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></textarea>{{x.required}}
                   <div *ngIf="f.submitted && name1.invalid">
                     <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
                   </div>
@@ -29,16 +28,13 @@
                 <td *ngIf="x.fieldtype == 'checkbox'">
                   <ng-container *ngFor="let y of checkboxList;let i = index">
                     <ng-container *ngIf="y.colname == x.fieldname">
-                      <!-- <input type="checkbox" name="{{i}}{{x.fieldname}}" [(ngModel)]="data[x.fieldname][y.dspValue]">
-                    {{y.dspValue}}<br>  -->
-                      <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"
-                        [required]="x.isRequired"></p-checkbox><br>
+                      <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"></p-checkbox><br>
                     </ng-container>
                   </ng-container>
                 </td>
                 <td *ngIf="x.fieldtype == 'email'">
-                  <input type="text" class="form-control" name="{{x.fieldname}}" [(ngModel)]="data[x.fieldname]" #name2="ngModel"
-                    [required]="x.isRequired" email />
+                  <input type="text" class="form-control" name="name2{{x.fieldname}}" [(ngModel)]="data[x.fieldname]"
+                    #name2="ngModel" [required]="x.isRequired" email />
                   <div *ngIf="f.submitted && name2.invalid">
                     <div class="error" *ngIf="name2.errors.required">{{x.fieldname}} is required</div>
                     <div class="error" *ngIf="name2.errors.email ">{{x.fieldname}} must be a
@@ -47,12 +43,8 @@
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'date'">
-                  <!-- <p-calendar name="{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname] "
-                    [required]="x.isRequired"></p-calendar> -->
-                  <input id="date" name="{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
-                    [required]="x.isRequired">
-                  <!-- <input type="date" class="form-control" name="{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname]"
-                    [required]="x.isRequired" min="1997-06-24" max="{{dtmax | date:'yyyy-MM-dd'}}"> -->
+                  <input id="date" name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date"
+                    [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
                   <div *ngIf="f.submitted && name3.invalid">
                     <div class="error" *ngIf="name3.errors.required">{{x.fieldname}} is required</div>
                   </div>
@@ -78,8 +70,6 @@
                 <td *ngIf="x.fieldtype == 'radio'">
                   <ng-container *ngFor="let y of radioList">
                     <ng-container *ngIf="y.colname == x.fieldname">
-                      <!-- <input type="radio" name="name6{{x.fieldname}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
-                        [value]="y.dspValue" required> {{y.dspValue}}<br> -->
                       <p-radioButton name="{{x.fieldname}}" label="{{y.dspValue}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
                         [value]="y.dspValue" [required]="x.isRequired"></p-radioButton><br>
                     </ng-container>
@@ -92,11 +82,21 @@
                     <div class="error" *ngIf="name7.errors.required">{{x.fieldname}} is required</div>
                   </div>
                 </td>
+                <td *ngIf="x.fieldtype == 'file_upload' ">
+                  <input type="file" name="name8{{x.fieldname}}" #name8="ngModel" [(ngModel)]="data[x.fieldname]"
+                    [required]="x.isRequired">
+                  <div *ngIf="f.submitted && name8.invalid">
+                    <div class="error" *ngIf="name8.errors.required">{{x.fieldname}} is required</div>
+                  </div>
+                </td>
             </table>
             <div class="card-footer">
               <button class="btn btn-primary btn-sm" value="Submit">Submit</button>
               <button style="margin-right: 10px" class="btn btn-warning btn-sm" (click)="onCancel()">Cancel</button>
             </div>
+            <!-- {{f.form.valid}}
+            {{f.form.errors | json}} -->
+            <!-- {{f.form.value | json}} -->
           </form>
         </div>
       </div>

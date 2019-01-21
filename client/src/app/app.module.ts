@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+// import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 import { ToastModule } from 'primeng/toast';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DataTablesModule } from 'angular-datatables';
@@ -69,6 +70,7 @@ import { RatingModule } from 'primeng/rating';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    // RxReactiveFormsModule,
     HttpClientModule,
     ToastModule,
     BrowserAnimationsModule,

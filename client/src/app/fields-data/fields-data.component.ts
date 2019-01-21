@@ -12,6 +12,9 @@ import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@ang
 import { UserServiceService } from '../user-service.service';
 import { CommonModalComponent } from '../common-modal/common-modal.component';
 import { validateConfig } from '@angular/router/src/config';
+// import { RxwebValidators } from '@rxweb/reactive-form-validators';
+
+
 
 @Component({
   selector: 'app-fields-data',
@@ -57,6 +60,7 @@ export class FieldsDataComponent implements OnInit {
   counter: Number;
   isLength: Boolean = false;
   isRating: Boolean = false;
+  isFile: Boolean = false;
 
 
   ngOnInit() {
@@ -117,7 +121,8 @@ export class FieldsDataComponent implements OnInit {
         'unique_key': ['false', Validators.required],
         'required_key': ['true', Validators.required],
         'text_length': ['null', Validators.required],
-        'rating': ['null', Validators.required]
+        'rating': ['null', Validators.required],
+        // 'fileSize': ['null', Validators.required]
 
       }
     )
@@ -132,6 +137,7 @@ export class FieldsDataComponent implements OnInit {
   get required_key() { return this.fieldForm.get('required_key') }
   get text_length() { return this.fieldForm.get('text_length') }
   get rating() { return this.fieldForm.get('rating') }
+  // get fileSize() { return this.fieldForm.get('fileSize') }
 
 
   get arrayList() { return this.fieldForm.get('arrayList') as FormArray }
@@ -151,6 +157,7 @@ export class FieldsDataComponent implements OnInit {
     this.required_key.setValue('true');
     this.text_length.setValue('null');
     this.rating.setValue('null');
+    // this.fileSize.setValue('null');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
@@ -224,24 +231,31 @@ export class FieldsDataComponent implements OnInit {
 
   onSelect() {
 
+    console.log("ON SELECT ");
+
     if (this.type.value == 'short_text' || this.type.value == 'long_text') {
       this.isLength = true;
       this.isDropdown = false;
       this.isRadio = false;
       this.isCheckbox = false;
       this.isRating = false;
+      this.isFile = false;
 
     } else if (this.type.value == 'dropdown') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isDropdown = true;
       this.isRadio = false;
       this.isCheckbox = false;
+      this.isRating = false;
+      this.isFile = false;
       this.reset();
 
     } else if (this.type.value == 'radio') {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isRadio = true;
       this.isDropdown = false;
+      this.isRating = false;
+      this.isFile = false;
       this.isCheckbox = false;
       this.reset();
 
@@ -249,7 +263,18 @@ export class FieldsDataComponent implements OnInit {
       this.fieldForm.addControl('arrayList', this._fb.array([]));
       this.isRadio = false;
       this.isDropdown = false;
+      this.isFile = false;
+      this.isRating = false;
       this.isCheckbox = true;
+      this.reset();
+
+    } else if (this.type.value == 'file_upload') {
+      this.isFile = true;
+      this.isRating = false;
+      this.isLength = false;
+      this.isRadio = false;
+      this.isDropdown = false;
+      this.isCheckbox = false;
       this.reset();
 
     } else if (this.type.value == 'star_rating') {
@@ -257,6 +282,7 @@ export class FieldsDataComponent implements OnInit {
       this.isLength = false;
       this.isRadio = false;
       this.isDropdown = false;
+      this.isFile = false;
       this.isCheckbox = false;
       this.reset();
 
@@ -265,6 +291,7 @@ export class FieldsDataComponent implements OnInit {
       this.isRadio = false;
       this.isCheckbox = false;
       this.isLength = false;
+      this.isFile = false;
       this.isRating = false;
     }
   }
@@ -275,10 +302,11 @@ export class FieldsDataComponent implements OnInit {
     this.arrayList.removeAt(index);
   }
 
+  // RxwebValidators.unique()
   addSuggestion() {
     this.arrayList.push(this._fb.group({
       databaseValue: ['', [Validators.required]],
-      displayValue: ['', [Validators.required,]]
+      displayValue: ['', [Validators.required]]
     }));
     // console.log(this.arrayList)
   }
@@ -288,7 +316,6 @@ export class FieldsDataComponent implements OnInit {
   }
 
   reset() {
-    // this.isRating = false;
     this.isLength = false;
     this.constraints.setValue('false');
     this.unique_key.setValue('false');

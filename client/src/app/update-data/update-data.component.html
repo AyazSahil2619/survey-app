@@ -20,7 +20,6 @@
                 <td *ngIf="x.fieldtype == 'long_text'">
                   <textarea name="name1{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control"
                     type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></textarea>
-
                   <div *ngIf="f.submitted && name1.invalid">
                     <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
                   </div>
@@ -58,8 +57,7 @@
                     <ng-container *ngIf="y.colname == x.fieldname">
                       <!-- <input type="checkbox" name="{{i}}{{x.fieldname}}" [(ngModel)]="data[x.fieldname][y.dspValue]">
                   {{y.dspValue}}<br> -->
-                      <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"
-                        [required]="x.isRequired"></p-checkbox><br>
+                      <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"></p-checkbox><br>
                     </ng-container>
                   </ng-container>
                 </td>
@@ -84,12 +82,12 @@
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'star_rating' ">
-                    <p-rating name="name7{{x.fieldname}}" #name7="ngModel" stars="{{x.rating}}" [(ngModel)]="data[x.fieldname]"
-                      [required]="x.isRequired" [cancel]="false"></p-rating>
-                    <div *ngIf="f.submitted && name7.invalid">
-                      <div class="error" *ngIf="name7.errors.required">{{x.fieldname}} is required</div>
-                    </div>
-                  </td>
+                  <p-rating name="name7{{x.fieldname}}" #name7="ngModel" stars="{{x.rating}}" [(ngModel)]="data[x.fieldname]"
+                    [required]="x.isRequired" [cancel]="false"></p-rating>
+                  <div *ngIf="f.submitted && name7.invalid">
+                    <div class="error" *ngIf="name7.errors.required">{{x.fieldname}} is required</div>
+                  </div>
+                </td>
               </tr>
             </table>
             <div class="card-footer">

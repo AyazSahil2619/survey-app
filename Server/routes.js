@@ -117,7 +117,6 @@ app.put('/updaterow/:id', operations.updateRow);
 // app.get('/radio/:id', operations.fetchRadioList);
 // app.get('/checkbox/:id', operations.fetchCheckboxList);
 
-
 // app.get('/loggedout', check.logout)
 app.get('/loggedout', check.isLoggedIn, check.logout);
 

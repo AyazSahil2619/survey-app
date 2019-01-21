@@ -34,14 +34,13 @@ export class AddDataComponent implements OnInit {
   table_id = this.route.snapshot.params['id'];
   // table_id: Number;
   // table_id = tableid; 
-  colinfo1: Object[] = [];
+  colinfo1: any = [];
   ddinfo1: Object[] = [];
   radioList: Object[] = [];
   checkboxList: any = [];
   data: any = {};
   // id;
   data1: Object = {};
-  selectedValues: string[] = [];
 
   test;
   modifiedUser = {
@@ -49,11 +48,8 @@ export class AddDataComponent implements OnInit {
     time: Date(),
   };
 
-  selectedvalues: string[] = ['Technology'];
-
-
   ngOnInit() {
-    this.insert();
+    this.fieldsData();
     this.ddinfo();
     this.radioInfo();
     this.checkboxInfo();
@@ -61,7 +57,7 @@ export class AddDataComponent implements OnInit {
 
   }
 
-  insert() {
+  fieldsData() {
     console.log("ADDING ROW IN TABLE", this.table_id);
 
     this._userService.getById(this.table_id)
@@ -82,8 +78,6 @@ export class AddDataComponent implements OnInit {
         });
 
         console.log(this.colinfo1, "INFO");
-        // for display table id in frontend
-        // this.id = response[0].tableid;
 
       },
         function (errResponse) {
@@ -154,12 +148,10 @@ export class AddDataComponent implements OnInit {
               colname: item.colname
             })
             this.data[this.checkboxList[index].colname] = {};
-            // this.data1.push(item.displayvalue);
           });
 
-          console.log(this.data);
           console.log(this.checkboxList, "checkboxList");
-          this.test = new Array(this.checkboxList.length);
+          // this.test = new Array(this.checkboxList.length);
         } else {
           console.log(response);
         }
@@ -176,7 +168,16 @@ export class AddDataComponent implements OnInit {
 
 
   submit() {
+
+    console.log("ASDSA");
     console.log(this.data, "data");
+    // console.log(Object.keys(this.data).length, "LENGTH")
+
+    if (Object.keys(this.data).length == 0) {
+      this.colinfo1.forEach(element => {
+        this.data[element.fieldname] = null;
+      });
+    }
 
     this._userService.insertData(this.table_id, this.data)
       .subscribe((response) => {

@@ -140,6 +140,7 @@ async function addColumn(req, id) {
         rating = 0;
     }
 
+
     let unique_key_constraint = req.body.unique_key;
     let optionData = [];
 
@@ -196,9 +197,11 @@ async function addColumn(req, id) {
         } else if (item.fieldtype == 'short_text' || item.fieldtype == 'long_text') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `varchar(${text_length})` + ',';
         } else if (item.fieldtype == 'date') {
-            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `timestamp with time zone` + ',';
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `timestamp` + ',';
         } else if (item.fieldtype == 'star_rating') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `integer` + ',';
+        } else if (item.fieldtype == 'file_upload') {
+            colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `text` + ',';
         } else {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + item.fieldtype + ',';
         }
@@ -628,8 +631,8 @@ async function fieldEdit(req, table_id, field_id) {
     }
 
 
-    if ((fieldtype == 'dropdown' || fieldtype == 'radio' || fieldtype == 'checkbox') && (req.body.List && req.body.List.length > 0)) {
-        optionList = req.body.List;
+    if ((fieldtype == 'dropdown' || fieldtype == 'radio' || fieldtype == 'checkbox') && (req.body.arrayList && req.body.arrayList.length > 0)) {
+        optionList = req.body.arrayList;
     } else {
         optionList = [];
     }

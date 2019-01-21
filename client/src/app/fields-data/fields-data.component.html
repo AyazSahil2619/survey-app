@@ -80,6 +80,7 @@
                 <option value="dropdown">Dropdown</option>
                 <option value="radio">Radio</option>
                 <option value="checkbox">Checkbox</option>
+                <option value="file_upload">File Upload</option>
                 <option value="star_rating">Star Rating</option>
               </select>
               <span class="danger" *ngIf="!type.valid && type.dirty">Field type is required!</span>
@@ -177,13 +178,11 @@
               </div>
             </div>
             <br>
-            <!-- <div>
-                <label>Primary Key</label>
-                <select type="text" class="form-control" formControlName="constraints" required>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </div> -->
+            <!-- <div *ngIf="isFile" class="col-md-12">
+              <label>Max Size <span class='asteriskcolor'>*</span></label>
+              <input type="number" class="form-control" formControlName="fileSize" required>
+              <span class="danger" *ngIf="!fileSize.valid && fileSize.dirty">Size of File is required!</span>
+            </div> -->
             <div *ngIf="isRating" class="col-md-12">
               <label>Rating Amount <span class='asteriskcolor'>*</span></label>
               <select type="text" class="form-control" formControlName="rating" required>
@@ -191,14 +190,13 @@
                   <option [ngValue]="number">{{number}}</option>
                 </ng-container>
               </select>
-              <!-- <input type="text" class="form-control" formControlName="rating" required> -->
               <span class="danger" *ngIf="!rating.valid && rating.dirty">Rating Amount is required!</span>
             </div>
             <div class="container">
               <label>Required</label><br>
               <p-selectButton [options]="ConstraintOptions" formControlName="required_key"></p-selectButton>
             </div>
-            <div *ngIf="!isDropdown && !isRadio && !isCheckbox && !isRating">
+            <div *ngIf="!isDropdown && !isRadio && !isCheckbox && !isRating && !isFile">
               <div class="col-md-12">
                 <span *ngIf="clicked"><i class="fas fa-angle-right"></i></span>
                 <span *ngIf="!clicked"><i class="fas fa-angle-down"></i></span>
@@ -261,7 +259,7 @@
             </div>
             <div class="col-md-12">
               <label>Field type <span class='asteriskcolor'>*</span></label>
-              <select type="text" class="form-control" formControlName="type" (change)="onSelect1()" required>
+              <select type="text" class="form-control" formControlName="type" (change)="onSelect()" required>
                 <!-- <option value="text">Text</option> -->
                 <option value="short_text">Short Text</option>
                 <option value="long_text">Long Text</option>
