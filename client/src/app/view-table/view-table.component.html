@@ -18,16 +18,21 @@
           <tr *ngFor="let row of datas">
             <td *ngFor="let column of colinfo1">
               <div *ngIf="column.fieldtype =='date'">{{row[column.fieldname] | date:'medium'}}</div>
-              <div *ngIf="column.fieldtype !='date' && column.fieldtype != 'star_rating'">{{row[column.fieldname]}}</div>
+              <div *ngIf="column.fieldtype !='date' && column.fieldtype !='file_upload' && column.fieldtype != 'star_rating'">{{row[column.fieldname]}}</div>
               <div *ngIf="column.fieldtype =='star_rating'">
-                <p-rating stars="{{row[column.fieldname]}}" readonly="true" [cancel]="false">
+                <p-rating ngModel="{{row[column.fieldname]}}" stars="{{row[column.fieldname]}}" readonly="true"
+                  [cancel]="false">
                 </p-rating>
               </div>
-
+              <div *ngIf="column.fieldtype == 'file_upload'">
+                <a href="{{selectedFile}}" target="_blank">
+                  <img src="{{selectedFile}}">
+                </a>
+                <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(row[column.fieldname],imageTemplate)">{{row[column.fieldname]}}</a>
+              </div>
             </td>
             <td>
-              <a id="
-                tablebutton" type="button" class="btn btn-primary btn-sm" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;
+              <a id="tablebutton" type="button" class="btn btn-primary btn-sm" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;
               <!-- <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deletedata(templatedelete,row.uid)">Delete</a> -->
               <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deletedata(row.uid)">Delete</a>
             </td>
@@ -39,10 +44,9 @@
   </app-navbar>
 </div>
 
+<!-- <img src="/assets/files/edgar-chaparro-550056-unsplash.jpg" alt="hsdfjghsf"> -->
 
-
-
-
+<img [src]="imageurl" alt="dsfjdf">
 
 
 <ng-template #templateshare>
@@ -68,13 +72,10 @@
 </ng-template>
 
 
-
-
-
-
-
-
-
+<ng-template #imageTemplate>
+  {{selectedFile}}
+  <img [src]="imageurl" height="500">
+</ng-template>
 
 
 

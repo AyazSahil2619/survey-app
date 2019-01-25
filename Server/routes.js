@@ -6,13 +6,16 @@ var session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 var cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+
 
 
 const User_controller = require('./login/User_controller')
 const validate = require('./validation/validation')
 const controller = require('./database/database_controller');
 const operations = require('./operations/operation_controller');
-const check = require('./login/passport')
+const check = require('./login/passport');
 
 
 
@@ -116,10 +119,26 @@ app.put('/updaterow/:id', operations.updateRow);
 // app.get('/dropdown/:id', operations.fetchDropdownList);
 // app.get('/radio/:id', operations.fetchRadioList);
 // app.get('/checkbox/:id', operations.fetchCheckboxList);
-
 // app.get('/loggedout', check.logout)
-app.get('/loggedout', check.isLoggedIn, check.logout);
 
+app.post('/upload', operations.upload, function (req, res) {
+    if (req.file) {
+        console.log(req.file.filename, "LLLLLL");
+        res.status(200).json(req.file.filename);
+    } else {
+        res.status(200).json({
+            msg: false
+        });
+    }
+});
+
+app.get('/fetchFile/:filename', function (req, res) {
+    console.log(path.join(__dirname, './uploads', req.params.filename), "OOOOOOOOOOOOOoo")
+    res.sendFile(path.join(__dirname, './uploads', req.params.filename));
+})
+
+
+app.get('/loggedout', check.isLoggedIn, check.logout);
 
 
 

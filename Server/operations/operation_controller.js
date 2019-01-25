@@ -1,4 +1,9 @@
 const repository = require('./operation_repository')
+const multer = require('multer');
+
+// const DIR = '/home/sahil/Desktop/survey-app/Server/uploads';
+const DIR = './uploads';
+
 
 async function view(req, res) {
     const id = parseInt(req.params.id, 10);
@@ -143,6 +148,23 @@ async function checkToken(req, res) {
     }
 }
 
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        console.log(file, "!!!!!!!");
+        cb(null, DIR)
+    },
+    filename: (req, file, cb) => {
+        let extension = file.originalname.split('.').pop();
+        cb(null, 'file_' + Date.now() + '.' + extension);
+        // cb(null, file.originalname)
+    }
+});
+
+var upload = multer({
+    storage: storage
+}).single("file");
+
+
 module.exports = {
     view: view,
     addDataToTable: addDataToTable,
@@ -154,5 +176,6 @@ module.exports = {
     tablename: tablename,
     fetchRadioList: fetchRadioList,
     fetchCheckboxList: fetchCheckboxList,
-    checkToken: checkToken
+    checkToken: checkToken,
+    upload: upload,
 }

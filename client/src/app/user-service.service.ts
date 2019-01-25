@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../environments/environment'
 @Injectable()
@@ -121,6 +121,19 @@ export class UserServiceService {
   checkToken(tableid, token): Observable<any> {
     return this._http.get(`${environment.ip}/checkToken/` + tableid + '/' + token, { withCredentials: true })
   }
+
+  upload(file: File): Observable<any> {
+    const formdata: FormData = new FormData();
+    formdata.append('file', file);
+    return this._http.post(`${environment.ip}/upload`, formdata, { withCredentials: true });
+  }
+
+  fetchFile(filename): Observable<any> {
+
+    return this._http.get(`${environment.ip}/fetchFile/` + filename, { withCredentials: true });
+
+  }
+
 
 }
 

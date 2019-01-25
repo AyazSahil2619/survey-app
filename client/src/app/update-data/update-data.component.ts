@@ -151,7 +151,7 @@ export class UpdateDataComponent implements OnInit {
               dspValue: item.displayvalue,
               colname: item.colname
             })
-            this.data[this.checkboxList[index].colname] = {};
+            // this.data[this.checkboxList[index].colname] = {};
           });
           console.log(this.checkboxList, "checkboxList");
         } else {

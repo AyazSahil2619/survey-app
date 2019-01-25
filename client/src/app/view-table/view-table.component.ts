@@ -15,6 +15,7 @@ import { CommonModalComponent } from '../common-modal/common-modal.component';
 
 // import { switchMap } from 'rxjs/operators';
 
+
 @Component({
   selector: 'app-view-table',
   templateUrl: './view-table.component.html',
@@ -187,6 +188,30 @@ export class ViewTableComponent implements OnInit {
 
       })
   }
+
+  selectedFile: any = null;
+  imageurl: any;
+
+  imagepreview(filename, template: TemplateRef<any>) {
+
+    console.log(filename, template);
+
+    // this.selectedFile = `/home/sahil/Desktop/survey-app/Server/uploads/${filename}`;
+    // console.log("THE URL", this.selectedFile);
+
+    // this.modalRef = this._modalService.show(template, { class: 'gray modal-lg' });
+
+    this._userService.fetchFile(filename).subscribe((response) => {
+      console.log("SUCCESS fetching file", response);
+
+    }, (error) => {
+      console.log(error, "Error")
+      // console.log(error.error.text, "++++++++++++++++++++++++++++++");
+      this.imageurl = 'data:image/jpg;base64,' + error.error.text;
+    })
+
+  }
+
 
   onClick() {
 

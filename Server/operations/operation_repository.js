@@ -1,6 +1,7 @@
 const squel = require('squel');
-const multer = require('multer');
 const runQuery = require('../pgConnection');
+
+
 
 /**
  * Database Query is Executed
@@ -16,7 +17,7 @@ async function queryExecute(query) {
         try {
             result = await client.query(query);
         } catch (err) {
-            console.log(err, "ERROR");
+            // console.log(err, "ERROR");
             await client.query('ROLLBACK');
             return Promise.reject(err);
         }
@@ -63,15 +64,16 @@ async function view(id) {
     }
 }
 
+
 /**
  * Inserting the data to table
- * @param {Object} req Its body provide the data to inserted into  the table
+ * @param {Object} req Its body provide the data to be inserted into the table
  * @param {Number} id  the table id on which changes is to be made
  * @returns {Object[]} the result of running insert data query
  */
 async function addDataToTable(req, id) {
 
-    console.log(req, "Request");
+
     console.log(req.body, "Body");
     console.log(req.file, "File");
 
@@ -122,6 +124,11 @@ async function addDataToTable(req, id) {
         console.log(query2, "QUERY2")
 
         let res2 = await queryExecute(query2);
+
+        if (req.file) {
+
+        }
+
         await queryExecute('COMMIT');
 
         if (res2.rowCount > 0) {
@@ -488,6 +495,8 @@ async function checkToken(tableid, token) {
 
 
 
+
+
 module.exports = {
     view: view,
     addDataToTable: addDataToTable,
@@ -499,5 +508,5 @@ module.exports = {
     tablename: tablename,
     fetchRadioList: fetchRadioList,
     fetchCheckboxList: fetchCheckboxList,
-    checkToken: checkToken
+    checkToken: checkToken,
 }

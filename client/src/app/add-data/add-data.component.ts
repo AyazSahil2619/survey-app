@@ -32,17 +32,15 @@ export class AddDataComponent implements OnInit {
     private modalService: BsModalService) { }
 
   table_id = this.route.snapshot.params['id'];
-  // table_id: Number;
-  // table_id = tableid; 
   colinfo1: any = [];
   ddinfo1: Object[] = [];
   radioList: Object[] = [];
   checkboxList: any = [];
   data: any = {};
-  // id;
   data1: Object = {};
+  selectedFile: File = null;
+  // test;
 
-  test;
   modifiedUser = {
     user: localStorage.getItem("LoggedInUser"),
     time: Date(),
@@ -53,7 +51,6 @@ export class AddDataComponent implements OnInit {
     this.ddinfo();
     this.radioInfo();
     this.checkboxInfo();
-    // this.onClose = new Subject();
 
   }
 
@@ -167,11 +164,26 @@ export class AddDataComponent implements OnInit {
   }
 
 
+  current: any;
+
+  onSelect(event, fieldname) {
+
+    this.current = fieldname;
+    this.selectedFile = <File>event.target.files[0];
+    // this.data[fieldname] = this.selectedFile.name;
+    console.log(this.data, "asdasdasddadad");
+    console.log(fieldname, this.data, "ON SELRCT CHECKING DATA");
+    console.log(this.selectedFile, "THE SELECTED FILE");
+
+
+  }
+
+  fd: any;
+
   submit() {
 
-    console.log("ASDSA");
+
     console.log(this.data, "data");
-    // console.log(Object.keys(this.data).length, "LENGTH")
 
     if (Object.keys(this.data).length == 0) {
       this.colinfo1.forEach(element => {
@@ -179,28 +191,48 @@ export class AddDataComponent implements OnInit {
       });
     }
 
-    this._userService.insertData(this.table_id, this.data)
-      .subscribe((response) => {
-        this._userService.modified(this.table_id, this.modifiedUser)
-          .subscribe((response) => {
-            console.log("Row added successfully");
-            this.router.navigate(['/viewTable/' + this.table_id]);
+    if (this.selectedFile) {
+      this.fd = new FormData();
+      console.log(this.selectedFile, "Name");
+      this.fd.append('file', this.selectedFile, this.selectedFile.name);
+      console.log("asdsa", this.fd);
+      // this.data.file = fd;
+
+
+    }
+
+    this._userService.upload(this.selectedFile).subscribe((response) => {
+      console.log(response.msg, "FILENAME");
+      if (response.msg != false) {
+        this.data[this.current] = response;
+      }
+      this._userService.insertData(this.table_id, this.data)
+        .subscribe((response) => {
+          this._userService.modified(this.table_id, this.modifiedUser)
+            .subscribe((response) => {
+              console.log("Row added successfully");
+              this.router.navigate(['/viewTable/' + this.table_id]);
+              this.messageService.add(
+                { severity: 'success', detail: 'Success', summary: 'Data Added Successfully' });
+            }, (error) => {
+              console.log("Error while modifying", error);
+            })
+        }, (errResponse) => {
+          console.log(errResponse, "Error in adding row in table");
+          if (errResponse.error.code == 22001) {
             this.messageService.add(
-              { severity: 'success', detail: 'Success', summary: 'Data Added Successfully' });
-            // this.onClose.next(true);
-          }, (error) => {
-            console.log("Error while modifying", error);
-          })
-      }, (errResponse) => {
-        console.log(errResponse, "Error in adding row in table");
-        if (errResponse.error.code == 22001) {
-          this.messageService.add(
-            { severity: 'error', detail: 'Error', summary: `Value too long for type character varying` });
-        } else {
-          this.messageService.add(
-            { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
-        }// this.onClose.next(false);
-      })
+              { severity: 'error', detail: 'Error', summary: `Value too long for type character varying` });
+          } else {
+            this.messageService.add(
+              { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
+          }
+        })
+    }, (err) => {
+      console.log(err, "Error while uploading file");
+    })
+
+
+
   }
 
 }

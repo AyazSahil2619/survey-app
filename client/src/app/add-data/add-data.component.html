@@ -7,7 +7,7 @@
         </div>
         <div class="card-body">
           <!-- <form #F="ngForm" class="form-group" name="form" (ngSubmit)="F.form.valid && submit()" novalidate> -->
-          <form name="form" (ngSubmit)="f.form.valid && submit()" #f="ngForm" novalidate>
+          <form name="form" (ngSubmit)="f.form.valid && submit()" #f="ngForm" enctype="multipart/form-data" novalidate>
             <table class="table">
               <tr *ngFor="let x of colinfo1 ">
                 <td><label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label></td>
@@ -83,19 +83,18 @@
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'file_upload' ">
-                  <input type="file" name="name8{{x.fieldname}}" #name8="ngModel" [(ngModel)]="data[x.fieldname]"
-                    [required]="x.isRequired">
-                  <div *ngIf="f.submitted && name8.invalid">
+                  <input type="file" name="name8{{x.fieldname}}" (change)="onSelect($event,x.fieldname)" [required]="x.isRequired" />
+                  <!-- <div *ngIf="f.submitted && name8.invalid">
                     <div class="error" *ngIf="name8.errors.required">{{x.fieldname}} is required</div>
-                  </div>
+                  </div> -->
                 </td>
             </table>
             <div class="card-footer">
               <button class="btn btn-primary btn-sm" value="Submit">Submit</button>
               <button style="margin-right: 10px" class="btn btn-warning btn-sm" (click)="onCancel()">Cancel</button>
             </div>
-            <!-- {{f.form.valid}}
-            {{f.form.errors | json}} -->
+            <!-- {{f.form.valid}} -->
+            <!-- {{f.form.errors | json}} -->
             <!-- {{f.form.value | json}} -->
           </form>
         </div>
