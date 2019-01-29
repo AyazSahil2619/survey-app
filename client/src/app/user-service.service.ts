@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../environments/environment'
+import 'rxjs/Rx'
 @Injectable()
 export class UserServiceService {
 
@@ -122,26 +123,30 @@ export class UserServiceService {
     return this._http.get(`${environment.ip}/checkToken/` + tableid + '/' + token, { withCredentials: true })
   }
 
-  upload(file: File): Observable<any> {
-    const formdata: FormData = new FormData();
-    formdata.append('file', file);
-    return this._http.post(`${environment.ip}/upload`, formdata, { withCredentials: true });
+  upload(file): Observable<any> {
+
+    console.log(file, typeof file, "IN service");
+    const formData: FormData = new FormData();
+    for (var i = 0; i < file.length; i++) {
+      // formData.append("file", file[i]);  
+      formData.append("file", file[i], file[i]['name']);
+    }
+    // formdata.append('file', file);
+    return this._http.post(`${environment.ip}/upload`, formData, { withCredentials: true });
   }
 
   fetchFile(filename): Observable<any> {
 
-    return this._http.get(`${environment.ip}/fetchFile/` + filename, { withCredentials: true });
+    return this._http.get(`${environment.ip}/fetchFile/` + filename, {
+      withCredentials: true,
+      responseType: 'blob',
+      headers: new HttpHeaders().append('Content-Type', 'application/json'),
+    });
 
   }
 
 
 }
-
-
-
-
-
-
 
 
 

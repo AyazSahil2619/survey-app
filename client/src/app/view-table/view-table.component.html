@@ -25,9 +25,6 @@
                 </p-rating>
               </div>
               <div *ngIf="column.fieldtype == 'file_upload'">
-                <a href="{{selectedFile}}" target="_blank">
-                  <img src="{{selectedFile}}">
-                </a>
                 <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(row[column.fieldname],imageTemplate)">{{row[column.fieldname]}}</a>
               </div>
             </td>
@@ -45,8 +42,6 @@
 </div>
 
 <!-- <img src="/assets/files/edgar-chaparro-550056-unsplash.jpg" alt="hsdfjghsf"> -->
-
-<img [src]="imageurl" alt="dsfjdf">
 
 
 <ng-template #templateshare>
@@ -73,8 +68,7 @@
 
 
 <ng-template #imageTemplate>
-  {{selectedFile}}
-  <img [src]="imageurl" height="500">
+  <img [src]="imageToShow" height="500">
 </ng-template>
 
 
@@ -107,17 +101,17 @@
 
 
 <!-- <ng-template #templatedelete>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Delete</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    Do you want to delete this record ?
-  </div>
-  <div class="modal-footer">
-    <a type="button" class="btn btn-primary btn-sm" (click)="confirm()">Confirm</a>
-    <a type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>
-  </div>
-</ng-template> -->
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Delete</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Do you want to delete this record ?
+    </div>
+    <div class="modal-footer">
+      <a type="button" class="btn btn-primary btn-sm" (click)="confirm()">Confirm</a>
+      <a type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>
+    </div>
+  </ng-template> -->

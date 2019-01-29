@@ -145,9 +145,37 @@ export class CommonDataComponent implements OnInit {
       })
   }
 
+  current: any;
+  selectedFile: any;
+  myFiles: any = [];
+
+  onFileSelect(event, fieldname) {
+    console.log(event.target.files[0].name);
+    this.current = fieldname;
+    this.data[this.current] = event.target.files[0].name;
+    // this.selectedFile = <File>event.target.files[0];
+    for (var i = 0; i < event.target.files.length; i++) {
+      this.selectedFile = <File>event.target.files[0];
+      this.myFiles.push(this.selectedFile);
+      // this.myFiles.push(event.target.files[i]);
+    }
+    console.log(fieldname, this.data, "ON SELRCT CHECKING DATA");
+    console.log(this.myFiles, "THE SELECTED FILE");
+
+  }
 
   submit() {
     console.log(this.data, "data");
+
+    if (Object.keys(this.myFiles).length != 0) {
+      this._userService.upload(this.myFiles).subscribe((response) => {
+        console.log("response after uploads", response);
+      }, (err) => {
+        console.log(err, "Error while uploading file");
+      })
+    }
+
+
 
     this._userService.insertData(this.table_id, this.data)
       .subscribe((response) => {

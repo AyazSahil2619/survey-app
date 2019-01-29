@@ -83,11 +83,12 @@
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'file_upload' ">
-                  <input type="file" name="name8{{x.fieldname}}" (change)="onSelect($event,x.fieldname)" [required]="x.isRequired" />
+                  <input type="file" name="name8{{x.fieldname}}" (change)="onFileSelect($event,x.fieldname)" [required]="x.isRequired" />
                   <!-- <div *ngIf="f.submitted && name8.invalid">
                     <div class="error" *ngIf="name8.errors.required">{{x.fieldname}} is required</div>
                   </div> -->
                 </td>
+              </tr>
             </table>
             <div class="card-footer">
               <button class="btn btn-primary btn-sm" value="Submit">Submit</button>

@@ -12,6 +12,7 @@ import { AddDataComponent } from '../add-data/add-data.component';
 import { UpdateDataComponent } from '../update-data/update-data.component';
 import { AuthService } from '../auth.service';
 import { CommonModalComponent } from '../common-modal/common-modal.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 // import { switchMap } from 'rxjs/operators';
 
@@ -42,7 +43,8 @@ export class ViewTableComponent implements OnInit {
     private _userService: UserServiceService,
     private messageService: MessageService,
     private _modalService: BsModalService,
-    private _auth: AuthService
+    private _auth: AuthService,
+    private sanitizer: DomSanitizer
   ) { }
 
   table_id = this.route.snapshot.params['id'];
@@ -190,27 +192,38 @@ export class ViewTableComponent implements OnInit {
   }
 
   selectedFile: any = null;
-  imageurl: any;
+  imageToShow: any;
 
   imagepreview(filename, template: TemplateRef<any>) {
 
-    console.log(filename, template);
-
-    // this.selectedFile = `/home/sahil/Desktop/survey-app/Server/uploads/${filename}`;
-    // console.log("THE URL", this.selectedFile);
-
-    // this.modalRef = this._modalService.show(template, { class: 'gray modal-lg' });
-
     this._userService.fetchFile(filename).subscribe((response) => {
-      console.log("SUCCESS fetching file", response);
+      let data = response;
+      this.createImageFromBlob(data);
+      this.modalRef = this._modalService.show(template, { class: 'gray modal-lg' });
 
     }, (error) => {
       console.log(error, "Error")
-      // console.log(error.error.text, "++++++++++++++++++++++++++++++");
-      this.imageurl = 'data:image/jpg;base64,' + error.error.text;
     })
 
   }
+
+
+
+  // This function creates new FileReader and listen to FileReader's load-Event.
+  //  As result this function returns base64-encoded image,
+  //  which we can use in img src-attribute:
+  createImageFromBlob(image: Blob) {
+    let reader = new FileReader();
+    reader.addEventListener("load", () => {
+      this.imageToShow = reader.result;
+      console.log(this.imageToShow, "LLLL")
+    }, false);
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
+  }
+
 
 
   onClick() {

@@ -75,7 +75,7 @@ async function addDataToTable(req, id) {
 
 
     console.log(req.body, "Body");
-    console.log(req.file, "File");
+    console.log(req.files, "File");
 
     let body = [req.body];
     let colquery = '';

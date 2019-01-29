@@ -173,6 +173,27 @@ export class UpdateDataComponent implements OnInit {
     this._router.navigate(['/viewTable/' + this.table_id]);
   }
 
+
+
+  myFiles: any = [];
+  current: any;
+  selectedFile: any;
+
+  onFileSelect(event, fieldname) {
+    console.log(event.target.files[0].name);
+    this.current = fieldname;
+    this.data[this.current] = event.target.files[0].name;
+    // this.selectedFile = <File>event.target.files[0];
+    for (var i = 0; i < event.target.files.length; i++) {
+      this.selectedFile = <File>event.target.files[0];
+      this.myFiles.push(this.selectedFile);
+      // this.myFiles.push(event.target.files[i]);
+    }
+    console.log(fieldname, this.data, "ON SELRCT CHECKING DATA");
+    console.log(this.myFiles, "THE SELECTED FILE");
+
+  }
+
   updateData() {
     console.log(this.data, "11");
     console.log(this.data1, "2211");
@@ -183,9 +204,19 @@ export class UpdateDataComponent implements OnInit {
       });
     }
 
+    if (Object.keys(this.myFiles).length != 0) {
+      this._userService.upload(this.myFiles).subscribe((response) => {
+        console.log("response after uploads", response);
+      }, (err) => {
+        console.log(err, "Error while uploading file");
+      })
+    }
+
     console.log(this.data, "1122222222");
 
 
+    // this._userService.upload(this.myFiles).subscribe((response) => {
+    //   console.log("response after uploads", response);
     this._userService.tableRowEdit(this.table_id, this.data)
       .subscribe((response) => {
         this._userService.modified(this.table_id, this.modifiedUser)
@@ -211,6 +242,9 @@ export class UpdateDataComponent implements OnInit {
           console.error(errResponse, 'Error while updating data.');
         }
       });
+    // }, (err) => {
+    //   console.log(err, "Error while uploading file");
+    // })
   }
 
 }

@@ -45,6 +45,7 @@ app.use(bodyparser.urlencoded({
     extended: true
 }));
 
+app.use(express.static('./uploads'));
 
 // app.use((req, res, next) => {
 
@@ -82,7 +83,16 @@ app.get('/dropdown/:id', operations.fetchDropdownList);
 app.get('/radio/:id', operations.fetchRadioList);
 app.get('/checkbox/:id', operations.fetchCheckboxList);
 app.put('/update/:id', operations.addDataToTable);
-
+app.post('/upload', operations.upload, function (req, res) {
+    if (req.files) {
+        console.log(req.files, "LLLLLL");
+        res.status(200).json(req.files);
+    } else {
+        res.status(200).json({
+            msg: false
+        });
+    }
+});
 // app.use(check.login);
 
 app.use(check.isLoggedIn);
@@ -121,16 +131,16 @@ app.put('/updaterow/:id', operations.updateRow);
 // app.get('/checkbox/:id', operations.fetchCheckboxList);
 // app.get('/loggedout', check.logout)
 
-app.post('/upload', operations.upload, function (req, res) {
-    if (req.file) {
-        console.log(req.file.filename, "LLLLLL");
-        res.status(200).json(req.file.filename);
-    } else {
-        res.status(200).json({
-            msg: false
-        });
-    }
-});
+// app.post('/upload', operations.upload, function (req, res) {
+//     if (req.files) {
+//         console.log(req.files, "LLLLLL");
+//         res.status(200).json(req.files);
+//     } else {
+//         res.status(200).json({
+//             msg: false
+//         });
+//     }
+// });
 
 app.get('/fetchFile/:filename', function (req, res) {
     console.log(path.join(__dirname, './uploads', req.params.filename), "OOOOOOOOOOOOOoo")

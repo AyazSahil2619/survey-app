@@ -154,15 +154,19 @@ var storage = multer.diskStorage({
         cb(null, DIR)
     },
     filename: (req, file, cb) => {
-        let extension = file.originalname.split('.').pop();
-        cb(null, 'file_' + Date.now() + '.' + extension);
-        // cb(null, file.originalname)
+        // let extension = file.originalname.split('.').pop();
+        // cb(null, 'file_' + Date.now() + '.' + extension);
+        cb(null, file.originalname)
     }
 });
 
+// var upload = multer({
+//     storage: storage
+// }).single("file");
+
 var upload = multer({
     storage: storage
-}).single("file");
+}).array("file", 10);
 
 
 module.exports = {

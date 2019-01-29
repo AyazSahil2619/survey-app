@@ -71,6 +71,9 @@
                   <div class="error" *ngIf="name7.errors.required">{{x.fieldname}} is required</div>
                 </div>
               </td>
+              <td *ngIf="x.fieldtype == 'file_upload' ">
+                <input type="file" name="name8{{x.fieldname}}" (change)="onFileSelect($event,x.fieldname)" [required]="x.isRequired" />
+              </td>
           </table>
           <div class="card-footer">
             <button class="btn btn-primary btn-sm" [disabled]="!F.form.valid" value="Submit">Submit</button>

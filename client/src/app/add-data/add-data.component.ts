@@ -51,6 +51,7 @@ export class AddDataComponent implements OnInit {
     this.ddinfo();
     this.radioInfo();
     this.checkboxInfo();
+    console.log(this.data, "567890-")
 
   }
 
@@ -163,27 +164,27 @@ export class AddDataComponent implements OnInit {
     this.router.navigate(['/viewTable/' + this.table_id]);
   }
 
-
+  myFiles: any = [];
   current: any;
 
-  onSelect(event, fieldname) {
-
+  selectedfilename: any;
+  onFileSelect(event, fieldname) {
+    console.log(event.target.files[0].name);
     this.current = fieldname;
-    this.selectedFile = <File>event.target.files[0];
-    // this.data[fieldname] = this.selectedFile.name;
-    console.log(this.data, "asdasdasddadad");
+    this.data[this.current] = event.target.files[0].name;
+    // this.selectedFile = <File>event.target.files[0];
+    for (var i = 0; i < event.target.files.length; i++) {
+      this.selectedFile = <File>event.target.files[0];
+      this.myFiles.push(this.selectedFile);
+      // this.myFiles.push(event.target.files[i]);
+    }
     console.log(fieldname, this.data, "ON SELRCT CHECKING DATA");
-    console.log(this.selectedFile, "THE SELECTED FILE");
-
+    console.log(this.myFiles, typeof this.myFiles, "THE SELECTED FILE");
 
   }
 
-  fd: any;
-
   submit() {
-
-
-    console.log(this.data, "data");
+    console.log(this.data, "data=============");
 
     if (Object.keys(this.data).length == 0) {
       this.colinfo1.forEach(element => {
@@ -191,45 +192,42 @@ export class AddDataComponent implements OnInit {
       });
     }
 
-    if (this.selectedFile) {
-      this.fd = new FormData();
-      console.log(this.selectedFile, "Name");
-      this.fd.append('file', this.selectedFile, this.selectedFile.name);
-      console.log("asdsa", this.fd);
-      // this.data.file = fd;
-
-
+    if (Object.keys(this.myFiles).length != 0) {
+      this._userService.upload(this.myFiles).subscribe((response) => {
+        console.log("response after uploads", response);
+      }, (err) => {
+        console.log(err, "Error while uploading file");
+      })
     }
 
-    this._userService.upload(this.selectedFile).subscribe((response) => {
-      console.log(response.msg, "FILENAME");
-      if (response.msg != false) {
-        this.data[this.current] = response;
-      }
-      this._userService.insertData(this.table_id, this.data)
-        .subscribe((response) => {
-          this._userService.modified(this.table_id, this.modifiedUser)
-            .subscribe((response) => {
-              console.log("Row added successfully");
-              this.router.navigate(['/viewTable/' + this.table_id]);
-              this.messageService.add(
-                { severity: 'success', detail: 'Success', summary: 'Data Added Successfully' });
-            }, (error) => {
-              console.log("Error while modifying", error);
-            })
-        }, (errResponse) => {
-          console.log(errResponse, "Error in adding row in table");
-          if (errResponse.error.code == 22001) {
+
+
+    // this._userService.upload(this.myFiles).subscribe((response) => {
+    // console.log("response after uploads", response);
+    this._userService.insertData(this.table_id, this.data)
+      .subscribe((response) => {
+        this._userService.modified(this.table_id, this.modifiedUser)
+          .subscribe((response) => {
+            console.log("Row added successfully");
+            this.router.navigate(['/viewTable/' + this.table_id]);
             this.messageService.add(
-              { severity: 'error', detail: 'Error', summary: `Value too long for type character varying` });
-          } else {
-            this.messageService.add(
-              { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
-          }
-        })
-    }, (err) => {
-      console.log(err, "Error while uploading file");
-    })
+              { severity: 'success', detail: 'Success', summary: 'Data Added Successfully' });
+          }, (error) => {
+            console.log("Error while modifying", error);
+          })
+      }, (errResponse) => {
+        console.log(errResponse, "Error in adding row in table");
+        if (errResponse.error.code == 22001) {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: `Value too long for type character varying` });
+        } else {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
+        }
+      })
+    // }, (err) => {
+    //   console.log(err, "Error while uploading file");
+    // })
 
 
 
