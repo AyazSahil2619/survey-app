@@ -197,6 +197,7 @@ export class ViewTableComponent implements OnInit {
   imagepreview(filename, template: TemplateRef<any>) {
 
     this._userService.fetchFile(filename).subscribe((response) => {
+      console.log(response, "JUST NOW")
       let data = response;
       this.createImageFromBlob(data);
       this.modalRef = this._modalService.show(template, { class: 'gray modal-lg' });

@@ -1,5 +1,6 @@
 .btncustom {
-  background-color: #177d6b;
+  /* background-color: #177d6b; */
+  background: steelblue;
 }
 
 .btn {
@@ -11,3 +12,10 @@
   margin-top: 5px;
 }
 
+
+.btn-xs {
+  padding: 0.5rem .2rem;
+  font-size: .875rem;
+  line-height: .5;
+  border-radius: 0.0rem;
+}

@@ -16,14 +16,15 @@
       <tbody>
         <tr *ngFor="let row of datas">
           <td>{{row.id}}</td>
-          <td>{{row.tablename}}</td>
+          <td><a routerLink="/viewTable/{{row.id}}">{{row.tablename}}</a></td>
+          <!-- <td>{{row.tablename}}</td> -->
           <td>{{row.Description}}</td>
           <td>{{row.modifiedat}}</td>
           <td>{{row.modifiedby}}</td>
           <td>{{row.createdby}}</td>
           <td>
-            <a id="tablebutton" type="button" class="btn button1 btn-sm" (click)="viewTableData(row.id)">View</a>
-            <a id="tablebutton" type="button" class="btn button2 btn-sm" (click)="addRow(row.id)">Add Data</a>
+            <!-- <a id="tablebutton" type="button" class="btn button1 btn-xs" (click)="viewTableData(row.id)">View</a> -->
+            <a id="tablebutton" type="button" class="btn button2 btn-xs" (click)="addRow(row.id)">Add Data</a>
           </td>
         </tr>
       </tbody>

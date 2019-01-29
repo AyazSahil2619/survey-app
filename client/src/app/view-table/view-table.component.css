@@ -28,3 +28,10 @@
   font-size: smaller;
   color: red;
 }
+
+.btn-xs {
+  padding: 0.5rem .2rem;
+  font-size: .875rem;
+  line-height: .5;
+  border-radius: 0.0rem;
+}

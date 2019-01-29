@@ -43,8 +43,10 @@
                   </div>
                 </td>
                 <td *ngIf="x.fieldtype == 'date'">
-                  <input id="date" name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date"
-                    [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
+                  <p-calendar id="date" name="name3{{x.fieldname}}" #name3="ngModel" type="date"
+                    [(ngModel)]="data[x.fieldname]" [required]="x.isRequired" [showIcon]="true"></p-calendar>
+                  <!-- <input id="date" name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date"
+                    [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"> -->
                   <div *ngIf="f.submitted && name3.invalid">
                     <div class="error" *ngIf="name3.errors.required">{{x.fieldname}} is required</div>
                   </div>

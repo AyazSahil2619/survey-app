@@ -194,6 +194,7 @@ export class UpdateDataComponent implements OnInit {
 
   }
 
+
   updateData() {
     console.log(this.data, "11");
     console.log(this.data1, "2211");

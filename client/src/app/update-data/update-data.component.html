@@ -62,9 +62,8 @@
                   </ng-container>
                 </td>
                 <td *ngIf="x.fieldtype == 'date'">
-                  <!-- <p-calendar name="{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></p-calendar> -->
-                  <!-- <input name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
-                    [required]="x.isRequired"> -->
+                  <!-- <p-calendar type="date" name="name3{{x.fieldname}}" #name3="ngModel" [ngModel]="data[x.fieldname]"
+                     [required]="x.isRequired" [showIcon]="true"></p-calendar> -->
                   <input type="date" class="form-control" name="{{x.fieldname}}" #name3="ngModel" [ngModel]="data[x.fieldname] | date:'yyyy-MM-dd'"
                     (ngModelChange)="data[x.fieldname] = $event" [required]="x.isRequired">
                   <div *ngIf="f.submitted && name3.invalid">
