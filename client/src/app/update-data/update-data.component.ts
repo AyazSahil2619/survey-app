@@ -29,22 +29,24 @@ export class UpdateDataComponent implements OnInit {
     private messageService: MessageService,
     private _userService: UserServiceService,
     private modalService: BsModalService
-  ) { }
-
-  ngOnInit() {
-    this.DataInfo();
-    this.ColumnData();
-    this.ddinfo();
-    this.radioInfo();
-    this.checkboxInfo();
-    // this.onClose = new Subject();
+  ) {
 
   }
 
+  ngOnInit() {
+    this.ColumnData();
+    this.DataInfo();
+    this.ddinfo();
+    this.radioInfo();
+    this.checkboxInfo();
+
+  }
+
+  isLoaded: boolean = false;
   ddinfo1: any = [];
   colinfo1: any = [];
   radioList: Object[] = [];
-  data = {};
+  data: any;
   data1: Object = {};
 
   checkboxList: any = [];
@@ -70,7 +72,8 @@ export class UpdateDataComponent implements OnInit {
               fieldtype: item.fieldtype,
               isRequired: item.required,
               length: item.text_length,
-              rating: item.rating
+              rating: item.rating,
+              m_editor: item.m_editor
             })
           }
         });
@@ -83,8 +86,19 @@ export class UpdateDataComponent implements OnInit {
   DataInfo() {
     this._userService.dataToEdit(this.table_id, this.row_id)
       .subscribe((response) => {
-        console.log(response, "in data")
+        console.log(response, "data in response")
         this.data = response[0];
+
+        this.colinfo1.forEach(item => {
+          if (item.fieldtype == 'date') {
+            let value = this.data[item.fieldname]
+            console.log(value, "VALUE");
+            if (value != undefined) {
+              this.data[item.fieldname] = new Date(value);
+            }
+          }
+        })
+        this.isLoaded = true;
         console.log(this.data, "data");
 
       }, ((errResponse) => {

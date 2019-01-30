@@ -21,7 +21,7 @@
   padding: 0;
 }
 
-.background_img{
+.background_img {
   background-image: url('../image/signbg.jpg');
   background-size: cover;
   background-repeat: repeat;
@@ -29,5 +29,6 @@
 }
 
 .btn {
-  color:white !important
+  border-radius: 0px;
+  color: white !important
 }

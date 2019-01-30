@@ -40,6 +40,8 @@ import { CommonModalComponent } from './common-modal/common-modal.component';
 import { OverviewComponent } from './overview/overview.component';
 import { CarouselModule } from 'primeng/carousel';
 import { RatingModule } from 'primeng/rating';
+import { EditorModule } from 'primeng/editor';
+
 
 
 
@@ -81,7 +83,8 @@ import { RatingModule } from 'primeng/rating';
     SidebarModule,
     SelectButtonModule,
     CarouselModule,
-    RatingModule
+    RatingModule,
+    EditorModule
 
   ],
   providers: [

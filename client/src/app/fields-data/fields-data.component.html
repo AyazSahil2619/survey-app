@@ -103,13 +103,15 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="databaseValue" required>&nbsp;&nbsp;
                         <div class="danger" *ngIf="dropdown.controls.databaseValue.dirty">
-                          <div *ngIf="dropdown.hasError('required', 'databaseValue')"> Database value is required</div>
+                          <div class="span_margin" *ngIf="dropdown.hasError('required', 'databaseValue')"> Database
+                            value is required</div>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="dropdown.controls.displayValue.dirty">
-                          <div *ngIf="dropdown.hasError('required', 'displayValue')"> Display value is required</div>
+                          <div class="span_margin" *ngIf="dropdown.hasError('required', 'displayValue')"> Display value
+                            is required</div>
                         </div>
                       </div>
                       <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
@@ -132,13 +134,15 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="databaseValue" required>&nbsp;&nbsp;
                         <div class="danger" *ngIf="radio.controls.databaseValue.dirty">
-                          <div *ngIf="radio.hasError('required', 'databaseValue')"> Database value is required</div>
+                          <div class="span_margin" *ngIf="radio.hasError('required', 'databaseValue')"> Database value
+                            is required</div>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="radio.controls.displayValue.dirty">
-                          <div *ngIf="radio.hasError('required', 'displayValue')"> Display value is required</div>
+                          <div class="span_margin" *ngIf="radio.hasError('required', 'displayValue')"> Display value is
+                            required</div>
                         </div>
                       </div>
                       <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
@@ -161,13 +165,15 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="databaseValue" required>&nbsp;&nbsp;
                         <div class="danger" *ngIf="checkbox.controls.databaseValue.dirty">
-                          <div *ngIf="checkbox.hasError('required', 'databaseValue')"> Database value is required</div>
+                          <div class="span_margin" *ngIf="checkbox.hasError('required', 'databaseValue')"> Database
+                            value is required</div>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="checkbox.controls.displayValue.dirty">
-                          <div *ngIf="checkbox.hasError('required', 'displayValue')"> Display value is required</div>
+                          <div class="span_margin" *ngIf="checkbox.hasError('required', 'displayValue')"> Display value
+                            is required</div>
                         </div>
                       </div>
                       <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
@@ -191,6 +197,10 @@
                 </ng-container>
               </select>
               <span class="danger" *ngIf="!rating.valid && rating.dirty">Rating Amount is required!</span>
+            </div>
+            <div *ngIf="isEditor" class="container">
+              <label>Enable MarkDown Editor</label><br>
+              <p-selectButton [options]="ConstraintOptions" formControlName="m_editor"></p-selectButton>
             </div>
             <div class="container">
               <label>Required</label><br>
@@ -292,13 +302,15 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="databaseValue" required>&nbsp;&nbsp;
                         <div class="danger" *ngIf="dropdown.controls.databaseValue.dirty">
-                          <div *ngIf="dropdown.hasError('required', 'databaseValue')"> Database value is required</div>
+                          <div class="span_margin" *ngIf="dropdown.hasError('required', 'databaseValue')"> Database
+                            value is required</div>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="dropdown.controls.displayValue.dirty">
-                          <div *ngIf="dropdown.hasError('required', 'displayValue')"> Display value is required</div>
+                          <div class="span_margin" *ngIf="dropdown.hasError('required', 'displayValue')"> Display value
+                            is required</div>
                         </div>
                       </div>
                       <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
@@ -321,13 +333,15 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="databaseValue" required>&nbsp;&nbsp;
                         <div class="danger" *ngIf="radio.controls.databaseValue.dirty">
-                          <div *ngIf="radio.hasError('required', 'databaseValue')"> Database value is required</div>
+                          <div class="span_margin" *ngIf="radio.hasError('required', 'databaseValue')"> Database value
+                            is required</div>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="radio.controls.displayValue.dirty">
-                          <div *ngIf="radio.hasError('required', 'displayValue')"> Display value is required</div>
+                          <div class="span_margin" *ngIf="radio.hasError('required', 'displayValue')"> Display value is
+                            required</div>
                         </div>
                       </div>
                       <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
@@ -350,13 +364,15 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="databaseValue" required>&nbsp;&nbsp;
                         <div class="danger" *ngIf="checkbox.controls.databaseValue.dirty">
-                          <div *ngIf="checkbox.hasError('required', 'databaseValue')"> Database value is required</div>
+                          <div class="span_margin" *ngIf="checkbox.hasError('required', 'databaseValue')"> Database
+                            value is required</div>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="checkbox.controls.displayValue.dirty">
-                          <div *ngIf="checkbox.hasError('required', 'displayValue')"> Display value is required</div>
+                          <div class="span_margin" *ngIf="checkbox.hasError('required', 'displayValue')"> Display value
+                            is required</div>
                         </div>
                       </div>
                       <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteSuggestion(i)"><i
@@ -373,13 +389,16 @@
                 <option *ngFor="let number of numbers" [ngValue]="number">{{number}}</option>
               </select>
             </div>
+            <div *ngIf="isEditor" class="container">
+              <label>Enable MarkDown Editor</label><br>
+              <p-selectButton [options]="ConstraintOptions" formControlName="m_editor"></p-selectButton>
+            </div>
             <div class="container">
               <label>Required</label><br>
               <p-selectButton [options]="ConstraintOptions" formControlName="required_key"></p-selectButton>
             </div>
             <div *ngIf="!isDropdown && !isRadio && !isCheckbox && !isRating">
               <div class="col-md-12">
-
                 <span *ngIf="clicked"><i class="fas fa-angle-right"></i></span>
                 <span *ngIf="!clicked"><i class="fas fa-angle-down"></i></span>
                 <a data-target="#demo" data-toggle="collapse" (click)="click()">Advance Options</a>
@@ -443,43 +462,3 @@
     <a type="button" class="btn btn-danger btn-sm" (click)="confirm()">Delete</a>
   </div>
 </ng-template> -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

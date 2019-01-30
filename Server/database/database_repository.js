@@ -86,6 +86,7 @@ async function CreateTable(req) {
             required: false,
             text_length: 0,
             rating: 0,
+            m_editor: false,
             tableid: table_id
         })
 
@@ -180,7 +181,8 @@ async function addColumn(req, id) {
         u_konstraint: req.body.unique_key,
         required: req.body.required_key,
         text_length: text_length,
-        rating: rating
+        rating: rating,
+        m_editor: req.body.m_editor
     })
 
     fieldsData.forEach((item) => {
@@ -559,7 +561,7 @@ async function fetchFieldData(tableid, fieldid) {
     let query = `SELECT d.databasevalue AS d_dbvalue, d.displayvalue AS d_dspvalue,
      c.databasevalue AS c_dbvalue,c.displayvalue AS c_dspvalue,
      r.databasevalue AS r_dbvalue,r.displayvalue AS r_dspvalue,
-     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid,f.u_konstraint,f.required,f.text_length,f.rating
+     f.fieldname,f.fieldtype,f.label,f.tableid,f.konstraint,f.f_uid,f.u_konstraint,f.required,f.text_length,f.rating,f.m_editor
      FROM public.fieldstable AS f 
 	 FULL JOIN dropdowntable AS d ON d.tableid = f.tableid AND d.colname = f.fieldname 
      FULL JOIN radiotable AS r ON r.tableid = f.tableid AND r.colname = f.fieldname 
@@ -611,6 +613,7 @@ async function fieldEdit(req, table_id, field_id) {
     let optionData = [];
     let text_length;
     let rating;
+    let m_editor = req.body.m_editor;
 
 
     if (fieldtype == 'short_text' || fieldtype == 'long_text') {
@@ -694,6 +697,7 @@ async function fieldEdit(req, table_id, field_id) {
         .set("required", required_key)
         .set("text_length", text_length)
         .set("rating", rating)
+        .set("m_editor", m_editor)
         .where("f_uid = ?", field_id)
         .toString()
 

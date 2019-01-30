@@ -63,3 +63,7 @@
   white-space: nowrap !important;
   text-overflow: ellipsis !important;
 } */
+
+.span_margin {
+  margin-top: -20px !important;
+}

@@ -5,7 +5,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RatingModule } from 'primeng/rating';
-
+import { EditorModule } from 'primeng/editor';
 import { CalendarModule } from 'primeng/calendar';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -70,6 +70,7 @@ export class AddDataComponent implements OnInit {
               fieldtype: item.fieldtype,
               isRequired: item.required,
               length: item.text_length,
+              m_editor: item.m_editor,
               rating: item.rating
             })
           }
@@ -201,9 +202,6 @@ export class AddDataComponent implements OnInit {
     }
 
 
-
-    // this._userService.upload(this.myFiles).subscribe((response) => {
-    // console.log("response after uploads", response);
     this._userService.insertData(this.table_id, this.data)
       .subscribe((response) => {
         this._userService.modified(this.table_id, this.modifiedUser)
@@ -225,9 +223,6 @@ export class AddDataComponent implements OnInit {
             { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });
         }
       })
-    // }, (err) => {
-    //   console.log(err, "Error while uploading file");
-    // })
 
 
 

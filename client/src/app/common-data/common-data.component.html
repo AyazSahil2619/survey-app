@@ -55,8 +55,10 @@
                 <span class="error" *ngIf="!name2.valid && name2.dirty">{{x.fieldname}} is required!</span>
               </td>
               <td *ngIf="x.fieldtype == 'date'">
-                <input id="date" name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date"
-                  [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
+                <p-calendar id="date" name="name3{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname]"
+                  [required]="x.isRequired" [showIcon]="true"></p-calendar>
+                <!-- <input id="date" name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date"
+                  [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"> -->
                 <span class="error" *ngIf="!name3.valid && name3.dirty">{{x.fieldname}} is required!</span>
               </td>
               <td *ngIf="x.fieldtype == 'integer' || x.fieldtype == 'bigint' ">

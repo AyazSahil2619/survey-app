@@ -51,7 +51,6 @@ export class ViewTableComponent implements OnInit {
 
   ngOnInit() {
     this.datatableIntialization();
-
   }
 
   datatableIntialization() {
@@ -91,7 +90,7 @@ export class ViewTableComponent implements OnInit {
 
     this._userService.tableData(this.table_id)
       .subscribe((response) => {
-        console.log(response, "ppppp");
+        console.log(response, "Response in table data");
         this.datas = response;
         this.dtTrigger.next();
       }, (err) => {

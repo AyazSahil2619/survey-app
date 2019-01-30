@@ -61,6 +61,7 @@ export class FieldsDataComponent implements OnInit {
   isLength: Boolean = false;
   isRating: Boolean = false;
   isFile: Boolean = false;
+  isEditor: Boolean = false;
 
 
   ngOnInit() {
@@ -122,6 +123,7 @@ export class FieldsDataComponent implements OnInit {
         'required_key': ['true', Validators.required],
         'text_length': ['null', Validators.required],
         'rating': ['null', Validators.required],
+        'm_editor': ['false', Validators.required]
         // 'fileSize': ['null', Validators.required]
 
       }
@@ -137,6 +139,7 @@ export class FieldsDataComponent implements OnInit {
   get required_key() { return this.fieldForm.get('required_key') }
   get text_length() { return this.fieldForm.get('text_length') }
   get rating() { return this.fieldForm.get('rating') }
+  get m_editor() { return this.fieldForm.get('m_editor') }
   // get fileSize() { return this.fieldForm.get('fileSize') }
 
 
@@ -157,12 +160,14 @@ export class FieldsDataComponent implements OnInit {
     this.required_key.setValue('true');
     this.text_length.setValue('null');
     this.rating.setValue('null');
+    this.m_editor.setValue('false');
     // this.fileSize.setValue('null');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
     this.isLength = false;
     this.isRating = false;
+    this.isEditor = false;
 
     this.fieldForm.removeControl('arrayList');
 
@@ -229,73 +234,6 @@ export class FieldsDataComponent implements OnInit {
 
   }
 
-  onSelect() {
-
-    console.log("ON SELECT ");
-
-    if (this.type.value == 'short_text' || this.type.value == 'long_text') {
-      this.isLength = true;
-      this.isDropdown = false;
-      this.isRadio = false;
-      this.isCheckbox = false;
-      this.isRating = false;
-      this.isFile = false;
-
-    } else if (this.type.value == 'dropdown') {
-      this.fieldForm.addControl('arrayList', this._fb.array([]));
-      this.isDropdown = true;
-      this.isRadio = false;
-      this.isCheckbox = false;
-      this.isRating = false;
-      this.isFile = false;
-      this.reset();
-
-    } else if (this.type.value == 'radio') {
-      this.fieldForm.addControl('arrayList', this._fb.array([]));
-      this.isRadio = true;
-      this.isDropdown = false;
-      this.isRating = false;
-      this.isFile = false;
-      this.isCheckbox = false;
-      this.reset();
-
-    } else if (this.type.value == 'checkbox') {
-      this.fieldForm.addControl('arrayList', this._fb.array([]));
-      this.isRadio = false;
-      this.isDropdown = false;
-      this.isFile = false;
-      this.isRating = false;
-      this.isCheckbox = true;
-      this.reset();
-
-    } else if (this.type.value == 'file_upload') {
-      this.isFile = true;
-      this.isRating = false;
-      this.isLength = false;
-      this.isRadio = false;
-      this.isDropdown = false;
-      this.isCheckbox = false;
-      this.reset();
-
-    } else if (this.type.value == 'star_rating') {
-      this.isRating = true;
-      this.isLength = false;
-      this.isRadio = false;
-      this.isDropdown = false;
-      this.isFile = false;
-      this.isCheckbox = false;
-      this.reset();
-
-    } else {
-      this.isDropdown = false;
-      this.isRadio = false;
-      this.isCheckbox = false;
-      this.isLength = false;
-      this.isFile = false;
-      this.isRating = false;
-    }
-  }
-
 
   deleteSuggestion(index) {
     console.log(index, "OOO");
@@ -316,6 +254,7 @@ export class FieldsDataComponent implements OnInit {
   }
 
   reset() {
+    this.isEditor = false;
     this.isLength = false;
     this.constraints.setValue('false');
     this.unique_key.setValue('false');
@@ -400,7 +339,8 @@ export class FieldsDataComponent implements OnInit {
               'unique_key': element.u_konstraint,
               'required_key': element.required,
               'text_length': element.text_length,
-              'rating': parseInt(element.rating)
+              'rating': parseInt(element.rating),
+              'm_editor': element.m_editor
 
             });
             console.log(typeof element.text_length, "LLLL");
@@ -451,6 +391,9 @@ export class FieldsDataComponent implements OnInit {
       }
 
       if (this.fieldtype == 'short_text' || this.fieldtype == 'long_text') {
+        if (this.fieldtype == 'long_text') {
+          this.isEditor = true;
+        }
         this.isLength = true;
       } else if (this.fieldtype == 'star_rating') {
         this.isRating = true;
@@ -507,6 +450,80 @@ export class FieldsDataComponent implements OnInit {
         console.log(errResponse, "ERROR WHILE EDITING COLUMN");
       })
 
+  }
+
+
+
+  onSelect() {
+
+    console.log("ON SELECT ");
+
+    if (this.type.value == 'short_text' || this.type.value == 'long_text') {
+      this.isLength = true;
+      this.isDropdown = false;
+      this.isRadio = false;
+      this.isCheckbox = false;
+      this.isRating = false;
+      this.isFile = false;
+      this.isEditor = false;
+      if (this.type.value == 'long_text') {
+        this.isEditor = true;
+      }
+
+    } else if (this.type.value == 'dropdown') {
+      this.fieldForm.addControl('arrayList', this._fb.array([]));
+      this.isDropdown = true;
+      this.isRadio = false;
+      this.isCheckbox = false;
+      this.isRating = false;
+      this.isFile = false;
+      this.reset();
+
+    } else if (this.type.value == 'radio') {
+      this.fieldForm.addControl('arrayList', this._fb.array([]));
+      this.isRadio = true;
+      this.isDropdown = false;
+      this.isRating = false;
+      this.isFile = false;
+      this.isCheckbox = false;
+      this.reset();
+
+    } else if (this.type.value == 'checkbox') {
+      this.fieldForm.addControl('arrayList', this._fb.array([]));
+      this.isRadio = false;
+      this.isDropdown = false;
+      this.isFile = false;
+      this.isRating = false;
+      this.isCheckbox = true;
+      this.reset();
+
+    } else if (this.type.value == 'file_upload') {
+      this.isFile = true;
+      this.isRating = false;
+      this.isLength = false;
+      this.isRadio = false;
+      this.isDropdown = false;
+      this.isCheckbox = false;
+      this.reset();
+
+    } else if (this.type.value == 'star_rating') {
+      this.isRating = true;
+      this.isLength = false;
+      this.isRadio = false;
+      this.isDropdown = false;
+      this.isFile = false;
+      this.isCheckbox = false;
+      this.reset();
+
+    } else {
+      this.isDropdown = false;
+      this.isRadio = false;
+      this.isCheckbox = false;
+      this.isLength = false;
+      this.isFile = false;
+      this.isRating = false;
+      this.isEditor = false;
+    }
   }
 
 }

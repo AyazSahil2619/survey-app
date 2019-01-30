@@ -104,13 +104,10 @@ function logout(req, res, next) {
         req.session.destroy();
         res.clearCookie();
         console.log(req.cookies.user_id, "CHECKING COOKIES AFTER LOG OUT ");
-        res.clearCookie('"'+req.cookies.user_id+'"');
-        console.log(req.cookies.user_id, "CHECKING COOKIES AFTER LOG OUT ");
-        
         res.clearCookie('user_id');
-
-        console.log(req.cookies.user_id, "CHECKING COOKIES AFTER LOG OUT ");
-        res.clearCookie('user_id', { path: '/' });
+        res.clearCookie('user_id', {
+            path: '/'
+        });
         console.log(req.cookies.user_id, "CHECKING COOKIES AFTER LOG OUT ");
 
         res.status(200).json({

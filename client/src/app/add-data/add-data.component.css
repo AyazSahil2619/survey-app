@@ -32,5 +32,19 @@
 }
 
 .btn {
-  color:white !important
+  border-radius: 0px;
+  color: white !important
+}
+
+.ss {
+  width: 1200px !important;
+}
+
+
+.margin {
+  margin-top: 10px !important;
+}
+
+input {
+  border-radius: 0px !important;
 }

@@ -2,9 +2,9 @@
   <app-navbar>
     <div class="container-fluid">
       <br>
-      <a *ngIf="_auth.isRole() == 'admin'" id="sharebutton" type="button" class="btn-xs float-left " (click)="share(templateshare)">Share
+      <a *ngIf="_auth.isRole() == 'admin'" id="sharebutton" type="button" class="btn-sm float-left " (click)="share(templateshare)">Share
         <i class="fas fa-share-alt"></i></a>
-      <a type="button" class="btn btn-primary btn-xs float-right " (click)="addRow()"><i class='fas fa-plus'></i>
+      <a type="button" class="btn btn-primary btn-sm float-right " (click)="addRow()"><i class='fas fa-plus'></i>
         Add Data</a>
       <br><br>
       <table width="100%" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-striped table-bordered  table-condensed">
@@ -18,7 +18,7 @@
           <tr *ngFor="let row of datas">
             <td *ngFor="let column of colinfo1">
               <div *ngIf="column.fieldtype =='date'">{{row[column.fieldname] | date:'medium'}}</div>
-              <div *ngIf="column.fieldtype !='date' && column.fieldtype !='file_upload' && column.fieldtype != 'star_rating'">{{row[column.fieldname]}}</div>
+              <div *ngIf="column.fieldtype !='date' && column.fieldtype !='long_text' && column.fieldtype !='file_upload' && column.fieldtype != 'star_rating'">{{row[column.fieldname]}}</div>
               <div *ngIf="column.fieldtype =='star_rating'">
                 <p-rating ngModel="{{row[column.fieldname]}}" stars="{{row[column.fieldname]}}" readonly="true"
                   [cancel]="false">
@@ -27,11 +27,13 @@
               <div *ngIf="column.fieldtype == 'file_upload'">
                 <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(row[column.fieldname],imageTemplate)">{{row[column.fieldname]}}</a>
               </div>
+              <div *ngIf="column.fieldtype == 'long_text'" data-ellipsis="5" class="ql-editor preview ellipsis"
+                [innerHTML]="row[column.fieldname]"></div>
             </td>
             <td>
-              <a id="tablebutton" type="button" class="btn btn-primary btn-xs" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;
-              <!-- <a id="tablebutton" type="button" class="btn btn-danger btn-xs" (click)="deletedata(templatedelete,row.uid)">Delete</a> -->
-              <a id="tablebutton" type="button" class="btn btn-danger btn-xs" (click)="deletedata(row.uid)">Delete</a>
+              <a id="tablebutton" type="button" class="btn btn-primary btn-sm" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;
+              <!-- <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deletedata(templatedelete,row.uid)">Delete</a> -->
+              <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deletedata(row.uid)">Delete</a>
             </td>
           </tr>
         </tbody>
