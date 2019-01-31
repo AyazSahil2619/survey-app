@@ -29,7 +29,6 @@ import { RoleGuard } from './role.guard';
 import { ViewTableComponent } from './view-table/view-table.component';
 import { AddDataComponent } from './add-data/add-data.component';
 import { UpdateDataComponent } from './update-data/update-data.component';
-import { TableEditComponent } from './table-edit/table-edit.component';
 import { FieldsDataComponent } from './fields-data/fields-data.component';
 import { EditTableComponent } from './edit-table/edit-table.component';
 import { AboutComponent } from './about/about.component';
@@ -41,9 +40,7 @@ import { OverviewComponent } from './overview/overview.component';
 import { CarouselModule } from 'primeng/carousel';
 import { RatingModule } from 'primeng/rating';
 import { EditorModule } from 'primeng/editor';
-
-
-
+import { sanitizeHtmlPipe } from './sanitize-html.pipe';
 
 @NgModule({
   declarations: [
@@ -57,7 +54,6 @@ import { EditorModule } from 'primeng/editor';
     ViewTableComponent,
     AddDataComponent,
     UpdateDataComponent,
-    TableEditComponent,
     FieldsDataComponent,
     EditTableComponent,
     AboutComponent,
@@ -65,6 +61,7 @@ import { EditorModule } from 'primeng/editor';
     CommonDataComponent,
     CommonModalComponent,
     OverviewComponent,
+    sanitizeHtmlPipe
   ],
   imports: [
     BrowserModule,
@@ -84,8 +81,11 @@ import { EditorModule } from 'primeng/editor';
     SelectButtonModule,
     CarouselModule,
     RatingModule,
-    EditorModule
+    EditorModule,
 
+  ],
+  exports: [
+    sanitizeHtmlPipe
   ],
   providers: [
     UserServiceService,

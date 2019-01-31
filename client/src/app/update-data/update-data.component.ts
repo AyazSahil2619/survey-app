@@ -251,6 +251,9 @@ export class UpdateDataComponent implements OnInit {
         if (errResponse.error.code == 22001) {
           this.messageService.add(
             { severity: 'error', detail: 'Error', summary: `Value too long for type character varying` });
+        } else if (errResponse.error.code == 22003) {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: `Numeric value out of range` });
         } else {
           this.messageService.add(
             { severity: 'error', detail: 'ERROR', summary: `${errResponse.error.detail}` });

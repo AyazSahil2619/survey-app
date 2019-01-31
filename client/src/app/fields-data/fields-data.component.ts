@@ -62,6 +62,8 @@ export class FieldsDataComponent implements OnInit {
   isRating: Boolean = false;
   isFile: Boolean = false;
   isEditor: Boolean = false;
+  isAddTemplate: boolean = false;
+  isEditTemplate: boolean = false;
 
 
   ngOnInit() {
@@ -124,7 +126,6 @@ export class FieldsDataComponent implements OnInit {
         'text_length': ['null', Validators.required],
         'rating': ['null', Validators.required],
         'm_editor': ['false', Validators.required]
-        // 'fileSize': ['null', Validators.required]
 
       }
     )
@@ -140,7 +141,6 @@ export class FieldsDataComponent implements OnInit {
   get text_length() { return this.fieldForm.get('text_length') }
   get rating() { return this.fieldForm.get('rating') }
   get m_editor() { return this.fieldForm.get('m_editor') }
-  // get fileSize() { return this.fieldForm.get('fileSize') }
 
 
   get arrayList() { return this.fieldForm.get('arrayList') as FormArray }
@@ -148,6 +148,7 @@ export class FieldsDataComponent implements OnInit {
   // get List() { return this.fieldForm.get('List') as FormArray }
 
   addField(template: TemplateRef<any>) {
+    this.isAddTemplate = true;
     this.modalRef = this.modalService.show(template, { class: 'gray modal-lg', backdrop: 'static' });
   }
 
@@ -161,13 +162,14 @@ export class FieldsDataComponent implements OnInit {
     this.text_length.setValue('null');
     this.rating.setValue('null');
     this.m_editor.setValue('false');
-    // this.fileSize.setValue('null');
     this.isDropdown = false;
     this.isRadio = false;
     this.isCheckbox = false;
     this.isLength = false;
     this.isRating = false;
     this.isEditor = false;
+    this.isAddTemplate = false;
+    this.isEditTemplate = false;
 
     this.fieldForm.removeControl('arrayList');
 
@@ -263,7 +265,8 @@ export class FieldsDataComponent implements OnInit {
 
   deleteModal(f_uid) {
     const initialState = {
-      title: 'Do you want to delete this field ?'
+      title: 'Do you want to delete this field ?',
+      // template: 'deleteTemplate'
     };
     this.fieldToDelete = f_uid;
     this.modalRef = this.modalService.show(CommonModalComponent, { initialState });
@@ -315,12 +318,22 @@ export class FieldsDataComponent implements OnInit {
   }
 
 
+  onFormSubmit() {
+    if (this.isAddTemplate) {
+      this.onSubmit();
+    } else if (this.isEditTemplate) {
+      this.editFormSubmit();
+    }
+  }
+
+
 
   currentFieldId: Number;
   ListToEdit: any = [];
   fieldtype: String;
 
   updatefield(template, field_id) {
+    this.isEditTemplate = true;
     this.currentFieldId = field_id;
     console.log(this.currentFieldId, "current field Id");
     this._userService.fetchFieldData(this.table_id, field_id).subscribe((response) => {

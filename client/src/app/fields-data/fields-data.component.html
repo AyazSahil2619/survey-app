@@ -3,7 +3,7 @@
     <div class="card col-md-10 offset-md-1 text-black bg-light">
       <div class="card-header">
         <h3>{{title}}</h3>
-        <a type="button" class="btn btn-primary cc btn-sm float-right" (click)="addField(addFieldTemplate)"><i class='fas fa-plus'></i>
+        <a type="button" class="btn btn-primary cc btn-sm float-right" (click)="addField(FieldTemplate)"><i class='fas fa-plus'></i>
           Add Field</a>
       </div>
       <div class="card-body">
@@ -25,7 +25,7 @@
             <td>{{object.constraints}}</td>
             <td>{{object.unique_key}}</td>
             <td>
-              <a class="pointer" data-toggle="tooltip" data-placement="top" title="Edit" (click)="updatefield(editFieldTemplate,object.f_uid)"><i
+              <a class="pointer" data-toggle="tooltip" data-placement="top" title="Edit" (click)="updatefield(FieldTemplate,object.f_uid)"><i
                   class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;
               <!-- <a class="danger" (click)="deleteModal(templatedelete,object.f_uid)"><i class='fa fa-close'></i></a> -->
               <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete" (click)="deleteModal(object.f_uid)"><i
@@ -45,7 +45,7 @@
 
 
 
-<ng-template #addFieldTemplate>
+<ng-template #FieldTemplate>
   <div class="Container">
     <div class="modal-header header">
       <h3>Survey Details</h3>
@@ -54,7 +54,7 @@
       </button>
     </div>
     <div class="modal-body">
-      <form [formGroup]="fieldForm" (ngSubmit)="onSubmit()" class="form-group" novalidate>
+      <form [formGroup]="fieldForm" (ngSubmit)="onFormSubmit()" class="form-group" novalidate>
         <fieldset>
           <div class="row">
             <div class="col-md-12">
@@ -70,7 +70,6 @@
             <div class="col-md-12">
               <label>Field type <span class='asteriskcolor'>*</span></label>
               <select type="text" class="form-control" formControlName="type" (change)="onSelect()" required>
-                <!-- <option value="text">Text</option> -->
                 <option value="short_text">Short Text</option>
                 <option value="long_text">Long Text</option>
                 <option value="integer">Number</option>
@@ -89,7 +88,6 @@
               <label>Max Length <span class='asteriskcolor'>*</span></label>
               <input type="number" class="form-control" formControlName="text_length">
               <span class="alert">Default value would be set to 100</span>
-              <!-- <span class="danger" *ngIf="!text_length.valid && colname.dirty">Text Length is required!</span> -->
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
@@ -110,7 +108,8 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="dropdown.controls.displayValue.dirty">
-                          <div class="span_margin" *ngIf="dropdown.hasError('required', 'displayValue')"> Display value
+                          <div class="span_margin" *ngIf="dropdown.hasError('required', 'displayValue')"> Display
+                            value
                             is required</div>
                         </div>
                       </div>
@@ -134,14 +133,16 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="databaseValue" required>&nbsp;&nbsp;
                         <div class="danger" *ngIf="radio.controls.databaseValue.dirty">
-                          <div class="span_margin" *ngIf="radio.hasError('required', 'databaseValue')"> Database value
+                          <div class="span_margin" *ngIf="radio.hasError('required', 'databaseValue')"> Database
+                            value
                             is required</div>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="radio.controls.displayValue.dirty">
-                          <div class="span_margin" *ngIf="radio.hasError('required', 'displayValue')"> Display value is
+                          <div class="span_margin" *ngIf="radio.hasError('required', 'displayValue')"> Display value
+                            is
                             required</div>
                         </div>
                       </div>
@@ -172,7 +173,8 @@
                       <div class="col-md-4">
                         <input type="text" class="form-control" formControlName="displayValue" required>&nbsp;&nbsp;&nbsp;
                         <div class="danger" *ngIf="checkbox.controls.displayValue.dirty">
-                          <div class="span_margin" *ngIf="checkbox.hasError('required', 'displayValue')"> Display value
+                          <div class="span_margin" *ngIf="checkbox.hasError('required', 'displayValue')"> Display
+                            value
                             is required</div>
                         </div>
                       </div>
@@ -184,11 +186,6 @@
               </div>
             </div>
             <br>
-            <!-- <div *ngIf="isFile" class="col-md-12">
-              <label>Max Size <span class='asteriskcolor'>*</span></label>
-              <input type="number" class="form-control" formControlName="fileSize" required>
-              <span class="danger" *ngIf="!fileSize.valid && fileSize.dirty">Size of File is required!</span>
-            </div> -->
             <div *ngIf="isRating" class="col-md-12">
               <label>Rating Amount <span class='asteriskcolor'>*</span></label>
               <select type="text" class="form-control" formControlName="rating" required>
@@ -227,8 +224,8 @@
           </div>
         </fieldset><br><br>
         <div class="modal-footer">
-          <input class="btn btn-primary float-right" [disabled]="!fieldForm.valid" type="submit">
-          <input type="button" class="btn btn-warning float-right" (click)="formColumnArray()" value="Cancel">
+          <input type="button" class="btn btn-warning btn-sm float-right" (click)="formColumnArray()" value="Cancel">
+          <input class="btn btn-primary btn-sm float-right" [disabled]="!fieldForm.valid" type="submit">
         </div>
       </form>
     </div>
@@ -244,7 +241,7 @@
 
 
 
-<ng-template #editFieldTemplate>
+<!-- <ng-template #editFieldTemplate>
   <div class="Container">
     <div class="modal-header header">
       <h3>Edit survey details</h3>
@@ -270,7 +267,6 @@
             <div class="col-md-12">
               <label>Field type <span class='asteriskcolor'>*</span></label>
               <select type="text" class="form-control" formControlName="type" (change)="onSelect()" required>
-                <!-- <option value="text">Text</option> -->
                 <option value="short_text">Short Text</option>
                 <option value="long_text">Long Text</option>
                 <option value="integer">Number</option>
@@ -288,7 +284,6 @@
               <label>Max Length <span class='asteriskcolor'>*</span></label>
               <input type="number" class="form-control" formControlName="text_length">
               <span class="alert">Default value would be set to 100</span>
-              <!-- <span class="danger" *ngIf="!text_length.valid && colname.dirty">Text Length is required!</span> -->
             </div>
             <div class="col-md-12" *ngIf="isDropdown">
               <br><label>Add Suggestions <span class="asteriskcolor">*</span></label>
@@ -426,7 +421,7 @@
   <div class="zindex">
     <p-toast key="buzz" position="top-right"></p-toast>
   </div>
-</ng-template>
+</ng-template> -->
 
 
 

@@ -1,3 +1,153 @@
+<div class="background_img">
+  <app-navbar>
+    <div class="container-fluid">
+      <div class="card col-md-6 offset-md-3 text-black bg-light mb-3 ">
+        <div class="card-header">
+          <h4>Add Data</h4>
+        </div>
+        <div class="card-body">
+          <form name="form" (ngSubmit)="f.form.valid && submit()" #f="ngForm" enctype="multipart/form-data" novalidate>
+            <table class="table">
+              <div *ngFor="let x of colinfo1 ">
+                <div *ngIf="x.fieldtype == 'short_text'" class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <input name="name0{{x.fieldname}}" [maxlength]="x.length" #name0="ngModel" class="form-control"
+                      type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
+                    <div *ngIf="f.submitted && name0.invalid">
+                      <div class="error" *ngIf="name0.errors.required">{{x.fieldname}} is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'long_text'" class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div *ngIf="x.m_editor">
+                    <p-editor name="name{{x.fieldname}}" #name="ngModel" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"
+                      [style]="{'height':'320px'}"></p-editor>
+                    <div *ngIf="f.submitted && name.invalid">
+                      <div class="error" *ngIf="name.errors.required">{{x.fieldname}} is required</div>
+                    </div>
+                  </div>
+                  <div *ngIf="!x.m_editor">
+                    <textarea name="name1{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control"
+                      type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></textarea>
+                    <div *ngIf="f.submitted && name1.invalid">
+                      <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'checkbox'" class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <ng-container *ngFor="let y of checkboxList;let i = index">
+                      <ng-container *ngIf="y.colname == x.fieldname">
+                        <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"></p-checkbox><br>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'email'" class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <input type="text" class="form-control" name="name2{{x.fieldname}}" [(ngModel)]="data[x.fieldname]"
+                      #name2="ngModel" [required]="x.isRequired" email />
+                    <div *ngIf="f.submitted && name2.invalid">
+                      <div class="error" *ngIf="name2.errors.required">{{x.fieldname}} is required</div>
+                      <div class="error" *ngIf="name2.errors.email ">{{x.fieldname}} must be a
+                        valid email address(ex.
+                        abc@xyz.com)</div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'date'" class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <p-calendar id="date" name="name3{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname]"
+                      [required]="x.isRequired" [showIcon]="true"></p-calendar>
+                    <div *ngIf="f.submitted && name3.invalid">
+                      <div class="error" *ngIf="name3.errors.required">{{x.fieldname}} is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'integer' || x.fieldtype == 'bigint' " class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <input id="number" name="name4{{x.fieldname}}" #name4="ngModel" class="form-control" type="number"
+                      [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
+                    <div *ngIf="f.submitted && name4.invalid">
+                      <div class="error" *ngIf="name4.errors.required">{{x.fieldname}} is required</div>
+                      <div class="error" *ngIf="name4.errors.number">{{x.fieldname}} must be a Number</div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'dropdown'" class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <select class="form-control" name="{{x.fieldname}}" #name5="ngModel" [(ngModel)]="data[x.fieldname]"
+                      [required]="x.isRequired">
+                      <ng-container *ngFor="let y of ddinfo1">
+                        <ng-container *ngIf="y.colname == x.fieldname">
+                          <option [ngValue]="y.dspValue">{{y.dspValue}}</option>
+                        </ng-container>
+                      </ng-container>
+                    </select>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'radio'" class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <ng-container *ngFor="let y of radioList">
+                      <ng-container *ngIf="y.colname == x.fieldname">
+                        <p-radioButton name="{{x.fieldname}}" label="{{y.dspValue}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
+                          [value]="y.dspValue" [required]="x.isRequired"></p-radioButton><br>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'star_rating' " class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <p-rating name="name7{{x.fieldname}}" #name7="ngModel" stars="{{x.rating}}" [(ngModel)]="data[x.fieldname]"
+                      [required]="x.isRequired" [cancel]="false"></p-rating>
+                    <div *ngIf="f.submitted && name7.invalid">
+                      <div class="error" *ngIf="name7.errors.required">{{x.fieldname}} is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="x.fieldtype == 'file_upload' " class="container margin">
+                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
+                  <div>
+                    <input type="file" name="name8{{x.fieldname}}" accept="image/*" (change)="onFileSelect($event,x.fieldname)"
+                      [required]="x.isRequired" />
+                  </div>
+                </div>
+              </div>
+            </table>
+            <div class="card-footer">
+              <!-- <button class="btn btn-primary btn-sm btn_margin float-right"  value="Submit">Submit</button> -->
+              <input class="btn btn-primary btn-sm btn_margin float-right" [disabled]="!f.form.valid" type="submit">
+              <button style="margin-right: 10px" class="btn btn-warning btn-sm btn_margin float-right" (click)="onCancel()">Cancel</button>
+            </div>
+            {{f.form.valid}}
+            {{f.form.errors | json}}
+            {{f.form.value | json}}
+          </form>
+        </div>
+      </div>
+    </div>
+  </app-navbar>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 <!-- <div class="background_img">
   <app-navbar>
     <div class="container-fluid">
@@ -107,239 +257,4 @@
       </div>
     </div>
   </app-navbar>
-</div> -->
-
-
-
-
-
-
-<div class="background_img">
-  <app-navbar>
-    <div class="container-fluid">
-      <div class="card col-md-6 offset-md-3 text-black bg-light mb-3 ss">
-        <div class="card-header">
-          <h3>Survey Data</h3>
-        </div>
-        <div class="card-body">
-          <form name="form" (ngSubmit)="f.form.valid && submit()" #f="ngForm" enctype="multipart/form-data" novalidate>
-            <table class="table">
-              <div *ngFor="let x of colinfo1 ">
-                <div *ngIf="x.fieldtype == 'short_text'" class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <input name="name0{{x.fieldname}}" [maxlength]="x.length" #name0="ngModel" class="form-control"
-                      type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
-                    <div *ngIf="f.submitted && name0.invalid">
-                      <div class="error" *ngIf="name0.errors.required">{{x.fieldname}} is required</div>
-                    </div>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'long_text'" class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <div *ngIf="x.m_editor">
-                      <p-editor name="name1{{x.fieldname}}" #name1="ngModel" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"
-                        [style]="{'height':'320px'}"></p-editor>
-                      <div *ngIf="f.submitted && name1.invalid">
-                        <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
-                      </div>
-                    </div>
-                    <div *ngIf="!x.m_editor">
-                      <textarea name="name1{{x.fieldname}}" [maxlength]="x.length" #name1="ngModel" class="form-control"
-                        type="text" [(ngModel)]="data[x.fieldname]" [required]="x.isRequired"></textarea>
-                      <div *ngIf="f.submitted && name1.invalid">
-                        <div class="error" *ngIf="name1.errors.required">{{x.fieldname}} is required</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'checkbox'" class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <ng-container *ngFor="let y of checkboxList;let i = index">
-                      <ng-container *ngIf="y.colname == x.fieldname">
-                        <p-checkbox name="{{i}}{{x.fieldname}}" binary="true" label="{{y.dspValue}}" [(ngModel)]="data[x.fieldname][y.dspValue]"></p-checkbox><br>
-                      </ng-container>
-                    </ng-container>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'email'" class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <input type="text" class="form-control" name="name2{{x.fieldname}}" [(ngModel)]="data[x.fieldname]"
-                      #name2="ngModel" [required]="x.isRequired" email />
-                    <div *ngIf="f.submitted && name2.invalid">
-                      <div class="error" *ngIf="name2.errors.required">{{x.fieldname}} is required</div>
-                      <div class="error" *ngIf="name2.errors.email ">{{x.fieldname}} must be a
-                        valid email address(ex.
-                        abc@xyz.com)</div>
-                    </div>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'date'" class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <p-calendar id="date" name="name3{{x.fieldname}}" #name3="ngModel" [(ngModel)]="data[x.fieldname]"
-                      [required]="x.isRequired" [showIcon]="true"></p-calendar>
-                    <div *ngIf="f.submitted && name3.invalid">
-                      <div class="error" *ngIf="name3.errors.required">{{x.fieldname}} is required</div>
-                    </div>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'integer' || x.fieldtype == 'bigint' " class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <input id="number" name="name4{{x.fieldname}}" #name4="ngModel" class="form-control" type="number"
-                      [(ngModel)]="data[x.fieldname]" [required]="x.isRequired">
-                    <div *ngIf="f.submitted && name4.invalid">
-                      <div class="error" *ngIf="name4.errors.required">{{x.fieldname}} is required</div>
-                      <div class="error" *ngIf="name4.errors.number">{{x.fieldname}} must be a Number</div>
-                    </div>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'dropdown'" class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <select class="form-control" name="{{x.fieldname}}" #name5="ngModel" [(ngModel)]="data[x.fieldname]"
-                      [required]="x.isRequired">
-                      <ng-container *ngFor="let y of ddinfo1">
-                        <ng-container *ngIf="y.colname == x.fieldname">
-                          <option [ngValue]="y.dspValue">{{y.dspValue}}</option>
-                        </ng-container>
-                      </ng-container>
-                    </select>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'radio'" class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <ng-container *ngFor="let y of radioList">
-                      <ng-container *ngIf="y.colname == x.fieldname">
-                        <p-radioButton name="{{x.fieldname}}" label="{{y.dspValue}}" #name6="ngModel" [(ngModel)]="data[x.fieldname]"
-                          [value]="y.dspValue" [required]="x.isRequired"></p-radioButton><br>
-                      </ng-container>
-                    </ng-container>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'star_rating' " class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <p-rating name="name7{{x.fieldname}}" #name7="ngModel" stars="{{x.rating}}" [(ngModel)]="data[x.fieldname]"
-                      [required]="x.isRequired" [cancel]="false"></p-rating>
-                    <div *ngIf="f.submitted && name7.invalid">
-                      <div class="error" *ngIf="name7.errors.required">{{x.fieldname}} is required</div>
-                    </div>
-                  </div>
-                </div>
-                <div *ngIf="x.fieldtype == 'file_upload' " class="container margin">
-                  <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
-                  <div>
-                    <input type="file" name="name8{{x.fieldname}}" (change)="onFileSelect($event,x.fieldname)"
-                      [required]="x.isRequired" />
-                  </div>
-                </div>
-              </div>
-            </table>
-            <div class="card-footer">
-              <button class="btn btn-primary btn-sm" value="Submit">Submit</button>
-              <button style="margin-right: 10px" class="btn btn-warning btn-sm" (click)="onCancel()">Cancel</button>
-            </div>
-            <!-- {{f.form.valid}} -->
-            <!-- {{f.form.errors | json}} -->
-            <!-- {{f.form.value | json}} -->
-          </form>
-        </div>
-      </div>
-    </div>
-  </app-navbar>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <div *ngFor="let x of colinfo1 "> -->
-
-
-<!-- MODAL POP UP -->
-
-
-
-<!-- <div class="container">
-  <div class="modal-header">
-    <h3>Input Data</h3>
-  </div>
-  <div class="modal-body">
-    <form #F="ngForm" class="form-group" name="form" (ngSubmit)="F.form.valid && submit()" novalidate>
-      <table class="table">
-        <tr>
-          <td><label><b>Table Id</b></label></td>
-          <td><input class="form-control" type="number" [(ngModel)]="id" name="id" readonly></td>
-        </tr>
-        <tr *ngFor="let x of colinfo1 ">
-          <td><label><b>{{x.label}} </b><span class="asteriskcolor">*</span></label></td>
-          <td *ngIf="x.fieldtype == 'text'">
-            <input id="text" name="name1{{x.fieldname}}" #name1="ngModel" class="form-control" type="text" [(ngModel)]="data[x.fieldname]"
-              required>
-            <div *ngIf="F.submitted && name1.invalid">
-              <span class="error" *ngIf="!name1.valid && name1.dirty">{{x.fieldname}} is required!</span>
-            </div>
-          </td>
-          <td *ngIf="x.fieldtype == 'dropdown'">
-            <select class="form-control" name="name5{{x.fieldname}}" #name5="ngModel" [(ngModel)]="data[x.fieldname]"
-              required>
-              <ng-container *ngFor="let y of ddinfo1">
-                <ng-container *ngIf="y.colname == x.fieldname">
-                  <option [ngValue]="y.ddValue">{{y.ddValue}}</option>
-                </ng-container>
-              </ng-container>
-            </select>
-          </td>
-          <td *ngIf="x.fieldtype == 'varchar'">
-            <input type="email" name="name2{{x.fieldname}}" #name2="ngModel" class="form-control"
-              [(ngModel)]="data[x.fieldname]" required>
-            <span class="error" *ngIf="!name2.valid && name2.dirty">{{x.fieldname}} is required!</span>
-          </td>
-          <td *ngIf="x.fieldtype == 'date'">
-            <input id="date" name="name3{{x.fieldname}}" #name3="ngModel" class="form-control" type="date" [(ngModel)]="data[x.fieldname]"
-              required>
-            <span class="error" *ngIf="!name3.valid && name3.dirty">{{x.fieldname}} is required!</span>
-          </td>
-          <td *ngIf="x.fieldtype == 'integer' || x.fieldtype == 'bigint' ">
-            <input id="number" name="name4{{x.fieldname}}" #name4="ngModel" class="form-control" type="number"
-              [(ngModel)]="data[x.fieldname]" required>
-            <span class="error" *ngIf="!name4.valid && name4.dirty">{{x.fieldname}} is required!</span>
-          </td>
-        </tr>
-      </table>
-      <div class="modal-footer">
-        <button class="btn btn-primary " [disabled]="!F.form.valid" value="Submit">Submit</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="zindex">
-  <p-toast key='data' position="bottom-center"></p-toast>
 </div> -->

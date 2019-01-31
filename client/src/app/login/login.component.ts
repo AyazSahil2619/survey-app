@@ -44,12 +44,14 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     console.log("ON SUBMIT");
     if (this.loginDetails.value.username == '' && this.loginDetails.value.password == '') {
+      
       this.messageService.add(
         { severity: 'error', detail: 'Required Fields', summary: 'USERNAME AND PASSWORD IS REQUIRED' });
     } else {
       this._userService.login(this.loginDetails.value).subscribe((data) => {
 
         console.log(data, " 1  in login submit");
+        
 
         if (data.msg == "INVALID") {
           this.messageService.add(
@@ -67,8 +69,9 @@ export class LoginComponent implements OnInit {
           }
         }
       }, (err) => {
-          this.messageService.add(
-            { severity: 'error', summary: 'Oops ! try again ..' });
+        
+        this.messageService.add(
+          { severity: 'error', summary: 'Oops ! try again ..' });
         console.log(err, "login err");
       })
     }

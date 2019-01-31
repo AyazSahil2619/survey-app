@@ -40,10 +40,14 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({
-    extended: true
+app.use(bodyparser.json({
+    limit: '50mb'
 }));
+app.use(bodyparser.urlencoded({
+    extended: true,
+    limit: '5mb'
+}));
+
 
 app.use(express.static('./uploads'));
 

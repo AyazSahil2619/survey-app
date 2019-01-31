@@ -27,3 +27,12 @@
 .card-body {
   padding: 0;
 }
+
+.margin {
+  margin-top: 10px;
+}
+
+.btn_custom {
+  border-radius: 0;
+  margin-bottom: 10px;
+}

@@ -51,8 +51,6 @@ export class AddDataComponent implements OnInit {
     this.ddinfo();
     this.radioInfo();
     this.checkboxInfo();
-    console.log(this.data, "567890-")
-
   }
 
   fieldsData() {
@@ -175,12 +173,13 @@ export class AddDataComponent implements OnInit {
     this.data[this.current] = event.target.files[0].name;
     // this.selectedFile = <File>event.target.files[0];
     for (var i = 0; i < event.target.files.length; i++) {
-      this.selectedFile = <File>event.target.files[0];
+      this.selectedFile = <File>event.target.files[i];
       this.myFiles.push(this.selectedFile);
+
       // this.myFiles.push(event.target.files[i]);
     }
     console.log(fieldname, this.data, "ON SELRCT CHECKING DATA");
-    console.log(this.myFiles, typeof this.myFiles, "THE SELECTED FILE");
+    console.log(this.myFiles, typeof this.myFiles, "THE SELECTED FILEssssss");
 
   }
 
@@ -218,6 +217,9 @@ export class AddDataComponent implements OnInit {
         if (errResponse.error.code == 22001) {
           this.messageService.add(
             { severity: 'error', detail: 'Error', summary: `Value too long for type character varying` });
+        } else if (errResponse.error.code == 22003) {
+          this.messageService.add(
+            { severity: 'error', detail: 'Error', summary: `Numeric value out of range` });
         } else {
           this.messageService.add(
             { severity: 'error', detail: 'Error', summary: `${errResponse.error.detail}` });

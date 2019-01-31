@@ -44,7 +44,7 @@ export class ViewTableComponent implements OnInit {
     private messageService: MessageService,
     private _modalService: BsModalService,
     private _auth: AuthService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) { }
 
   table_id = this.route.snapshot.params['id'];

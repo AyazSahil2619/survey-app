@@ -42,9 +42,13 @@
 
 
 .margin {
-  margin-top: 10px !important;
+  margin-top: 15px !important;
 }
 
 input {
   border-radius: 0px !important;
+}
+
+.btn_margin {
+  margin-bottom: 15px;
 }

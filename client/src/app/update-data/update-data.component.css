@@ -3,7 +3,7 @@
 
 }
 
-.astericks {
+.asteriskcolor {
   color: red
 }
 
@@ -21,6 +21,10 @@
   padding: 0;
 }
 
+.margin {
+  margin-top: 15px;
+}
+
 .background_img {
   background-image: url('../image/signbg.jpg');
   background-size: cover;
@@ -31,4 +35,8 @@
 .btn {
   border-radius: 0px;
   color: white !important
+}
+
+.btn_margin {
+  margin-bottom: 15px;
 }

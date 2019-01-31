@@ -12,3 +12,7 @@
   height: 100vh;
   color: black;
 }
+
+.btn {
+  border-radius: 0 !important;
+}

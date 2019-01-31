@@ -196,8 +196,14 @@ async function addColumn(req, id) {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'text[]' + ',';
         } else if (item.fieldtype == 'email') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + 'varchar' + ',';
-        } else if (item.fieldtype == 'short_text' || item.fieldtype == 'long_text') {
+        } else if (item.fieldtype == 'short_text') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `varchar(${text_length})` + ',';
+        } else if (item.fieldtype == 'long_text') {
+            if (item.m_editor) {
+                colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `text` + ',';
+            } else {
+                colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `varchar(${text_length})` + ',';
+            }
         } else if (item.fieldtype == 'date') {
             colquery = colquery + 'ADD COLUMN' + ' ' + '"' + item.fieldname + '"' + ' ' + `timestamp` + ',';
         } else if (item.fieldtype == 'star_rating') {
@@ -642,14 +648,18 @@ async function fieldEdit(req, table_id, field_id) {
     let new_fieldname = escape(req.body.colname);
     let new_fieldtype;
 
-    if (fieldtype == 'dropdown' || fieldtype == 'radio') {
+    if (fieldtype == 'dropdown' || fieldtype == 'radio' || fieldtype == 'file_upload') {
         new_fieldtype = 'text';
     } else if (fieldtype == 'checkbox') {
         new_fieldtype = 'text[]';
     } else if (fieldtype == 'email') {
         new_fieldtype = 'varchar';
     } else if (fieldtype == 'short_text' || fieldtype == 'long_text') {
-        new_fieldtype = `varchar(${text_length})`;
+        if (m_editor == 'true') {
+            new_fieldtype = 'text';
+        } else {
+            new_fieldtype = `varchar(${text_length})`;
+        }
     } else if (fieldtype == 'star_rating') {
         new_fieldtype = `integer`;
     } else {
