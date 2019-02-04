@@ -115,8 +115,12 @@
                   <div *ngIf="x.fieldtype == 'file_upload' " class="container margin">
                     <label>{{x.label}} <span *ngIf="x.isRequired" class="asteriskcolor">*</span></label><br>
                     <div>
-                      <input type="file" name="name8{{x.fieldname}}" accept="image/*" (change)="onFileSelect($event,x.fieldname)"
-                        [required]="x.isRequired" />
+                      <input type="file" accept="image/*" (change)="onFileSelect($event,x.fieldname)" [required]="x.isRequired"
+                        multiple />
+                    </div>
+                    <div *ngFor="let y of myFiles">
+                      <span>{{y.name}} <a class="danger pointer" data-toggle="tooltip" data-placement="top" title="Delete"
+                          (click)="fileDelete(y.name,x.fieldname)"><i class="fa fa-times"></i></a></span>
                     </div>
                   </div>
                 </div>

@@ -169,6 +169,21 @@ var upload = multer({
 }).array("file", 10);
 
 
+async function headerData(req, res) {
+
+    table_id = parseInt(req.params.tableid, 10)
+    console.log(req.headers, "REQUEST IN HEAD CALL");
+
+    try {
+        const data = repository.headerData(table_id);
+        res.status(200).json(data)
+    } catch (err) {
+        res.status(400).json(err)
+    }
+
+}
+
+
 module.exports = {
     view: view,
     addDataToTable: addDataToTable,
@@ -182,4 +197,5 @@ module.exports = {
     fetchCheckboxList: fetchCheckboxList,
     checkToken: checkToken,
     upload: upload,
+    headerData: headerData
 }

@@ -63,6 +63,7 @@ export class AddDataComponent implements OnInit {
         colinfo.forEach((item, index) => {
           if (item.fieldname != 'uid') {
             this.colinfo1.push({
+              f_uid: item.f_uid,
               fieldname: item.fieldname,
               label: item.label,
               fieldtype: item.fieldtype,
@@ -165,23 +166,48 @@ export class AddDataComponent implements OnInit {
 
   myFiles: any = [];
   current: any;
-
+  // count = 0;
   selectedfilename: any;
-  onFileSelect(event, fieldname) {
+  onFileSelect(event, id, fieldname) {
+
     console.log(event.target.files[0].name);
     this.current = fieldname;
-    this.data[this.current] = event.target.files[0].name;
-    // this.selectedFile = <File>event.target.files[0];
+    // this.data[this.current] = event.target.files[0].name;
     for (var i = 0; i < event.target.files.length; i++) {
+      if (i == 0) {
+        this.data[this.current] = event.target.files[i].name + ',';
+      } else {
+        this.data[this.current] += event.target.files[i].name + ',';
+      }
       this.selectedFile = <File>event.target.files[i];
       this.myFiles.push(this.selectedFile);
-
-      // this.myFiles.push(event.target.files[i]);
     }
-    console.log(fieldname, this.data, "ON SELRCT CHECKING DATA");
+    // this.myFiles.push(event.target.files[0]);
+    // this.myFiles[this.count].f_uid = id;
+    // this.myFiles[this.count].table_id = this.table_id;
+    // this.count++;
+    this.data[this.current] = this.data[this.current].replace(/(^[,\s]+)|([,\s]+$)/g, '');
+    console.log(this.data, "DATA FILE");
     console.log(this.myFiles, typeof this.myFiles, "THE SELECTED FILEssssss");
 
   }
+
+  fileDelete(fileToDelete, fieldname) {
+    this.data[fieldname] = '';
+    this.myFiles.forEach((element, index) => {
+
+      if (element.name == fileToDelete) {
+        this.myFiles.splice(index, 1);
+      } else {
+        this.data[fieldname] = element.name + ',';
+      }
+    });
+    console.log(this.myFiles, "MY FILES AFTER DELETE");
+
+    this.data[fieldname] = this.data[fieldname].replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+  }
+
 
   submit() {
     console.log(this.data, "data=============");
@@ -239,6 +265,21 @@ export class AddDataComponent implements OnInit {
 
 
 
+
+// onFileSelect(event, id, fieldname) {
+//   console.log(event.target.files[0].name);
+//   this.current = fieldname;
+//   this.data[this.current] = event.target.files[0].name;
+//   // this.selectedFile = <File>event.target.files[0];
+//   for (var i = 0; i < event.target.files.length; i++) {
+//     this.selectedFile = <File>event.target.files[i];
+//     this.myFiles.push(this.selectedFile);
+//     // this.myFiles.push(event.target.files[i]);
+//   }
+//   console.log(fieldname, this.data, "ON SELRCT CHECKING DATA");
+//   console.log(this.myFiles, typeof this.myFiles, "THE SELECTED FILEssssss");
+
+// }
 
 
 

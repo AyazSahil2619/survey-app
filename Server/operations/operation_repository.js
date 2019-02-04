@@ -484,7 +484,42 @@ async function checkToken(tableid, token) {
     try {
         let res = await queryExecute(query);
         if (res.rowCount > 0) {
+            let tablename = unescape(res.rows[0].tablename)
             return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        return Promise.reject(err.message);
+    }
+}
+
+
+async function headerData(tableid) {
+
+    let query = squel
+        .select()
+        .from("mastertable")
+        .where("id =?", tableid)
+        .toString();
+
+    console.log(tableid, "JUST NOW IN HEADER")
+    try {
+        let res = await queryExecute(query);
+        if (res.rowCount > 0) {
+            let tablename = unescape(res.rows[0].tablename)
+
+            let query1 = squel
+                .select()
+                .from(`"${tablename}"`)
+                .toString();
+            console.log(query1, "QUERY1");
+
+            let res1 = await queryExecute(query1);
+            console.log("!@#$%^&*()_+");
+            console.log(res1, "aaaaaaaa");
+            return res1;
+
         } else {
             return false;
         }
@@ -509,4 +544,5 @@ module.exports = {
     fetchRadioList: fetchRadioList,
     fetchCheckboxList: fetchCheckboxList,
     checkToken: checkToken,
+    headerData: headerData
 }

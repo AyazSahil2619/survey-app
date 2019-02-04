@@ -25,7 +25,11 @@
                 </p-rating>
               </div>
               <div *ngIf="column.fieldtype == 'file_upload'">
-                <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(row[column.fieldname],imageTemplate)">{{row[column.fieldname]}}</a>
+                <ng-container *ngFor="let x of row[column.fieldname] | split:','">
+                  <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(x,imageTemplate)">{{x}}</a><br>
+                </ng-container>
+                <!-- <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(row[column.fieldname],imageTemplate)">{{row[column.fieldname]
+                  | split:','}}</a> -->
               </div>
               <div *ngIf="column.fieldtype == 'long_text'" data-ellipsis="5" class="ql-editor preview ellipsis"
                 [innerHTML]="row[column.fieldname] | sanitizeHtml"></div>

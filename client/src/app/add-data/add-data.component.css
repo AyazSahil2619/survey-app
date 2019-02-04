@@ -1,5 +1,5 @@
 .error {
-  color: red;
+  color: red !important;
 }
 
 .asteriskcolor {
@@ -51,4 +51,9 @@ input {
 
 .btn_margin {
   margin-bottom: 15px;
+}
+
+
+.danger {
+  color: red !important;
 }

@@ -41,6 +41,7 @@ import { CarouselModule } from 'primeng/carousel';
 import { RatingModule } from 'primeng/rating';
 import { EditorModule } from 'primeng/editor';
 import { sanitizeHtmlPipe } from './sanitize-html.pipe';
+import { SplitPipe } from './split.pipe';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { sanitizeHtmlPipe } from './sanitize-html.pipe';
     CommonDataComponent,
     CommonModalComponent,
     OverviewComponent,
-    sanitizeHtmlPipe
+    sanitizeHtmlPipe,
+    SplitPipe
   ],
   imports: [
     BrowserModule,
@@ -85,7 +87,8 @@ import { sanitizeHtmlPipe } from './sanitize-html.pipe';
 
   ],
   exports: [
-    sanitizeHtmlPipe
+    sanitizeHtmlPipe,
+    SplitPipe
   ],
   providers: [
     UserServiceService,

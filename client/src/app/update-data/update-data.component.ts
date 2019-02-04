@@ -194,17 +194,32 @@ export class UpdateDataComponent implements OnInit {
   selectedFile: any;
 
   onFileSelect(event, fieldname) {
-    console.log(event.target.files[0].name);
     this.current = fieldname;
-    this.data[this.current] = event.target.files[0].name;
-    // this.selectedFile = <File>event.target.files[0];
     for (var i = 0; i < event.target.files.length; i++) {
-      this.selectedFile = <File>event.target.files[0];
+      if (i == 0) {
+        this.data[this.current] = event.target.files[i].name + ',';
+      } else {
+        this.data[this.current] += event.target.files[i].name + ',';
+      }
+      this.selectedFile = <File>event.target.files[i];
       this.myFiles.push(this.selectedFile);
-      // this.myFiles.push(event.target.files[i]);
     }
-    console.log(fieldname, this.data, "ON SELRCT CHECKING DATA");
-    console.log(this.myFiles, "THE SELECTED FILE");
+    this.data[this.current] = this.data[this.current].replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+
+  }
+
+  fileDelete(fileToDelete, fieldname) {
+    this.data[fieldname] = '';
+    this.myFiles.forEach((element, index) => {
+
+      if (element.name == fileToDelete) {
+        this.myFiles.splice(index, 1);
+      } else {
+        this.data[fieldname] = element.name + ',';
+      }
+    });
+    this.data[fieldname] = this.data[fieldname].replace(/(^[,\s]+)|([,\s]+$)/g, '');
 
   }
 

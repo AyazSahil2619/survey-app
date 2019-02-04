@@ -40,3 +40,8 @@
 .btn_margin {
   margin-bottom: 15px;
 }
+
+
+.danger {
+  color: red !important;
+}

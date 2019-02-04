@@ -130,7 +130,11 @@ export class UserServiceService {
     for (var i = 0; i < file.length; i++) {
       // formData.append("file", file[i]);  
       formData.append("file", file[i], file[i]['name']);
+      // formData.append("f_uid", (file[i].f_uid).toString(), file[i]['name']);
+      // formData.append("table_id", file[i].table_id, file[i]['name']);
+
     }
+    console.log(formData, "FORMDATA");
     // formdata.append('file', file);
     return this._http.post(`${environment.ip}/upload`, formData, { withCredentials: true });
   }
@@ -143,6 +147,10 @@ export class UserServiceService {
       headers: new HttpHeaders().append('Content-Type', 'application/json'),
     });
 
+  }
+
+  headerData(tableid): Observable<any> {
+    return this._http.head(`${environment.ip}/headerData/` + tableid, { withCredentials: true });
   }
 
 

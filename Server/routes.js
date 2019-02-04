@@ -41,7 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(bodyparser.json({
-    limit: '50mb'
+    limit: '5mb'
 }));
 app.use(bodyparser.urlencoded({
     extended: true,
@@ -150,6 +150,8 @@ app.get('/fetchFile/:filename', function (req, res) {
     console.log(path.join(__dirname, './uploads', req.params.filename), "OOOOOOOOOOOOOoo")
     res.sendFile(path.join(__dirname, './uploads', req.params.filename));
 })
+
+app.head('/headerData/:tableid', operations.headerData)
 
 
 app.get('/loggedout', check.isLoggedIn, check.logout);

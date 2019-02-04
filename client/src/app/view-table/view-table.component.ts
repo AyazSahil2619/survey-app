@@ -96,6 +96,14 @@ export class ViewTableComponent implements OnInit {
       }, (err) => {
         console.log('Error while fetching datas', err);
       })
+
+
+    this._userService.headerData(this.table_id)
+      .subscribe((response) => {
+        console.log("In success after response", response);
+      }, (error) => {
+        console.log("Error after response", error);
+      })
   }
 
 
@@ -195,6 +203,7 @@ export class ViewTableComponent implements OnInit {
 
   imagepreview(filename, template: TemplateRef<any>) {
 
+    console.log(filename, "File name on select");
     this._userService.fetchFile(filename).subscribe((response) => {
       console.log(response, "JUST NOW")
       let data = response;
