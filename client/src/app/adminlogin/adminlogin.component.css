@@ -19,3 +19,9 @@
   line-height: .5;
   border-radius: 0.0rem;
 }
+
+.heading {
+  margin-left: 20px !important;
+  font-size: x-large !important;
+  color: #177d6b !important;
+}

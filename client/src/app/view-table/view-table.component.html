@@ -7,41 +7,45 @@
       <a type="button" class="btn btn-primary btn-sm float-right " (click)="addRow()"><i class='fas fa-plus'></i>
         Add Data</a>
       <br><br>
-      <table width="100%" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table-striped table-bordered  table-condensed">
-        <thead>
-          <tr>
-            <th *ngFor="let column of colinfo1">{{column.fieldname}}</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of datas">
-            <td *ngFor="let column of colinfo1">
-              <div *ngIf="column.fieldtype =='date'">{{row[column.fieldname] | date:'medium'}}</div>
-              <div *ngIf="column.fieldtype !='date' && column.fieldtype !='long_text' && column.fieldtype !='file_upload' && column.fieldtype != 'star_rating'">{{row[column.fieldname]}}</div>
-              <div *ngIf="column.fieldtype =='star_rating'">
-                <p-rating ngModel="{{row[column.fieldname]}}" stars="{{row[column.fieldname]}}" readonly="true"
-                  [cancel]="false">
-                </p-rating>
-              </div>
-              <div *ngIf="column.fieldtype == 'file_upload'">
-                <ng-container *ngFor="let x of row[column.fieldname] | split:','">
-                  <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(x,imageTemplate)">{{x}}</a><br>
-                </ng-container>
-                <!-- <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(row[column.fieldname],imageTemplate)">{{row[column.fieldname]
+      <div class="card col-md-12 text-black">
+        <div class="card-body">
+          <table width="100%" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-condensed">
+            <thead>
+              <tr>
+                <th *ngFor="let column of colinfo1">{{column.fieldname}}</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of datas">
+                <td *ngFor="let column of colinfo1">
+                  <div *ngIf="column.fieldtype =='date'">{{row[column.fieldname] | date:'medium'}}</div>
+                  <div *ngIf="column.fieldtype !='date' && column.fieldtype !='long_text' && column.fieldtype !='file_upload' && column.fieldtype != 'star_rating'">{{row[column.fieldname]}}</div>
+                  <div *ngIf="column.fieldtype =='star_rating'">
+                    <p-rating ngModel="{{row[column.fieldname]}}" stars="{{row[column.fieldname]}}" readonly="true"
+                      [cancel]="false">
+                    </p-rating>
+                  </div>
+                  <div *ngIf="column.fieldtype == 'file_upload'">
+                    <ng-container *ngFor="let x of row[column.fieldname] | split:','">
+                      <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(x,imageTemplate)">{{x}}</a><br>
+                    </ng-container>
+                    <!-- <a routerLink="/viewTable/{{table_id}}" (click)="imagepreview(row[column.fieldname],imageTemplate)">{{row[column.fieldname]
                   | split:','}}</a> -->
-              </div>
-              <div *ngIf="column.fieldtype == 'long_text'" data-ellipsis="5" class="ql-editor preview ellipsis"
-                [innerHTML]="row[column.fieldname] | sanitizeHtml"></div>
-            </td>
-            <td>
-              <a id="tablebutton" type="button" class="btn btn-primary btn-sm" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;
-              <!-- <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deletedata(templatedelete,row.uid)">Delete</a> -->
-              <a id="tablebutton" type="button" class="btn btn-danger btn-sm" (click)="deletedata(row.uid)">Delete</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                  </div>
+                  <div *ngIf="column.fieldtype == 'long_text'" data-ellipsis="5" class="ql-editor preview ellipsis"
+                    [innerHTML]="row[column.fieldname] | sanitizeHtml"></div>
+                </td>
+                <td>
+                  <a id="tablebutton" type="button" class="btn btn-primary btn-xs" (click)="updatedata(row.uid)">Edit</a>&nbsp;&nbsp;
+                  <!-- <a id="tablebutton" type="button" class="btn btn-danger btn-xs" (click)="deletedata(templatedelete,row.uid)">Delete</a> -->
+                  <a id="tablebutton" type="button" class="btn btn-danger btn-xs" (click)="deletedata(row.uid)">Delete</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
     <p-toast position="top-right"></p-toast>
   </app-navbar>
@@ -63,12 +67,12 @@
 
     <label>Email Id</label>
     <input id="email" name="emailid" type="email" [(ngModel)]="mailid" required>
-    <a type="button" class="btn btn-primary btn-sm" (click)="onClick()">Share</a><br>
     <p class="alert">* For multiple email id use comma as a separator</p>
 
   </div>
   <div class="modal-footer">
-    <a type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>
+    <a style="margin-left: 10px" type="button" class="btn btn-danger btn-sm" (click)="decline()">Decline</a>
+    <a type="button" class="btn btn-primary btn-sm" (click)="onClick()">Share</a><br>
   </div>
 </ng-template>
 

@@ -98,12 +98,12 @@ export class ViewTableComponent implements OnInit {
       })
 
 
-    this._userService.headerData(this.table_id)
-      .subscribe((response) => {
-        console.log("In success after response", response);
-      }, (error) => {
-        console.log("Error after response", error);
-      })
+    // this._userService.headerData(this.table_id)
+    //   .subscribe((response) => {
+    //     console.log("In success after response", response);
+    //   }, (error) => {
+    //     console.log("Error after response", error);
+    //   })
   }
 
 

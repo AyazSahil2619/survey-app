@@ -251,6 +251,7 @@ async function getdetails(tableid, uid) {
 
         let res1 = await queryExecute(query1);
 
+        console.log(res1, "RESPONSE!");
         console.log(res1.rows, "RES1");
 
         res1.rows.forEach((item) => {

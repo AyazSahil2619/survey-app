@@ -16,3 +16,8 @@
 .btn {
   border-radius: 0 !important;
 }
+
+
+input {
+  border-radius: 0px !important;
+}

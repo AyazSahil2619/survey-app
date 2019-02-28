@@ -6,8 +6,8 @@ const DIR = './uploads';
 
 
 async function view(req, res) {
+
     const id = parseInt(req.params.id, 10);
-    // console.log(id);
 
     try {
         var data = await repository.view(id)
